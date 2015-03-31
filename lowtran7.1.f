@@ -1042,9 +1042,10 @@ C     END OF VSA MODEL SET-UP                                           LWT10460
 C                                                                       LWT10470
 240   IF (MODEL.NE.0 .AND. MODEL.NE.7 ) ML=NL                           LWT10480
       MDELS=MODEL                                                       LWT10490
-      DO 250 I=1,5                                                      LWT10500
-      IF(MDELS.NE.0)HMODEL(I,7)=HMODEL(I,MDELS)                         LWT10510
-250   IF(MDELS.EQ.0)HMODEL(I,7)=HMODEL(I,8)                             LWT10520
+      DO I=1,5                                                          LWT10500
+        IF(MDELS.NE.0)HMODEL(I,7)=HMODEL(I,MDELS)                       LWT10510
+        IF(MDELS.EQ.0)HMODEL(I,7)=HMODEL(I,8)                           LWT10520
+      End Do
 C                                                                       LWT10530
 C                                                                       LWT10540
       IF(IM .EQ. 1) THEN                                                LWT10550
@@ -1534,7 +1535,7 @@ C@    SUBROUTINE FCLOCK(HTIME)                                          LWT15270
 C@    CALL CLOCK(GTIME)                                                 LWT15280
 C@    HTIME=SHIFT(GTIME,6)                                              LWT15290
 C@    RETURN                                                            LWT15300
-      END Program  LWTRAN7                                              LWT15310
+      END Program LWTRN7                                                LWT15310
 
       SUBROUTINE AERNSM(JPRT,  GNDALT)                                  ANS  100
 C********************************************************************** ANS  110
