@@ -1,0 +1,24 @@
+LOWTRAN TREE  LWTRN7-(AERNSM,SSGEO,EXABIN,XTRANS,                                                                                        
+,VSA,SUBSOL,CIRRUS)                                                                                                                      
+LWTRN7  GLOBAL CARD1,CARD1A,CARD2,CARD2A,CARD3,CARD4,CNTRL,MODEL,                                                                        
+,IFIL,CARD2D,SOLS,MDLZ,ZVSALY,MART,USRDTA,TITL,MNLT,CNSTNS,PATH,                                                                         
+,AERTM-SAVE                                                                                                                              
+AERNSM INCLUDE AERNSM,AERPRF,PRFDTA,MARINE,MARDTA,STDMDL,MDTA,                                                                           
+,RDNSM,LAYCLD,LAYVSA,EQULWC,VSANSM,MLATMB,CHECK,DEFALT,                                                                                  
+,CONVRT,WATVAP,ATMCON,DESATT,DSTDTA,CIRR18                                                                                               
+AERNSM GLOBAL MDATA,MDATA1,MLATM,TRAC,CARD1B,CONSTN,DESAER-SAVE                                                                          
+SSGEO INCLUDE SSGEO,GEO,INTERP,PSIDEL,PSI,DEL,SCTANG                                                                                     
+SSGEO GLOBAL PARMTR,RFRPTH-SAVE                                                                                                          
+EXABIN INCLUDE EXABIN,EXTDTA                                                                                                             
+XTRANS TREE TRANS-(SOURCE,SSRAD,TNRAIN)                                                                                                  
+TRANS INCLUDE TRANS,ABCDTA,AEREXT,BBFN,BETABS,CXDTA,C4DTA,HERTDA,                                                                        
+,C6DTA,C8DTA,DBLTX,C4D,SF296,SF260,FRN296,BFH2O,BO3HH0,BO3HH1,HNO3,                                                                      
+,BO3HH2,O3UVFD,O2CONT,BO2C,RAYSCT,CPH2O,CPO3,CPUMIX,FLXADD,                                                                              
+,WVBNRG,MAPMS,MSRAD,O3HHT0,O3HHT1,O3HHT2,O3UV,ABCD,CPTRCG,                                                                               
+,SCHRUN,SHUMG                                                                                                                            
+TRANS GLOBAL SRAD,ABC,AABBCC,H2O,O3,UFMIX1,UFMIX2,DIRST,                                                                                 
+,TRACEG,WNLOHI,AER,SHUR-SAVE                                                                                                             
+SSRAD INCLUDE SSRAD,PHASEF,PHSDTA                                                                                                        
+SSRAD GLOBAL MNMPHS                                                                                                                      
+SOURCE INCLUDE SOURCE,SUN,SOLAR                                                                                                          
+      END LWTRN7                                                                                                                         
