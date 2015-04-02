@@ -875,8 +875,7 @@ C***********************************************************************
       COMMON /USRDTA/ NANGLS,ANGF(50),F(4,50)
       COMMON /MDLZ/ HMDLZ(8)
       COMMON /ZVSALY/ ZVSA(10),RHVSA(10),AHVSA(10),IHVSA(10)
-      CHARACTER*4  HHAZE      ,HSEASN     ,HVULCN     ,BLANK,
-     X            HMET        ,HMODEL     ,HTRRAD
+      CHARACTER(len=4) :: HHAZE,HSEASN,HVULCN,BLANK,HMET,HMODEL,HTRRAD
       COMMON /TITL/ HHAZE(5,16),HSEASN(5,2),HVULCN(5,8),BLANK,
      X HMET(5,2),HMODEL(5,8),HTRRAD(6,4)
       COMMON /VSBD/ VSB(10)
@@ -937,17 +936,14 @@ C
 C*****START CALCULATION
 C
 C
-100   DO 10 II = 1,4
-10    IREG(II) = 0
+100   IREG(1:4) = 0
       WRITE(IPR,1000)
 1000  FORMAT('1',20X,'***** LOWTRAN 7 *****')
 C@    WRITE(IPR,1010) HDATE,HTIME
 1010  FORMAT('1',20X,'***** LOWTRAN 7 *****',10X,2(1X,A8,1X))
-      DO 80 I=1,4
-      DO 80 J=1,40
-      ABSC(I,J)=0.
-      EXTC(I,J)=0.
- 80   ASYM(I,J)=0.
+      ABSC(1:4,1:40)=0.
+      EXTC(1:4,1:40)=0.
+      ASYM(1:4,1:40)=0.
       JPRT = 0
       IKLO=1
 C
@@ -1182,8 +1178,8 @@ C
 C
       IF(IPH. EQ . 0) THEN
             IF(G. GE.  1.0) G =  .9999
-            IF(G. LE. -1.0) G = -.9999                                  L
-      ENDIF                                                             L
+            IF(G. LE. -1.0) G = -.9999
+      ENDIF
       IF (IPH.NE.1) GO TO 330
 C
 C*****CARD 3B1 USER DEFINED PHASE FUNCTION
@@ -1374,11 +1370,9 @@ C      WHEN REL HUM ARE DIFFERENT THE ANSWER CAN CHANGE
 C
            ISSGEO = ISSGS
            IMSMX=IKMAX
-           DO 35 N=1,IMSMX
-           TBBMS(N)=TBBY(N)
-           PLST(N)=PL   (N)
-           DO 35 K=1,KMAX
- 35        WPMS(N,K)=WPATH(N,K)
+           TBBMS(1:IMSMX)=TBBY(1:IMSMX)
+           PLST(1:IMSMX)=PL(1:IMSMX)
+           WPMS(1:IMSMX,1:KMAX)=WPATH(1:IMSMX,1:KMAX)
 C
            IF(IEMSCT.EQ.2)  THEN
                  CALL SSGEO(IERROR,IPH,IPARM,PARM1,PARM2,
@@ -1387,10 +1381,7 @@ C
                 CSENSV(N) = ABS(CSZEN(N))
                 IF(CSENSV(N) .LT. 0.0174) CSENSV(N) = 0.0174
 30              CONTINUE
-                DO 45 N=1,ML
-                DO 45 K=1,KMAX
-                WPMSS(N,K)=WPATHS(N,K)
-45              CONTINUE
+                WPMSS(1:ML,1:KMAX)=WPATHS(1:ML,1:KMAX)
           ENDIF
       ENDIF
       H1     = H1S
@@ -1515,14 +1506,28 @@ C*****WRITE END OF FILE ON TAPE 7
 C
       WRITE(IPR,1630)IRPT
 1630  FORMAT('0 CARD 5 *****',I5)
-      IF (IRPT.EQ.0) GO TO 900
+
+      IF (IRPT.EQ.0) Stop
       IF (IRPT.EQ.4) GO TO 400
+
       IF (IRPT.GT.1 .AND. IEMSCT.GE.2) THEN
           PRINT*,'/!! ERROR IN INPUT IEMSCT GE 2 IRPT GT 1!'
           STOP
       ENDIF
-      IF (IRPT.GT.4) GO TO 900
-      GO TO (100,900,300,400), IRPT
+
+      Select Case(IRPT)
+      case(1)
+        GoTo 100
+      case(2)
+        Stop
+      case(3)
+        GoTo 300
+      case(4)
+        GoTo 400
+      case Default
+        Stop
+      End Select
+
   900 STOP
 C@    END
 C@    THE FOLLOWING TIME AND DATE SUBROUTINES APPLY TO A CDC 6600
@@ -6541,13 +6546,13 @@ C             FOR A TEMPERATURE INDEPENDENT CASE
       Integer, Intent(IN)   :: N
       Real,Intent(IN)       :: A,B
 
-      DIMENSION B(*)                                                    BS   120
-C                                                                       BS   130
-C             THIS SUBROUTINE DOES THE BINARY SEARCH FOR THE INDEX I    BS   140
-C             SUCH THAT A IS IN BETWEEN B(I) AND B(I+1)                 BS   150
-C             AND CALCULATES THE INTERPOLATION PARAMETER S              BS   160
-C             SUCH THAT A=S*B(I+1)+(1.-S)*B(I)                          BS   170
-C                                                                       BS   180
+      DIMENSION B(*)
+C
+C             THIS SUBROUTINE DOES THE BINARY SEARCH FOR THE INDEX I
+C             SUCH THAT A IS IN BETWEEN B(I) AND B(I+1)
+C             AND CALCULATES THE INTERPOLATION PARAMETER S
+C             SUCH THAT A=S*B(I+1)+(1.-S)*B(I)
+C
       I=1
       J=N
 
