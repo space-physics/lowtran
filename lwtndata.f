@@ -4502,7 +4502,7 @@ C
       IF((ALAM-WAVE(1)).LT. -1.0E-6) GO TO 910
       IF(ALAM.GT.WAVE(27)) THEN
            COSANG=COS(CA*SANGLE)
-           Call HENGNS(ZZ1,COSANG,PI,PHFA)
+           PHFA = HENGNS(ZZ1,COSANG,PI)
            RETURN
       ENDIF
 C     DETERMINE THE AEROSOL MODEL NUMBER
@@ -4513,7 +4513,7 @@ C
       IF(IHAZE .EQ. 0) GO TO 400
       IF(IHAZE .EQ.10) THEN
            COSANG=COS(CA*SANGLE)
-           Call HENGNS(ZZ1,COSANG,PI,PHFA)
+           PHFA= HENGNS(ZZ1,COSANG,PI)
            RETURN
       ENDIF
 C
@@ -4522,7 +4522,7 @@ C
        IF(ICLD .GT. 0.  OR. IHAZE .EQ. 7 )  THEN
            COSANG=COS(CA*SANGLE)
 C
-           Call HENGNS(ZZ1,COSANG,PI,PHFA)
+           PHFA= HENGNS(ZZ1,COSANG,PI)
               RETURN
         ENDIF
       IF(IHAZE.GE.8) GO TO 90
@@ -4558,7 +4558,7 @@ C     2-10KM TROPOSPHERIC MODEL
        IF(ICLD .GT. 0.  OR. IHAZE .EQ. 7 )  THEN
            COSANG=COS(CA*SANGLE)
 C
-           Call HENGNS(ZZ2,COSANG,PI,PHFA)
+           PHFA = HENGNS(ZZ2,COSANG,PI)
               RETURN
         ENDIF
       NN=18
@@ -4661,17 +4661,18 @@ C     HUMIDITY DEPENDENCE
       STOP
       END Subroutine PHASEF
 
-      Subroutine HENGNS(ZZ,SANGLE,PI,PHFA)
+      Function HENGNS(ZZ,SANGLE,PI)
         IMPLICIT NONE
+          Real :: HENGNS
           Real, Intent(in) :: ZZ,SANGLE, PI
-          Real, Intent(inout) :: PHFA
+
 C
 C    CALCULATES THE PHASE FUNCTION USING THE HENREY GREENSTEIN
 C    METHOD FOR CLOUDS, DESERT AERSOL, RAIN OR USER READ IN MODEL
 C
 
-      PHFA = (1.0-ZZ**2) / (4.*PI*(1.0+ZZ**2-2.0*ZZ*SANGLE)**1.5)
-      END Subroutine HENGNS
+      HENGNS = (1.0-ZZ**2) / (4.*PI*(1.0+ZZ**2-2.0*ZZ*SANGLE)**1.5)
+      END Function HENGNS
 
       FUNCTION   PF(NN,I,J)
 C     CALL THE APPROPRIATE PHASE FUNCTION
