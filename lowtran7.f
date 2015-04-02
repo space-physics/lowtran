@@ -910,9 +910,9 @@ C@    DOUBLE PRECISION HDATE,HTIME
 C*****IRD, IPR, AND IPU ARE UNIT NUMBERS FOR INPUT, OUTPUT, AND         
 C*****  IPR1 = OUTPUT OF MOLECULAR TRANSMITTANCE                        
       DATA        MAXGEO   /    68/                                     
-            Print *,Python,nwl,V1Py,V2Py,DVPy,
-     & MODELPy,ITYPEPy,IEMSCTPy,
-     & H1Py,H2Py,ANGLEPy
+c            Print *,Python,nwl,V1Py,V2Py,DVPy,
+c     & MODELPy,ITYPEPy,IEMSCTPy,
+c     & H1Py,H2Py,ANGLEPy
       
       
       IRD = 15
@@ -920,9 +920,9 @@ C*****  IPR1 = OUTPUT OF MOLECULAR TRANSMITTANCE
       IPU = 17
       IPR1= 18
       If (.not.Python) OPEN (IRD,FILE='TAPE5',STATUS='OLD')
-      OPEN (IPR,FILE='TAPE6',STATUS='UNKNOWN')                          
-      OPEN (IPU,FILE='TAPE7',STATUS='UNKNOWN')                          
-      OPEN (IPR1,FILE='TAPE8',STATUS='UNKNOWN')                         
+      OPEN (IPR,FILE='out/TAPE6',STATUS='UNKNOWN')                          
+      OPEN (IPU,FILE='out/TAPE7',STATUS='UNKNOWN')                          
+      OPEN (IPR1,FILE='out/TAPE8',STATUS='UNKNOWN')                         
 C                                                                       
 C     ALTITUDE PARAMETERS                                               
 C                                                                       
@@ -979,7 +979,7 @@ C*****CARD 1
 C                                                                       
       If (Python) Then
         MODEL=ModelPy; IType=ITypePy; IEMSCT=IEMSCTPy
-        M1=0; M2=0; M3=0; M4=0; M5=0; M6=0
+        M1=0; M2=0; M3=0; M4=0; M5=0; M6=0 !FIXME get from function inp
       Else
       READ(IRD,1110)MODEL,ITYPE,IEMSCT,IMULT,M1,M2,M3,                  
      & M4,M5,M6,MDEF,IM,NOPRT,TBOUND,SALB
@@ -6215,7 +6215,6 @@ C*****
       IF(SUMT.LE.RADMIN) RADMIN=SUMT                                    
   710 CONTINUE                                                          
       IMULT=IMLT 
-      print *,tx(9)
         TXPy(IPython,:) = TX(9)
       VPy(IPython) = V; ALAMPy(IPython) = ALAM; TRACEPy(IPython)=TRACE
       UNIFPy(IPython) = UNIF; SUMAPy(IPython) = SUMA
