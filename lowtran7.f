@@ -1,4 +1,20 @@
-      PROGRAM    LWTRN7
+      SUBROUTINE LWTRN7(Python,nwl,
+     & TXPy,VPy,ALAMPy,TRACEPy,UNIFPy, SUMAPy)
+      Logical,Intent(in) :: Python
+      Integer,Intent(in) :: nwl
+      Real, Intent(Out) :: TXPy(nwl,*), VPy(*), ALAMPy(*), TRACEPy(*),
+     &      UNIFPy(*), SUMAPy(*)
+cccccccccccccccccccccccccccccccc
+c written to TAPE6:
+c  I,ZM(I),PM(I),TM(I),(DENSTY(K,I),K=4,6),RFNDX(I),DENSTY(8,I),DENSTY(58,I)
+c
+c V,ALAM,TX(9),TX(17),UNIF,TX(31),TRACE, + TX(4),TX(5),TX(6),TX(7),TX(11),TX(10),SUMA
+c      TX(50) = TX(50) * TX(58)
+c      WRITE(IPR1,907)      V,TX(17),TX(31),TX(36),TX(44),TX(46),
+c    + TX(47),TX(50),TX(52),TX(54),TX(55),TX(56)
+c      WRITE(IPU,907)      V,TX(9),TX(17),UNIF,TX(31),TRACE,
+c     + TX(4),TX(5),TX(6),TX(7),TX(11),TX(10),ALTX9
+ccccccccccccccccccccccccccccccccc
 C***********************************************************************
 C     LOWTRAN7  (LAST REVISED FEB 1 1992)   REVISION 4.2
 C
@@ -890,11 +906,11 @@ C@    DOUBLE PRECISION HDATE,HTIME
 C*****IRD, IPR, AND IPU ARE UNIT NUMBERS FOR INPUT, OUTPUT, AND
 C*****  IPR1 = OUTPUT OF MOLECULAR TRANSMITTANCE
       DATA        MAXGEO   /    68/
-      IRD = 5
-      IPR = 6
-      IPU = 7
-      IPR1= 8
-      OPEN (IRD,FILE='TAPE5',STATUS='OLD')
+      IRD = 15
+      IPR = 16
+      IPU = 17
+      IPR1= 18
+      If (.not.Python) OPEN (IRD,FILE='TAPE5',STATUS='OLD')
       OPEN (IPR,FILE='TAPE6',STATUS='UNKNOWN')
       OPEN (IPU,FILE='TAPE7',STATUS='UNKNOWN')
       OPEN (IPR1,FILE='TAPE8',STATUS='UNKNOWN')
@@ -949,11 +965,11 @@ C@    WRITE(IPR,1010) HDATE,HTIME
 C
 C*****CARD 1
 C
-      READ(IRD,1110)MODEL,ITYPE,IEMSCT,IMULT,M1,M2,M3,
-     1 M4,M5,M6,MDEF,IM,NOPRT,TBOUND,SALB
+      If (.not.Python) READ(IRD,1110)MODEL,ITYPE,IEMSCT,IMULT,M1,M2,M3,
+     & M4,M5,M6,MDEF,IM,NOPRT,TBOUND,SALB
 1110  FORMAT(13I5,F8.3,F7.2)
       WRITE(IPR,1111)MODEL,ITYPE,IEMSCT,IMULT,M1,M2,M3,
-     1 M4,M5,M6,MDEF,IM,NOPRT,TBOUND,SALB
+     & M4,M5,M6,MDEF,IM,NOPRT,TBOUND,SALB
 1111  FORMAT('0 CARD 1  *****',13I5,F8.3,F7.2)
       IF(IMULT .EQ. 1 .AND. NOPRT.EQ. 1) NOPRT = 0
 C
@@ -972,8 +988,8 @@ C
       M=MODEL
       NPR = NOPRT
 C*****CARD 2 AEROSOL MODEL
-      READ(IRD,1200)IHAZE,ISEASN,IVULCN,ICSTL,ICLD,IVSA,VIS,WSS,WHH,
-     X RAINRT,GNDALT
+      If (.not.Python) READ(IRD,1200)IHAZE,ISEASN,IVULCN,ICSTL,ICLD,
+     & IVSA,VIS,WSS,WHH,RAINRT,GNDALT
 1200  FORMAT(6I5,5F10.3)
       WRITE(IPR,1201)IHAZE,ISEASN,IVULCN,ICSTL,ICLD,IVSA,VIS,WSS,WHH,
      X RAINRT,GNDALT
@@ -1016,7 +1032,7 @@ C
       ISEED=-99
       IF(ICLD .LT. 18) GO TO 230
 C*****CARD 2A CIRRUS CLOUDS
-      READ(IRD,1210)CTHIK,CALT,CEXT,ISEED
+      If (.not.Python) READ(IRD,1210)CTHIK,CALT,CEXT,ISEED
 1210  FORMAT(3F10.3,I10)
       WRITE(IPR,1211)CTHIK,CALT,CEXT,ISEED
 1211  FORMAT('0 CARD 2A *****',3F10.3,I10)
@@ -1049,7 +1065,7 @@ C
 C
 C*****CARD 2C  USER SUPPLIED ATMOSPHERIC PROFILE
 C
-              READ (IRD,1250) ML,IRD1,IRD2,(HMODEL(I,7),I=1,5)
+       If (.not.Python) READ (IRD,1250) ML,IRD1,IRD2,(HMODEL(I,7),I=1,5)
 1250          FORMAT(3I5,18A4)
               WRITE(IPR,1251)ML,IRD1,IRD2,(HMODEL(I,7),I=1,5)
               IF(IVSA.EQ.1)CALL RDNSM
@@ -1124,14 +1140,14 @@ C
 C*****CARD 3 GEOMETERY PARAMETERS
 C
       IF(IEMSCT.EQ.3) GO TO 315
-      READ(IRD,1312)H1,H2,ANGLE,RANGE,BETA,RO,LEN
+      If (.not.Python) READ(IRD,1312)H1,H2,ANGLE,RANGE,BETA,RO,LEN
 1312  FORMAT(6F10.3,I5)
       WRITE(IPR,1313)H1,H2,ANGLE,RANGE,BETA,RO,LEN
 1313  FORMAT('0 CARD 3  *****',6F10.3,I5)
       GO TO 320
 C*****CARD 3 FOR DIRECTLY TRANSMITTED SOLAR RADIANCE (IEMSCT = 3)
   315 CONTINUE
-      READ(IRD,1316) H1,H2,ANGLE,IDAY,RO,ISOURC,ANGLEM
+      If (.not.Python) READ(IRD,1316) H1,H2,ANGLE,IDAY,RO,ISOURC,ANGLEM
  1316 FORMAT(3F10.3,I5,5X,F10.3,I5,F10.3)
       WRITE(IPR,1317) H1,H2,ANGLE,IDAY,RO,ISOURC,ANGLEM
  1317 FORMAT('0 CARD 3   *****',3F10.3,I5,5X,F10.3,I5,F10.3)
@@ -1193,7 +1209,8 @@ C
 C
 C*****CARD 3B2
 C
-      READ(IRD,1328)(ANGF(I),F(1,I),F(2,I),F(3,I),F(4,I),I=1,NANGLS)
+      If (.not.Python) READ(IRD,1328)(ANGF(I),F(1,I),F(2,I),F(3,I),
+     &                  F(4,I),I=1,NANGLS)
 1328  FORMAT(5E10.3)
       WRITE(IPR,1329)(ANGF(I),F(1,I),F(2,I),F(3,I),F(4,I),I=1,NANGLS)
 1329  FORMAT('0 CARD 3B2*****',5E10.3)
@@ -1205,7 +1222,7 @@ C
 C*****CARD 4 WAVENUMBER
 C
  400  CONTINUE
-      READ(IRD,1400)V1,V2,DV
+      If (.not.Python) READ(IRD,1400)V1,V2,DV
 1400  FORMAT(3F10.3)
       WRITE (IPR,1401) V1,V2,DV
 1401  FORMAT('0 CARD 4  *****',3F10.3)
@@ -1479,7 +1496,7 @@ C
       WRITE(IPR1,1322)PARM1,PARM2,PARM3,PARM4,TIME,PSIPO,ANGLEM,G
       WRITE(IPU,1400) V1,V2,DV
       WRITE(IPR1,1400)V1,V2,DV
-      READ(IRD,1600) IRPT
+      If (.not.Python) READ(IRD,1600) IRPT
 1600  FORMAT(I5)
       WRITE(IPU,1600) IRPT
       WRITE(IPR1,1600)IRPT
@@ -1492,7 +1509,9 @@ CCC    CALCULATE EQUIVALENT LIQUID WATER CONSTANTS
 CCC
       CALL EQULWC
 C
-      CALL TRANS (IPH,ISOURC,IDAY,ANGLEM)
+      CALL TRANS (IPH,ISOURC,IDAY,ANGLEM,nwl,TXPy,VPy,ALAMPy,TRACEPy,
+     &      UNIFPy, SUMAPy)    
+
 C
 C*****WRITE END OF FILE ON TAPE 7
 630   IF(IERROR .GT. 0) THEN
@@ -1506,41 +1525,29 @@ C*****WRITE END OF FILE ON TAPE 7
 C
       WRITE(IPR,1630)IRPT
 1630  FORMAT('0 CARD 5 *****',I5)
-
-      IF (IRPT.EQ.0) Stop
+      IF (IRPT.EQ.0) GoTo 9999
       IF (IRPT.EQ.4) GO TO 400
-
       IF (IRPT.GT.1 .AND. IEMSCT.GE.2) THEN
           PRINT*,'/!! ERROR IN INPUT IEMSCT GE 2 IRPT GT 1!'
           STOP
       ENDIF
-
       Select Case(IRPT)
       case(1)
         GoTo 100
       case(2)
-        Stop
+        Return
       case(3)
         GoTo 300
       case(4)
         GoTo 400
       case Default
-        Stop
+        GoTo 9999
       End Select
-
-  900 STOP
-C@    END
-C@    THE FOLLOWING TIME AND DATE SUBROUTINES APPLY TO A CDC 6600
-C@    SUBROUTINE FDATE(HDATE)
-C@    CALL DATE(GDATE)
-C@    HDATE=SHIFT(GDATE,6)
-C@    RETURN
-C@    END
-C@    SUBROUTINE FCLOCK(HTIME)
-C@    CALL CLOCK(GTIME)
-C@    HTIME=SHIFT(GTIME,6)
-C@    RETURN
-      END Program LWTRN7
+      
+9999  If (.not.Python) close(IPR)
+      close(IPU); close(IRD); close(IPR1)
+      print *, "LOWTRAN7: Normal return"
+      END Subroutine LWTRN7
 
       SUBROUTINE AERNSM(JPRT,  GNDALT)
 C**********************************************************************
@@ -1593,26 +1600,26 @@ C**********************************************************************
       DATA AHLVSA/'VSA ','DEFI','NED ','    ','    '/
       DATA  AHUS /'USER',' DEF','INED','    ','    '/
       DATA AHAHOL/
-     1 'CUMU','LUS ','    ','    ','    ',
-     2 'ALTO','STRA','TUS ','    ','    ',
-     3 'STRA','TUS ','    ','    ','    ',
-     4 'STRA','TUS ','STRA','TO C','UM  ',
-     5 'NIMB','OSTR','ATUS','    ','    ',
-     6 'DRIZ','ZLE ','2.0 ','MM/H','R   ',
-     7 'LT R','AIN ','5.0 ','MM/H','R   ',
-     8 'MOD ','RAIN',' 12.','5 MM','/HR ',
-     9 'HEAV','Y RA','IN 2','5 MM','/HR ',
-     A 'EXTR','EME ','RAIN',' 75M','M/HR',
-     B 'USER',' ATM','OSPH','ERE ','    ',
-     C 'USER',' RAI','N NO',' CLO','UD  ',
-     D 'CIRR','US C','LOUD','    ','    ' /
+     & 'CUMU','LUS ','    ','    ','    ',
+     & 'ALTO','STRA','TUS ','    ','    ',
+     & 'STRA','TUS ','    ','    ','    ',
+     & 'STRA','TUS ','STRA','TO C','UM  ',
+     & 'NIMB','OSTR','ATUS','    ','    ',
+     & 'DRIZ','ZLE ','2.0 ','MM/H','R   ',
+     & 'LT R','AIN ','5.0 ','MM/H','R   ',
+     & 'MOD ','RAIN',' 12.','5 MM','/HR ',
+     & 'HEAV','Y RA','IN 2','5 MM','/HR ',
+     & 'EXTR','EME ','RAIN',' 75M','M/HR',
+     & 'USER',' ATM','OSPH','ERE ','    ',
+     & 'USER',' RAI','N NO',' CLO','UD  ',
+     & 'CIRR','US C','LOUD','    ','    ' /
       DATA AVOGAD/6.022045E+23/,ALOSMT/2.68675E+19/,
-     1    GASCON/8.31441E+7/,PLANK/6.626176E-27/,BOLTZ/1.380662E-16/,
-     2    CLIGHT/2.99792458E10/
+     &    GASCON/8.31441E+7/,PLANK/6.626176E-27/,BOLTZ/1.380662E-16/,
+     &    CLIGHT/2.99792458E10/
       DATA AIRMWT/28.964/,AMWT/18.015,44.010,47.998,44.01,28.011,
-     1    16.043,31.999,30.01,64.06,46.01,17.03,63.01,17.00,20.01,
-     2    36.46,80.92,127.91,51.45,60.08,30.03,52.46,28.014,
-     3    27.03, 50.49, 34.01, 26.03, 30.07, 34.00, 7*0./
+     &    16.043,31.999,30.01,64.06,46.01,17.03,63.01,17.00,20.01,
+     &    36.46,80.92,127.91,51.45,60.08,30.03,52.46,28.014,
+     &    27.03, 50.49, 34.01, 26.03, 30.07, 34.00, 7*0./
       DATA CLDTOP / 3.,3.,1.,2.,.66,1.,.66,.66,3.,3./
 C
 C     F(A) IS SATURATED WATER WAPOR DENSITY AT TEMP T,A=TZERO/T
@@ -1677,11 +1684,8 @@ C
       IF(RAINRT.GT.0.) JPRT=0
       IF(GNDALT.GT.0.) JPRT=0
 C
-      DO 5 I=1,ML
-      HAZEC(I)=0.0
-5     CONTINUE
-      DO 6 II = 1,4
-6     ALTB(II) = 0.
+      HAZEC(1:ML)=0.0
+      ALTB(1:4) = 0.
       T0=273.15
       IC1=1
       N=7
@@ -2210,7 +2214,6 @@ C
       END SUBROUTINE AERNSM
 
       SUBROUTINE RDEXA
-
 C
 C     READ IN USER DEFINED EXTINCTION ABSORPTION COEFFICIENTS AND
 C     ASYMMETRY PARAMETERS
@@ -2242,7 +2245,6 @@ C
       WRITE(IPR,1270)(VX(I),EXTC(IHC,I),ABSC(IHC,I),ASYM(IHC,I),I=1,47)
 1270  FORMAT(2X,F6.2,2F7.5,F6.4,F6.2,2F7.5,F6.4,F6.2,2F7.5,F6.4)
 1300  CONTINUE
-      RETURN
       END Subroutine RDEXA
 
       SUBROUTINE CIRR18
@@ -2327,7 +2329,6 @@ C
 1226    FORMAT(15X,'CIRRUS PROFILE EXTINCT ',F10.3)
 C
 C       END OF CIRRUS MODEL SET UP
-      RETURN
       END Subroutine CIRR18
 
       SUBROUTINE DESATT(WSPD,VIS)
@@ -2423,7 +2424,8 @@ CC          DESSCA(WAVEL) = DESSCA(WAVEL)       /EXT55
 C
 999    FORMAT(' WARNING: WIND SPEED IS BEYOND 30 M/S; RADIATIVE',
      *'PROPERTIES',/,'OF THE DESERT AEROSOL HAVE BEEN EXTRAPOLATED')
-      END
+      END SUBROUTINE DESATT
+      
       BLOCK DATA DSTDTA
 C>    BLOCK DATA
 C**********************************************************************
@@ -2550,7 +2552,9 @@ C
      4 0.5706, 0.5673, 0.8196, 0.8324, 0.8347, 0.8549, 0.7940, 0.8621,
      4 0.8588, 0.8918, 0.8922, 0.8407, 0.6488, 0.7557, 0.7021, 0.6024,
      4 0.5533, 0.5280, 0.5016, 0.4711, 0.4396, 0.4230, 0.4058/
-      END
+      END BLOCK DATA DSTDTA
+      
+      
       SUBROUTINE FLAYZ(ML,MODEL,ICLD,ZMDL,GNDALT,IVSA)
 C
 C     SUBROUTINE TO CREATE FINAL LOWTRAN BOUNDARIES
@@ -2664,7 +2668,8 @@ C
 C
 C     MODEL 7
 600   RETURN
-      END
+      END SUBROUTINE FLAYZ
+      
       SUBROUTINE CONVRT (P,T)
 C*************************************************************
 C
@@ -2741,7 +2746,8 @@ CC    WMOL1(K)= ALOSMT*(WMOL/PZERO)*(TZERO/T)
       WRITE(IPR,951)JUNIT
   951 FORMAT(/,'   **** ERROR IN CONVERT ****, JUNIT = ',I5)
       STOP
-      END
+      END SUBROUTINE CONVRT
+      
       SUBROUTINE WATVAP(P,T)
 C*************************************************************
 C
@@ -3136,7 +3142,6 @@ C     FROM EDLEN, 1966
      5 '          ATM CM/KM                                   ',
      6 '                  )')
       END
-
       SUBROUTINE LAYCLD(K,CLDATZ,RRATZ,ICLD1,GNDALT,RAINRT)
 C
 C      THIS SUBROUTINE RESTRUCTURES THE ATMOSPHERIC PROFILE
@@ -3242,7 +3247,6 @@ C     HMXVSA=ZVSA(9)
       RH=RHVSA(K)
       AHAZE=AHVSA(K)
       IHA1=IHVSA(K)
-      RETURN
       END SUBROUTINE LAYVSA
 
       FUNCTION   JOU(CHAR)
@@ -3309,7 +3313,6 @@ C
   310 V=V/1.E3
       RETURN
   320 V=V/1.E5
-      RETURN
       END Subroutine Check
 
       SUBROUTINE VSANSM(K,AHAZE,IHA1)
@@ -3420,7 +3423,6 @@ C
        WAIR(K)  = WMOL(13)
       IF(KN.LE.9) IHA1  =IHVSA(KN)
       IF(KN.LE.9)AHAZE  =AHVSA(KN)
-      RETURN
       END Subroutine VSANSM
 
       SUBROUTINE RDNSM
@@ -3567,7 +3569,6 @@ C
 200   CONTINUE
       RETURN
       END
-
       SUBROUTINE DEFALT  (Z,P,T)
 C
 C     ******************************************************************
@@ -3827,7 +3828,6 @@ C***********************************************************************
       GO TO 200
    80 HAZI=VUTONO(I)
 200   IF(HAZI.GT.0) HAZE=HAZI
-      RETURN
       END Subroutine AERPRF
 
       SUBROUTINE GEO(IERROR,BENDNG,MAXGEO)
@@ -4029,10 +4029,10 @@ C*****PRINT CUMULATIVE ABSORBER AMOUNTS
      2    'HNO3', T39,'O3 UV',T50,'CNTMSLF1 ',
      +    T061,'CNTMSLF2',T73,'CNTMFRN',
      +    T86,'O2',
-     3              /,T8,'(KM)',T19,'(K)',T25,
-     4        '(ATM CM)',T37,'(ATM CM)',
-     5    T49,'(MOL CM-2)',T61,'(MOL CM-2)',T73,'(MOL CM-2)',
-     +    T83,'(MOL CM-2)'/)
+     &              /,T8,'(KM)',T19,'(K)',T25,
+     &        '(ATM CM)',T37,'(ATM CM)',
+     &    T49,'(MOL CM-2)',T61,'(MOL CM-2)',T73,'(MOL CM-2)',
+     &    T83,'(MOL CM-2)'/)
 C*****GOING DOWN, LP = 0,    GOING UP, LP = 1
       LP = 1
       IF(LEN.EQ.1 .OR. H1.GT.H2)  LP = 0
@@ -4111,7 +4111,7 @@ C*****PRINT TOTAL PATH AMOUNTS
      4    '(MOL CM-2)',T52,'(MOL CM-2)',T64,'(MOL CM-2)',
      +    T76,'(MOL CM-2)',
      +    //,10X,1P5E12.3,///,
-     5    T15,'N2 CONT',T26,'MOL SCAT',T41,'AER 1', T53,'AER 2',
+     &    T15,'N2 CONT',T26,'MOL SCAT',T41,'AER 1', T53,'AER 2',
      6    T65,'AER 3',T77, 'AER 4',T87,'CIRRUS',T99,'MEAN RH'/,
      7    T99,'(PRCNT)',//,10X,1P7E12.3,0PF12.2)
 C
@@ -4137,7 +4137,6 @@ C
 350   CONTINUE
 C
 500   FORMAT(/10X,'ICH(1),W(15),W(7),W(12)=',I5,1P3E12.3/)
-      RETURN
       END Subroutine GEO
 
       SUBROUTINE GEOINP(H1,H2,ANGLE,RANGE,BETA,ITYPE,LEN,HMIN,PHI,
@@ -4322,7 +4321,6 @@ C*****
      1    'OF THE ATMOSPHERIC PROFILE',//,10X,'ZMAX = ',G12.6,5X,
      2    '  H1 = ',G12.6,5X,'  H2 = ',G12.6,'  HMIN = ',G12.6)
  9900 IERROR = 1
-      RETURN
       END Subroutine GEOINP
 
       SUBROUTINE REDUCE(H1,H2,ANGLE,PHI,ITER)
@@ -4360,7 +4358,6 @@ C***********************************************************************
      3   'TO ZMAX',/,4X,'ANGLE AND/OR PHI HAVE ALSO BEEN RESET TO ',
      4    'THE ZENITH ANGLE AT ZMAX = ',F10.3,' DEG')
   200 CONTINUE
-      RETURN
       END Subroutine REDUCE
 
       SUBROUTINE FDBETA(H1,H2,BETAS,ANGLE,PHI,LEN,HMIN,IERROR)
@@ -4399,7 +4396,7 @@ C*****FIRST GUESS AT ANGLE: USE THE GEOMETRIC SOLUTION(NO REFRACTION)
      2    ' ITER    ANGLE',T21,'BETA',T30,'DBETA',T40,'RANGE',
      3    T51,'HMIN',T61,'PHI',T70,'BENDING',/,
      4    T10,'(DEG)',T21,'(DEG)',T30,'(DEG)',T41,'(KM)',
-     5    T51,'(KM)',T60,'(DEG)',T71,'(DEG)',/)
+     &    T51,'(KM)',T60,'(DEG)',T71,'(DEG)',/)
       ITER = 0
       RA = RE+HA
       RB = RE+HB
@@ -4501,7 +4498,6 @@ C    1    ANGLE3,BETA3
      3    10X,'LAST THREE ITERATIONS ',//,
      4    (10X,'ANGLE = ',F15.9,'    BETA = ',F15.9))
  9900 IERROR = 1
-      RETURN
       END SUBROUTINE FDBETA
 
       SUBROUTINE FNDHMN(H1,ANGLE,H2,LEN,ITER,HMIN,PHI,IERROR)
@@ -4613,7 +4609,7 @@ C*****H2 LT TANGENT HEIGHT FOR THIS H1 AND ANGLE
      2    'CONVERG AFTER ',I3,'  ITERATIONS',//,
      3    10X,'CPATH   = ',F12.5,' KM',//,10X,'CT3     = ',F12.5,' KM',
      4    //,10X,'DC      = ',E12.3,' KM',//,
-     5    10X,'HT3     = ',F12.5,' KM')
+     &    10X,'HT3     = ',F12.5,' KM')
       STOP 20
       END SUBROUTINE FNDHMN
 
@@ -4626,15 +4622,14 @@ C*****INDEX OF REFRACTION
       COMMON /CNSTNS/ PI,CA,DEG,GCAIR,BIGNUM,BIGEXP
       COMMON /MODEL/ Z(34),P(34),T(34),RFNDX(34),DENSTY(63,34),
      1 CLDAMT(34),RRAMT(34),EQLWC(34),HAZEC(34)
-      DO 100 IM=2,IMOD
-      I2 = IM
-      IF(Z(IM).GE.H)  GO TO 110
-  100 CONTINUE
+      DO IM=2,IMOD
+          I2 = IM
+          IF(Z(IM).GE.H)  GO TO 110
+      End Do
       I2 = IMOD
   110 CONTINUE
       I1 = I2-1
       CALL SCALHT(Z(I1),Z(I2),RFNDX(I1),RFNDX(I2),SH,GAMMA)
-      RETURN
       END Subroutine FINDSH
 
       SUBROUTINE SCALHT(Z1,Z2,RFNDX1,RFNDX2,SH,GAMMA)
@@ -4657,7 +4652,6 @@ C*****INSIGNIFICANT OR ZERO
       SH = 0.0
       GAMMA = RFNDX1
   110 CONTINUE
-      RETURN
       END Subroutine SCALHT
 
       FUNCTION   RADREF(H,SH,GAMMA)
@@ -4672,7 +4666,6 @@ C***********************************************************************
       RADREF = SH*(1.0+EXP(HSH )/GAMMA)
       RETURN
    20 RADREF = BIGNUM
-      RETURN
       END Function RADREF
 
       SUBROUTINE RFPATH(H1,H2,ANGLE,PHI,LEN,HMIN,IAMT,BETA,RANGE,BENDNG)
@@ -4698,7 +4691,7 @@ C***********************************************************************
       COMMON /CNTRL/ KMAX,M,IKMAX,NL,ML,IKLO,ISSGEO,IMULT
       COMMON /PATH/ PL(68),QTHETA(68),ITEST,HI,HF,AHT(68)
       DIMENSION HLOW(2)
-      CHARACTER*2 HLOW
+      CHARACTER(len=2):: HLOW
       DATA HLOW/'H1','H2'/
       MAX = 0
       IF(H1.GT.H2) GO TO 90
@@ -4966,7 +4959,6 @@ C*****INTERPOLATE THE DENSITIES TO HB
       DO 170 K=1,KMAX
       CALL EXPINT(DENP(K,JNEXT),DENSTY(K,I1),DENSTY(K,I2),A)
   170 CONTINUE
-      RETURN
       END Subroutine FILL
 
       SUBROUTINE LAYER(J,SINAI,COSAI,CPATH,SH,GAMMA,IAMT,S,BEND)
@@ -5131,8 +5123,7 @@ C*****LINEAR INTERPOLATION
   140 CONTINUE
       PA = PB
       RHOA = RHOB
-      DO 145 K=1,KMAX
-  145 DENA(K) = DENB(K)
+      DENA(1:KMAX) = DENB(1:KMAX)
   150 CONTINUE
       IF(H3.GE.Z2) GO TO 160
       H1 = H3
@@ -5149,10 +5140,13 @@ C*****LINEAR INTERPOLATION
       SINAI = SINAI3
       COSAI = COSAI3
       SP(J) = S
-      RETURN
-      END
+      END SUBROUTINE LAYER
 
-      SUBROUTINE TRANS(IPH,ISOURC,IDAY,ANGLEM)
+      SUBROUTINE TRANS(IPH,ISOURC,IDAY,ANGLEM,nwl,TXPy,VPy,ALAMPy,
+     & TRACEPy,  UNIFPy, SUMAPy)
+      Integer, Intent(IN)::nwl
+      Real, Intent(Out) :: TXPy(nwl,63), VPy(*), ALAMPy(*), TRACEPy(*),
+     &      UNIFPy(*), SUMAPy(*)
 C***********************************************************************
 C     CALCULATES TRANSMITTANCE AND RADIANCE VALUES BETWEEN V1 AND V2
 C        FOR A GIVEN ATMOSPHERIC SLANT PATH
@@ -5383,27 +5377,20 @@ C
       INDNO2=1
       INDSO2=1
 C******BEGINNING OF FREQUENCY LOOP
-C
-    5 IV=IV+IDV
-C
+      IPython = 1 ! ha ha
+      Do While (IV.LT.IV2)
+      IV=IV+IDV
 C   INITIALIZE THERMAL AND SOLAR MULTIPLE SCATTERING CONTRIBUTIONS
-C
-C
 C   RESET TBBY, WPATH AND WPATHS FOR MULTIPLE SCATTERING
-C
       ML1 = ML - 1
       INIT = 0
       IKLO=1
-C
 C  FOR MULTIPLE SCATTERING SET IKMAX=IKMAX+1 DUE TO GROUND LAYER
-C
       IF(IMULT .EQ. 1) THEN
-      IKMAX=IMSMX
+        IKMAX=IMSMX
       ELSE
-C
 C  IF NOT MULTIPLE SCATTERING, RESET IKMAX TO ORIGINAL VALUE
-C
-      IKMAX=IKMX
+        IKMAX=IKMX
       ENDIF
       IF(IEMISS .EQ. 0) THEN
            IKMAX=IKLO
@@ -5413,19 +5400,18 @@ C
       IPATH=1
       SUMV=0.
       TLOLD=1.
-      IF (ICOUNT.EQ.0) GO TO 15
-      IF (ICOUNT.EQ.50) GO TO 15
-      GO TO 20
-   15 ICOUNT=0
-      IF(IEMSCT.EQ.0) WRITE(IPR,900)
-      IF(IEMSCT.EQ.1) WRITE(IPR,910)
-      IF(IEMSCT.EQ.2 .AND. IMLT .EQ. 0) WRITE(IPR,920)
-      IF(IEMSCT.EQ.2 .AND. IMLT .EQ. 1) WRITE(IPR,921)
-      IF(IEMSCT.EQ.3) WRITE(IPR,930)
-   20 DO 25 K=1,KMAX
-      TX(K)=0.0
-      IF (K.LT.4) TX(K)=1.0
-   25 CONTINUE
+      IF (ICOUNT.EQ.0 .or. ICOUNT.EQ.50) Then
+          ICOUNT=0
+          IF(IEMSCT.EQ.0) WRITE(IPR,900)
+          IF(IEMSCT.EQ.1) WRITE(IPR,910)
+          IF(IEMSCT.EQ.2 .AND. IMLT .EQ. 0) WRITE(IPR,920)
+          IF(IEMSCT.EQ.2 .AND. IMLT .EQ. 1) WRITE(IPR,921)
+          IF(IEMSCT.EQ.3) WRITE(IPR,930)
+      End If
+      DO K=1,KMAX
+          TX(K)=0.0
+          IF (K.LT.4) TX(K)=1.0
+      End Do
       ICOUNT=ICOUNT+1
 C
       V=FLOAT(IV)
@@ -5467,7 +5453,7 @@ C
       CALL CXDTA(CP,V,IWLNH3,IWHNH3,CPNH3,INDNH3)
       CPS(11)= CP
 C
-      CALL C4DTA(ABB(4),V)
+      ABB(4)= C4DTA(V)
       CALL ABCDTA(IV)
 C
 C*****   WATER CONTINUUM
@@ -5494,18 +5480,18 @@ C*****PROTECT AGAINST EXPONENTIAL UNDERFLOW AT HIGH FREQUENCY
            RADFN0 = V
            RADFN1 = V
       ENDIF
-      CALL FUDGE(V,FDG)
+      FDG = FUDGE(V)
       ABB(5)=SH2OT0*RADFN0
-      CALL C6DTA(ABB(6),V)
+      ABB(6) = C6DTA(V)
       ABB(7)=0.
-      CALL C8DTA(ABB(8),V)
+      ABB(8)=C8DTA(V)
       ABB(9)=(SH2OT1*RADFN1)-(SH2OT0*RADFN0)
       ABB(10)=(FH2O+FDG)*RADFN0
 C*****HNO3 ABSORPTION CALCULATION
       CALL HNO3 (V,ABB(11))
       CALL AEREXT (V)
 C
-      CALL HERTDA(ABB(17),V)
+      Call HERTDA(V,ABB(17))
       CALL O2CONT(V,SIGO20,SIGO2A,SIGO2B)
       IF(V. GT. 49600 )CALL SCHRUN(V,CPS(7))
 C
@@ -5514,7 +5500,7 @@ C
            ABBUV = 0.
            IF(V .GT.24370. .AND. V .LT.40800.) THEN
               ABB(8) = 0.
-              CALL O3HHT0                (V,C0)
+              C0= O3HHT0(V)
               CALL O3HHT1                (V  ,CT1)
               CALL O3HHT2                (V,  CT2)
 C
@@ -5542,13 +5528,14 @@ C*****LOAD APPROPRIATE ABSORBER AMOUNTS INTO W(K)
 112   CONTINUE
 C*****LOAD W(K) WITH WPATHS(1,K) TO OBTAIN THE FIRST
 C*****SUN PATH TRANSMITTANCE
-      DO 113 K=1,KMAX
+      DO K=1,KMAX
       IF((IMULT. EQ. 1).AND.(INIT.EQ.0))THEN
           W(K)=WPMSS (1,K)
       ELSE
           W(K)=WPATHS(1,K)
       ENDIF
-113   CONTINUE
+      End Do
+      
       IF(W(36).GE.0.0) GO TO 120
       TX(6) = 0.
       TX(7) = 0.
@@ -5573,17 +5560,15 @@ C            SUN CAN NOT BE SEEN
 C*****LOAD W(K) WITH WPATH(IK,K)+WPATHS(IK+1,K)
 C*****TO OBTAIN L PATH TRANSMITTANCES
       IKP1=IK+1
-      DO 115 K=1,KMAX
-C
+      DO K=1,KMAX
 C   FOR MULTIPLE SCATTERING, CALCULATE SOLAR PATH ONLY TO FIND
 C   THE SOLAR PATH TRANSMITTANCE
-C
-      IF((IMULT. EQ. 1).AND.(INIT.EQ.0))THEN
-      W(K)=WPMSS (IKP1,K)
-      ELSE
-      W(K)=WPATH(IK,K)+WPATHS(IKP1,K)
-      ENDIF
-115   CONTINUE
+          IF((IMULT. EQ. 1).AND.(INIT.EQ.0))THEN
+              W(K)=WPMSS (IKP1,K)
+          ELSE
+              W(K)=WPATH(IK,K)+WPATHS(IKP1,K)
+          ENDIF
+      End Do
 C
 C   FOR MULTIPLE SCATTERING, CALCULATE SOLAR PATH ONLY TO FIND
 C   THE SOLAR PATH TRANSMITTANCE
@@ -5632,8 +5617,8 @@ C
       ENDIF
   117     CONTINUE
   120 CONTINUE
-      DO 121  K = 3,16
-121   TX(K) = 0.
+
+      TX(3:16) = 0.
 C
       EXT   =  XX1*W(7)+XX2*W(12)+XX3*W(13)+XX4*W(14)+XX5*W(16)
       ABT   =  YY1*W(7)+YY2*W(12)+YY3*W(13)+YY4*W(14)+YY5*W(16)
@@ -5652,10 +5637,7 @@ C
                 W14D = WPMS(IK,14) - WPMS(IKM,14)
                 W16D = WPMS(IK,16) - WPMS(IKM,16)
            ENDIF
-C
 C  ASYMMETRY FACTOR IS WEIGHTED AVERAGE
-
-C
            ASY=(ZZ1*(XX1-YY1)*W7D +ZZ2*(XX2-YY2)*W12D +
      +   ZZ3*(XX3-YY3)*W13D +ZZ4*(XX4-YY4)*W14D +ZZ5*(XX5-YY5)*W16D)
       ENDIF
@@ -6067,7 +6049,7 @@ C
       IF(TX(9) . GT. 0.)  ALTX9 = -LOG(TX(9))
       GO TO (300,400,400,600),IIII
   300 CONTINUE
-C*****TRANSMITTANCE ONLY
+C*****TRANSMITTANCE ONLY  (used in Python)
       TX(10)=1.-TX(10)
       TX(7) = TX(7) * TX(16)
       WRITE(IPR,906) V,ALAM,TX(9),TX(17),UNIF,TX(31),TRACE,
@@ -6104,15 +6086,15 @@ C
       SUMV = SUMV + BBG
       SUMVV=SUMV
       IF(V. GT. 0.)SUMV=(1.0E+04/V**2)*SUMV
-      IF(IEMSCT.EQ.2) GO TO 500
-      RADSUM=RADSUM+DV*FACTOR*SUMV
-      WRITE(IPR,916) V,ALAM ,SUMV,SUMVV,RADSUM,TX(9)
-      WRITE(IPU,917) V,TX(9),SUMV,ALTX9
-  917 FORMAT(F7.0,F8.4,1PE9.2,T96,E10.3)
-      SUMT=SUMV
-      SUMTT=SUMVV
-      GO TO 700
-  500 CONTINUE
+      IF(IEMSCT.NE.2) Then
+          RADSUM=RADSUM+DV*FACTOR*SUMV
+          WRITE(IPR,916) V,ALAM ,SUMV,SUMVV,RADSUM,TX(9)
+          WRITE(IPU,917) V,TX(9),SUMV,ALTX9
+917       FORMAT(F7.0,F8.4,1PE9.2,T96,E10.3)
+          SUMT=SUMV
+          SUMTT=SUMVV
+          GO TO 700
+      End If
 C*****SOLAR SCATTERED RADIANCE
 C*****MULTIPLY SUMSSR BY THE EXTRATERRESTRIAL SOURCE STRENGTH SS
       CALL SOURCE(V,ISOURC,IDAY,ANGLEM,SS)
@@ -6135,8 +6117,7 @@ C
 C   SURDSR IS SURFACE REFLECTION OF DOWNWARD SCATTERED RADIANCE
 C
       SURDSR=0.
-      IF(H2.GT.ZM(1)) GO TO 510
-      IF(TEB1.LE.0.)  GO TO 510
+      IF(H2.GT.ZM(1).OR.TEB1.LE.0.) GO TO 510
       IF(ANGSUN.GE.0.) RFLFAC=SALB*COS(ANGSUN*CA)/PI
 C
 C     FOR MULTIPLE SCATTERING CASES:
@@ -6182,14 +6163,19 @@ C*****SOLIL IS SOLAR IRRADIANCE IN WATTS/(CM2 MICROMETER)
       RADSUM = STSOL
 C*****
   700 CONTINUE
-      IF(IEMSCT.EQ.0) GO TO 710
-      IF(SUMT.GE.RADMAX) VRMAX = V
-      IF(SUMT.GE.RADMAX) RADMAX= SUMT
-      IF(SUMT.LE.RADMIN) VRMIN=V
-      IF(SUMT.LE.RADMIN) RADMIN=SUMT
-  710 CONTINUE
+      IF(IEMSCT.NE.0) Then
+          IF(SUMT.GE.RADMAX) VRMAX = V
+          IF(SUMT.GE.RADMAX) RADMAX= SUMT
+          IF(SUMT.LE.RADMIN) VRMIN=V
+          IF(SUMT.LE.RADMIN) RADMIN=SUMT
+      End If
       IMULT=IMLT
-      IF (IV.LT.IV2) GO TO 5
+C output to Python      
+      TXPy(IPython,:) = TX
+      VPy(IPython) = V; ALAMPy(IPython) = ALAM; TRACEPy(IPython)=TRACE
+      UNIFPy(IPython) = UNIF; SUMAPy(IPython) = SUMA
+      IPython = IPython+1
+      End Do !End Do While
 C*****END OF FREQUENCY LOOP
       AB=1.0-SUMA/FLOAT(IV-IV1)
       WRITE(IPR,740) IV1,IV,SUMA,AB
@@ -6234,11 +6220,11 @@ C*****PAGE HEADERS
      X '(MICRN)',T59,'(CM-1)',T69,'(CM-1)',T79,'(MICRN)',T89,'(CM-1)',
      X T99,'(CM-1)',T109,'(MICRN)',T119,'(CM-1)',T127,'TRANS',/)
   930 FORMAT('1',22X,'IRRADIANCE (WATTS/CM2-XXXX)',/
-     1    '0  FREQ',T11,'WAVLEN',T23,'TRANSMITTED ',T45,
-     2    'SOLAR',T61,'INTEGRATED',T80,'TOTAL',/,
-     3    2X,'(CM-1)',T10,'(MICRN)',T20,'(CM-1)',T30,'(MICRN)',
-     4    T40,'(CM-1)',T50,'(MICRN)',T60,'TRANS.',T70,'SOLAR',
-     5    T80,'TRANS')
+     &    '0  FREQ',T11,'WAVLEN',T23,'TRANSMITTED ',T45,
+     &    'SOLAR',T61,'INTEGRATED',T80,'TOTAL',/,
+     &    2X,'(CM-1)',T10,'(MICRN)',T20,'(CM-1)',T30,'(MICRN)',
+     &    T40,'(CM-1)',T50,'(MICRN)',T60,'TRANS.',T70,'SOLAR',
+     &    T80,'TRANS')
 C*****SPECTRAL DATA TO UNIT=IPR (=6)
   906 FORMAT(1X,F7.0,F8.3,11F9.4,F12.3)
   916 FORMAT(1X,F7.0,F8.3,1P3E10.2,0PF9.4)
@@ -6264,7 +6250,9 @@ C*****SUMMARY VALUES
      X ' BOUNDARY EMISSIVITY = ',F11.3)
       END Subroutine TRANS
 
-      SUBROUTINE FUDGE(V,SUMY)
+      Function FUDGE(V)
+      IMPLICIT NONE
+      Real V,YA,YB,FUDGE
 C
 C     TO CALCULATE H2O FAR WING CONTINUUM USING THE SUMS OF EXPONENTIALS
 C
@@ -6274,17 +6262,14 @@ C     THE NEW FUNCTION IS 0.01 OF THE ORIGINAL NEAR 10000CM-1 (1.06NM),
 C     IN ACCORDANCE WITH THE MEASUREMENTS OF JAYCOR, FUNDED BY SDIO.
 C
 C     Y0(V)=EXP(LOG(3.159E-8)-(2.75E-4)*V)
-      Y1(V)=EXP(LOG(1.025*3.159E-8)-(2.75E-4)*V)
-      Y2(V)=EXP(LOG(8.97E-6)-(1.300E-3)*V)
+c      Y1(V)=EXP(LOG(1.025*3.159E-8)-(2.75E-4)*V)
+c      Y2(V)=EXP(LOG(8.97E-6)-(1.300E-3)*V)
 C
 C     YO=Y0(V)
-      YA=Y1(V)
-      YB=Y2(V)
-      YAINV=1/YA
-      YBINV=1/YB
-      SUMY=1./(1.*YAINV+1.*YBINV)
-      RETURN
-      END Subroutine FUDGE
+      YA=EXP(LOG(1.025*3.159E-8)-(2.75E-4)*V)
+      YB=EXP(LOG(8.97E-6)-(1.300E-3)*V)
+      FUDGE=1./(1./YA+1./YB)
+      END Function FUDGE
 
       FUNCTION   ANDEX(H,SH,GAMMA)
 C***********************************************************************
@@ -6302,7 +6287,6 @@ C***********************************************************************
    10 ANDEX = 1.0+GAMMA
       RETURN
   20  ANDEX = 1.
-      RETURN
       END Function ANDEX
 
       FUNCTION   TNRAIN(RR,V,TM,RADFLD)
@@ -6335,7 +6319,6 @@ CCC
        TNRAIN=GMRAIN(V,TM,RR)
        TNRAIN = TNRAIN * RADFLD
       END IF
-      RETURN
       END Function TNRAIN
 
       SUBROUTINE RNSCAT(V,R,TT,PHASE,DIST,IK,CSSA,ASYMR,IENT)
@@ -6540,13 +6523,10 @@ C             FOR A TEMPERATURE INDEPENDENT CASE
       END Subroutine RNSCAT
 
       SUBROUTINE BS(I,A,B,N,S)
-
-      Integer,Intent(OUT)   :: I
-      Real,Intent(OUT)      :: S
-      Integer, Intent(IN)   :: N
-      Real,Intent(IN)       :: A,B
-
-      DIMENSION B(*)
+      Integer,Intent(OUT) ::   I
+      Real,Intent(OUT)    ::   S
+      Integer, Intent(IN) ::   N
+      Real,Intent(IN)     ::   A,B(*)
 C
 C             THIS SUBROUTINE DOES THE BINARY SEARCH FOR THE INDEX I
 C             SUCH THAT A IS IN BETWEEN B(I) AND B(I+1)
@@ -6555,7 +6535,6 @@ C             SUCH THAT A=S*B(I+1)+(1.-S)*B(I)
 C
       I=1
       J=N
-
    10 M=(I+J)/2
       IF(A.LE.B(M)) THEN
         J=M
@@ -6563,7 +6542,6 @@ C
         I=M
       END IF
       IF(J.GT.I+1) GO TO 10
-
       S=(A-B(I))/(B(I+1)-B(I))
       RETURN
       END Subroutine BS
@@ -6691,17 +6669,17 @@ C
 C
 C
       IF(I.GT.MAXI(J,K)) THEN
-      TAB=0.
-      RETURN
+          TAB=0.
+          RETURN
       END IF
       IF(ABS(A(I,J,K)).GT.1.E-8) THEN
-      TAB=A(I,J,K)*WC**ALPHA(I,J,K)
+          TAB=A(I,J,K)*WC**ALPHA(I,J,K)
       ELSE
-      L=ALPHA(I,J,K)
-      TAB=A1(L)*WC**ALPHA1(L)+A2(L)*WC
+          L=ALPHA(I,J,K)
+          TAB=A1(L)*WC**ALPHA1(L)+A2(L)*WC
       END IF
-      RETURN
-      END
+      END FUNCTION   TAB
+      
       BLOCK DATA ABCD
 C>    BLOCK DATA
       COMMON /ABC/ FACTOR(3),ANH3(2),ACO2(10),ACO(3),
@@ -6775,8 +6753,8 @@ C>    BLOCK DATA
      1 .347498,.348610,.353429,.354864,.357640,.352497,.327526,.322898/
       DATA CCH2O/21.8352,21.9588,22.4234,22.9517,23.0750,22.8262,
      1 22.8262,22.9517,23.6654,23.9774,25.9207,28.2957,33.3998,34.1575/
-      END
-
+      END BLOCK DATA ABCD
+      
       SUBROUTINE ABCDTA(IV)
       COMMON RELHUM(34),HSTOR(34),ICH(4),VH(17),TX(63),W(63)
       COMMON             WPATH(68, 63),TBBY(68)
@@ -7000,7 +6978,6 @@ C  ---SO2
            BB(IMOL) = BBSO2(IBAND)
            CC(IMOL) = CCSO2(IBAND)
       ENDIF
-      RETURN
       END Subroutine ABCDTA
 
       SUBROUTINE CXDTA (CPRIME,V,IWL,IWH,CP,IND)
@@ -7031,12 +7008,11 @@ C                          TO SPEED UP THE SEARCHING PROCESS)
       GO TO 100
   200 IF (IND .EQ. 1) GO TO 400
       INDM1=IND-1
-      DO 300 I=1,INDM1
+      DO I=1,INDM1
         IC=IC+(IWH(I)-IWL(I))/5+1
-  300 CONTINUE
+      End Do
   400 IC=IC+(IV-IWL(IND))/5+1
       CPRIME=CP(IC)
-      RETURN
       END SUBROUTINE CXDTA
 
       FUNCTION   DBLTX(W,CPRIME,QA)
@@ -7199,13 +7175,13 @@ C                                 A.E.R. 1986
 C
       COMMON /CARD1/ MODEL,ITYPE,IEMSCT,M1,M2,M3,IM,NOPRNT,TBOUND,SALB
       COMMON /CARD2/ IHAZE,ISEASN,IVULCN,ICSTL,ICLD,IVSA,VIS,WSS,WHH,
-     1    RAINRT
+     &    RAINRT
       COMMON /CNTRL/ KMAX,M,IKMAX,NL,ML,IKLO,ISSGEO,IMULT
       COMMON RELHUM(34),HSTOR(34),ICH(4),VH(17),TX(63),W(63)
       COMMON             WPATH(68, 63),TBBY(68)
       COMMON ABSC(5,47),EXTC(5,47),ASYC(5,47),VX2(47),AWCCON(5)
-      COMMON /AER/ XX1,XX2,XX3,XX4,XX5,
-     X YY1,YY2,YY3,YY4,YY5,ZZ1,ZZ2,ZZ3,ZZ4,ZZ5
+      COMMON /AER/ XX1,XX2,XX3,XX4,XX5, YY1,YY2,YY3,YY4,YY5,
+     &             ZZ1,ZZ2,ZZ3,ZZ4,ZZ5
       COMMON /SOLS/ AH1(68),ARH(68),
      X   WPATHS(68,63),PA(68),PR(68),ATHETA(35),ADBETA(35),LJ(69),JTURN,
      X ANGSUN,CSZEN(68)
@@ -7326,8 +7302,8 @@ C             AND ZENTIH ANGLE OBTAINED USING FUNCTION BETABS
 C
 C                                          A.E.R. 1986
 C
-      DOUBLE PRECISION AER1,AER2,AERA,AERU,AERV,AERC,AERCX,EX1,EX2,
-     1                 DENO,DNMO,DNM1
+      Real(kind=8) AER1,AER2,AERA,AERU,AERV,AERC,AERCX,EX1,EX2,
+     &                 DENO,DNMO,DNM1
       COMMON /IFIL/IRD,IPR,IPU,NPR,IPR1
       COMMON RELHUM(34),HSTOR(34),ICH(4),VH(17),TX(63),W(63)
       COMMON             WPATH(68, 63),TBBY(68)
@@ -7344,16 +7320,15 @@ C
       COMMON /PATH/ PL(68),QTHETA(68),ITEST,H1S,H2S,AHT(68)
       COMMON /CNSTNS/PI,CA,DEG,GCAIR,BIGNUM,BIGEXP
       COMMON /DIRST/  SUN,UMB(34),DMB(34),UMBS(34),DMBS(34)
-      DIMENSION COSBAR(34),DNF(10,34),
-     1 EDN(50),EUP(50),EUPC(50),TAUM(3,50),
-     2                        TDF(50),TLE(34),OMEGA0(34),
-     3 UPF(10,34),                  RUPC(50),TAER(50),REF(50),
-     4 EUPS(34),EDNS(34),UPFS(15,34),DNFS(15,34),EUPCS(34),
-     5 CSZEN(68),STRN(0:34),BETS(34),           TWGP(3,34),RUPCS(34),
-     6 UMF(34),DMF(34),UMFS(34),DMFS(34),REFS(34),TDFS(34)
-      DIMENSION OMEGAK(34),TAUT(34)
-      DIMENSION FAC(3),GKWJ(3,11),DPWJ(3,11)
-      DIMENSION CP1S(11),DPJ(3,34)
+      Real COSBAR(34),DNF(10,34),
+     & EDN(50),EUP(50),EUPC(50),TAUM(3,50),TDF(50),TLE(34),OMEGA0(34),
+     & UPF(10,34),                  RUPC(50),TAER(50),REF(50),
+     & EUPS(34),EDNS(34),UPFS(15,34),DNFS(15,34),EUPCS(34),
+     & CSZEN(68),STRN(0:34),BETS(34),           TWGP(3,34),RUPCS(34),
+     & UMF(34),DMF(34),UMFS(34),DMFS(34),REFS(34),TDFS(34)
+      Real OMEGAK(34),TAUT(34)
+      Real FAC(3),GKWJ(3,11),DPWJ(3,11)
+      Real CP1S(11),DPJ(3,34)
 C***********************************************************************
 C
 C   INPUT PARAMETERS:
@@ -7427,48 +7402,41 @@ CC    PRINT 1900
       NLAYRS = ML - 1
       NG=NLAYRS+1
       NG1=NG+1
-      DO  1 M = 1,11
-1     CP1S(M)= 10.**CPS(M)
+      CP1S(1:11)= 10.**CPS(1:11)
 C
-      DO  4  MOL = 1,11
-      DO  5    K = 1,3
-      IW = IBND(MOL)
-      GKWJ(K,MOL) = 0.
-      DPWJ(K,MOL) = 0.
-      IF(IW. LE. 0) GO TO 5
-      GKWJ(K,MOL) = FAC(K) * CC(MOL)
-      IF(K .EQ. 1) DPWJ(K,MOL) = AA(MOL)
-      IF(K .EQ. 2) DPWJ(K,MOL) = BB(MOL)
-      IF(K .EQ. 3) DPWJ(K,MOL) = 1. - AA(MOL) - BB(MOL)
-      IF(K. GT. 1) GO TO 5
-  5   CONTINUE
- 4    CONTINUE
+      DO MOL = 1,11
+          DO K = 1,3
+              IW = IBND(MOL)
+              GKWJ(K,MOL) = 0.
+              DPWJ(K,MOL) = 0.
+              IF(IW. LE. 0) CYCLE
+              GKWJ(K,MOL) = FAC(K) * CC(MOL)
+              IF(K .EQ. 1) DPWJ(K,MOL) = AA(MOL)
+              IF(K .EQ. 2) DPWJ(K,MOL) = BB(MOL)
+              IF(K .EQ. 3) DPWJ(K,MOL) = 1. - AA(MOL) - BB(MOL)
+              IF(K. GT. 1) CYCLE
+          End Do
+      End Do
+
       TLE(NG1)=TLE(NG)
-      DO 98 N=1,NG
-C
+
+      DO N=1,NG
 C   BLACK BODY FLUX FOR LAYER EDGE TEMPERATURE
-C
       BTOP(N)=BBFN(TLE(N),V)*PI
-C
 C   BLACK BODY RADIANCE FOR LAYER MIDDLE TEMPERATURE
-C
       BMID(N)=BBFN(TMD(N),V)
       IF(N .LT. NG) THEN
-C
 C    CALCULATE COSINE OF VIEWING PATH ZENITH ANGLE
-C
-C
 C    CALCULATE BACKSCATTER PARAMETERS
-C
-      IF(COSBAR(N) .EQ. 0.0) THEN
-      BETS(N)=.5
-      ELSE
-      IF((IEMSCT .EQ. 2) .OR. (IEMSCT .EQ. 3)) THEN
-      BETS(N)=BETABS(CSZEN(N),COSBAR(N))
+          IF(COSBAR(N) .EQ. 0.0) THEN
+            BETS(N)=.5
+          ELSE
+              IF((IEMSCT .EQ. 2) .OR. (IEMSCT .EQ. 3)) THEN
+                BETS(N)=BETABS(CSZEN(N),COSBAR(N))
+              ENDIF
+          ENDIF
       ENDIF
-      ENDIF
-      ENDIF
-   98 CONTINUE
+      End DO
 C
 C   ABSORPTION COEFFICIENTS FOR WATER VAPOR, UNIFORMLY MIXED GASES
 C   AND OZONE
@@ -7477,32 +7445,30 @@ C
 C   EVALUATE THE WEIGHTED K DISTRIBUTION QUANTITIES FOR
 C   WATER VAPOR AND THE UNIFORMLY MIXED GASES
 C
-      DO 70 K=1, 3
-      DO 70 N=1,NLAYRS
-C
-      TAUM(K,N)  = 0.
-      TWGP(K,N)  = 0.
-      DO 60 MOL = 1,11
-      IB = IBND(MOL)
-      IF(IB .LT.0) GO TO 60
-      W(IB) = DENSTY(IB,IKMAX-N)*PL(IKMAX-N)*GKWJ(K,MOL)
-      TAUM(K,N)= TAUM(K,N) + W(IB) * CP1S(MOL)
-      TWGP(K,N)= TWGP(K,N) + W(IB) * CP1S(MOL) * DPWJ(K,MOL)
-60    CONTINUE
-      DPJ(K,N) = DPC
-      IF(TAUM(K,N) .NE .0) THEN
-         DPJ(K,N) = TWGP(K,N) / TAUM(K,N)
-      ENDIF
-C
+      DO K=1, 3
+          DO N=1,NLAYRS
+          TAUM(K,N)  = 0.
+          TWGP(K,N)  = 0.
+          DO MOL = 1,11
+              IB = IBND(MOL)
+              IF(IB .GE.0) Then
+                  W(IB) = DENSTY(IB,IKMAX-N)*PL(IKMAX-N)*GKWJ(K,MOL)
+                  TAUM(K,N)= TAUM(K,N) + W(IB) * CP1S(MOL)
+                  TWGP(K,N)= TWGP(K,N) + W(IB) * CP1S(MOL) * DPWJ(K,MOL)
+              End If
+          End Do
+          DPJ(K,N) = DPC
+          IF(TAUM(K,N) .NE .0) THEN
+             DPJ(K,N) = TWGP(K,N) / TAUM(K,N)
+          ENDIF
 C     EFFECTIVE PROBILITY BY LAYER DPJ IS BASED ON MOLECULAR
 C     PROBILITY WEIGHTED BY OPTICAL DEPTH
-C
-  70  CONTINUE
-      DO 80 N=1,NLAYRS
-      SMDPJ = DPJ(1,N) + DPJ(2,N) + DPJ(3,N)
-      DO 80 K=1, 3
-      DPJ(K,N) = DPJ(K,N)/SMDPJ
-  80  CONTINUE
+          End Do
+      End Do
+      DO N=1,NLAYRS
+          SMDPJ = DPJ(1,N) + DPJ(2,N) + DPJ(3,N)
+          DPJ(1:3,N) = DPJ(1:3,N)/SMDPJ
+      End Do
 C
 C     EFFECTIVE PROBILITY BY LAYER DPJ NORMALIZED
 C     FOR CURRENT VALUES OF GKWJ  NORMALIZATION NOT REQUIRED
@@ -7825,7 +7791,7 @@ C
      2   -.553474414782,  -.626794663911, -.84678101,   -.406823676662,
      3  .0, -1.5989873995, -.2724219928,  1.18747390274, .49409050834,
      4   -.35928947292,    .37397957743,   .18057740986, .50718036245,
-     5    .01406832224, .0, 3.5184116963,  .6385960123, -2.081230849,
+     &    .01406832224, .0, 3.5184116963,  .6385960123, -2.081230849,
      6  -1.0144699491,     .1589475781,   -.74761782865, -.37416958202,
      7   -.374040109,   .1055607702, .0, -2.5592172257,  -.7459840146,
      8    .85392041407,    .4272082373,    .00049606046,  .42711266606,
@@ -7867,19 +7833,24 @@ C
       RETURN
       END Function BETABS
 
-      SUBROUTINE C4DTA (C4L,V)
+      Function C4DTA(V)
 C **  N2 CONTINUUM
+      IMPLICIT NONE
+      Real  C4, C8, V, C4DTA
+      Integer IV,L
       COMMON /C4C8/ C4(133),C8(102)
-      C4L=0.
+
       IF(V.LT.2080.) RETURN
       IF(V.GT.2740.) RETURN
       IV=V
       L=(IV-2080)/5+1
-      C4L=C4(L)
-      RETURN
-      END Subroutine C4DTA
+      C4DTA=C4(L)
 
-      SUBROUTINE C6DTA(C6L,V)
+      END Function C4DTA
+
+      Function C6DTA(V)
+      IMPLICIT NONE
+      Real C6DTA, V
 C     CALCULATES MOLECULAR RAYLEIGH SCATTERING COEFFICIENT
 C     USES APPROXIMATION OF SHETTLE ET AL., 1980 (APPL OPT,2873-4)
 C     WITH THE DEPOLARIZATION = 0.0279 INSTED OF 0.035
@@ -7887,14 +7858,16 @@ C     INPUT: V = FREQUENCY IN WAVENUMBERS (CM-1)
 C     OUTPUT: C6L = MOLECULAR SCATTERING COEFFICIENT (KM-1)
 C                   FOR TEMPERATURE 273K & PRESSURE = 1 ATM.
 C
-      C6L=V**4/(9.38076E+18-1.08426E+09*V**2)
-      RETURN
-      END Subroutine C6DTA
+      C6DTA=V**4/(9.38076E+18-1.08426E+09*V**2)
 
-      SUBROUTINE C8DTA (C8L,V)
+      END Function C6DTA
+
+      Function C8DTA (V)
+      IMPLICIT NONE
+      Real  V,C8DTA,C4,C8,XI,XD,IV
+      Integer N
 C **  OZONE U.V + VISIBLE
       COMMON /C4C8/ C4(133),C8(102)
-      C8L=0.
       IF(V.LT.13000.) RETURN
       IF(V.GT.50000.) RETURN
       IV=V
@@ -7903,12 +7876,16 @@ C **  OZONE U.V + VISIBLE
       IF(IV.GE.27500) XI=(V-27500.0)/500.+57.
       N=XI+1.001
       XD=XI-FLOAT(N)
-      C8L=C8(N)+XD*(C8(N)-C8(N-1))
-      RETURN
-      END Subroutine C8DTA
+      C8DTA=C8(N)+XD*(C8(N)-C8(N-1))
 
-      SUBROUTINE HERTDA(HERZ,V)
-C
+      END Function C8DTA
+
+      Subroutine HERTDA(V,HERZ)
+      IMPLICIT NONE
+      Real  HERZ
+
+      Real, Intent(in) :: V
+      Real :: CORR, RLOSCH, YRATIO
 C     HERZBERG O2 ABSORPTION
 C     HALL,1987 PRIVATE COMMUNICATION, BASED ON:
 C
@@ -7919,9 +7896,8 @@ C     AND YOSHINO, ET.AL., 1988 (PREPRINT OF "IMPROVED ABSORPTION
 C         CROSS SECTIONS OF OXYGEN IN THE WAVELENGTH REGION 205-240NM
 C         OF THE HERZBERG CONTINUUM")
 C
-      COMMON /CNSTNS/ PI,CA,DEG,GCAIR,BIGNUM,BIGEXP
+c      COMMON /CNSTNS/ PI,CA,DEG,GCAIR,BIGNUM,BIGEXP
 C
-      HERZ=0.0
       IF(V.LE.36000.00) RETURN
 C
 C     EXTRAPOLATE SMOOTHLY THROUGH THE HERZBERG BAND REGION
@@ -7941,66 +7917,81 @@ C           =.20487/WN(I)     IN MICRONS
 C           =WCM(I)/48811.0   IN CM-1
 C
       YRATIO= V    /48811.0
-      HERZ=6.884E-24*(YRATIO)*EXP(-69.738*(LOG(YRATIO))**2)-CORR
-      HERZ = HERZ * RLOSCH
-      RETURN
+      HERZ=(6.884E-24*(YRATIO)*EXP(-69.738*(LOG(YRATIO))**2)-CORR) *
+     &               RLOSCH
       END Subroutine HERTDA
 
       SUBROUTINE SLF296(V1C,SH2OT0)
+      IMPLICIT NONE
+      Real, Intent(in) :: V1C
+      Real, Intent(OUT):: SH2OT0
+      Real :: V1,V2,DV, S296
+      Integer :: NPT
 C     LOADS SELF CONTINUUM  296K
       COMMON /SH2O/ V1,V2,DV,NPT,S296(2003)
       CALL SINT(V1,V1C,DV,NPT,S296,SH2OT0)
-      RETURN
       END Subroutine SLF296
 
       SUBROUTINE SLF260(V1C,SH2OT1)
+      IMPLICIT NONE
+      Real, Intent(in) :: V1C
+      Real, Intent(OUT):: SH2OT1
+      Real :: V1,V2,DV, S260
+      Integer :: NPT
 C     LOADS SELF CONTINUUM  260K
       COMMON /S260/ V1,V2,DV,NPT,S260(2003)
       CALL SINT(V1,V1C,DV,NPT,S260,SH2OT1)
-      RETURN
       END Subroutine SLF260
 
       SUBROUTINE FRN296(V1C,FH2O)
+      IMPLICIT NONE
+      Real, Intent(in) :: V1C
+      Real, Intent(OUT):: FH2O
+      Real :: V1,V2,DV, F296
+      Integer :: NPT
 C     LOADS FOREIGN CONTINUUM  296K
       COMMON /FH2O/ V1,V2,DV,NPT,F296(2003)
       CALL SINT(V1,V1C,DV,NPT,F296,FH2O)
-      RETURN
-      END
+      END SUBROUTINE FRN296
 
       SUBROUTINE SINT(V1,V1C,DV,NPT,CONTI,CONTO)
-C
+      IMPLICIT NONE
 C     INTERPOLATION  FOR CONTINUUM WITH LOWTRAN
-C
-      DIMENSION CONTI(2003)
+      Integer, Intent(IN) :: NPT
+      Real, Intent(in) :: V1,V1C,DV
+      Real  :: CONTI(*)
+      Integer :: I, IMOD
+      Real, Intent(Out):: CONTO
       CONTO=0.
       I=(V1C-V1)/DV+1.00001
-      IF(I.GE.NPT)GO TO 10
+      IF(I.GE.NPT) Return
       CONTO=CONTI(I)
-      IMOD=AMOD(V1C,10.)
+      IMOD=MOD(V1C,10.)
       IF(IMOD.GT.0) CONTO=(CONTI(I)+CONTI(I+1))/2.
-10    CONTINUE
-      RETURN
       END Subroutine SINT
 
-      SUBROUTINE O3INT(V1C,V1,DV,NPT,CONTI,CONTO)
-C
+      Function O3INT(V1C,V1,DV,NPT,CONTI)
+      IMPLICIT NONE
 C     INTERPOLATION  FOR  O3 CONTINUUM WITH LOWTRAN
-C
-      DIMENSION CONTI(2687)
-      CONTO=0.
+      Integer, Intent(IN) :: NPT
+      Real, Intent(in) :: V1C,V1,DV
+      Real :: CONTI(*)
+      Integer :: I
+      Real :: O3INT
+
       I=(V1C-V1)/DV+1.00001
-      IF(I.LT.1  )GO TO 10
-      IF(I.GT.NPT)GO TO 10
-      CONTO=CONTI(I)
-10    CONTINUE
-      RETURN
-      END SUBROUTINE O3INT
+      IF(I.LT.1  ) Return
+      IF(I.GT.NPT) Return
+      O3INT=CONTI(I)
+      END Function O3INT
 
-      SUBROUTINE O3HHT0(V,C)
+      Function O3HHT0(V)
+      IMPLICIT NONE
+      Real, Intent(in) :: V
+      Real :: C, O3HHT0
+      Real :: V1S,V2S,DVS,S, O3INT
+      Integer :: NPTS
       COMMON /O3HH0/ V1S,V2S,DVS,NPTS,S(2687)
-C
-      CALL O3INT(V ,V1S,DVS,NPTS,S,C)
-      RETURN
-      END SUBROUTINE O3HHT0
-
-      INCLUDE "lwtndata.f"
+      O3HHT0= O3INT(V ,V1S,DVS,NPTS,S)
+      END Function O3HHT0
+       INCLUDE "lwtndata.f"
