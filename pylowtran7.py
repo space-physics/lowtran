@@ -7,19 +7,14 @@ model circa 1994.
 """
 from __future__ import division,print_function,absolute_import
 from matplotlib.pyplot import figure,show
-from matplotlib.colors import LogNorm
-from numpy import asarray,arange
+from pandas import DataFrame
+from numpy import asarray,arange,atleast_1d
 
 import lowtran7 as lt7
 
 def golowtran(obsalt,zenang,wlnm):
-    wlcminvstep = 20
-    wlnm= asarray(wlnm)
-    wlcminv = 1e7/wlnm
-    nwl = int((wlcminv[0]-wlcminv[1])/wlcminvstep)+1
-
-
-
+    zenang=atleast_1d(zenang)
+    wlcminv,wlcminvstep,nwl =nm2lt7(wlnm)
     #TX,V,ALAM,TRACE,UNIF,SUMA = lt7.lwtrn7(True,nwl)
     T = []
     for za in zenang:
@@ -27,12 +22,24 @@ def golowtran(obsalt,zenang,wlnm):
                            5,3,0,
                           obsalt,0,za)[:3]
         T.append(TX[:,9])
-    return T,ALAM*1e3
+    T = asarray(T).T
 
-def plottrans(wlnm,trans,log):
+    Tdf = DataFrame(data=T,columns=zenang,index=ALAM*1e3)
+
+    return Tdf
+
+def nm2lt7(wlnm):
+    """converts wavelength in nm to cm^-1"""
+    wlcminvstep = 20
+    wlnm= asarray(wlnm)
+    wlcminv = 1e7/wlnm
+    nwl = int((wlcminv[0]-wlcminv[1])/wlcminvstep)+1
+    return wlcminv,wlcminvstep,nwl
+
+def plottrans(trans,log):
     ax = figure().gca()
     for za,t in zip(zenang,trans):
-        ax.plot(wlnm[1:],t[1:],label=str(za))
+        ax.plot(trans.index,trans[t],label=str(za))
     ax.set_xlabel('wavelength [nm]')
     ax.set_ylabel('transmission (unitless)')
     ax.set_title('zenith angle [deg] = '+str(zenang))
@@ -42,7 +49,7 @@ def plottrans(wlnm,trans,log):
         ax.set_yscale('log')
         ax.set_ylim(bottom=1e-5)
     ax.invert_xaxis()
-    ax.set_xlim(left=wlnm[0])
+    ax.set_xlim(left=trans.index[0])
 
 if __name__=='__main__':
     from argparse import ArgumentParser
@@ -54,10 +61,10 @@ if __name__=='__main__':
 
     zenang = arange(p.zenang[0],p.zenang[1],p.zenang[2])
 
-    trans,wlnm = golowtran(p.obsalt,zenang,p.wavelen)
+    trans = golowtran(p.obsalt,zenang,p.wavelen)
 
-    plottrans(wlnm,trans,False)
-    plottrans(wlnm,trans,True)
+    plottrans(trans,False)
+    plottrans(trans,True)
 
 
     show()
