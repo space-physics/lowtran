@@ -39,7 +39,7 @@ def golowtran(obsalt_km,zenang_deg,wlnm):
     wlcminv,wlcminvstep,nwl =nm2lt7(wlnm)
     if wlcminvstep<5:
         warn('** LOWTRAN7: minimum resolution 5 cm^-1, specified resolution 20 cm^-1')
-    if not (0<=wlcminv) & (wlcminv<=50000):
+    if not ((0<=wlcminv) & (wlcminv<=50000)).all():
         warn('** LOWTRAN7: specified model range 0 <= wlcminv <= 50000')
     #TX,V,ALAM,TRACE,UNIF,SUMA = lt7.lwtrn7(True,nwl)
     T = []
@@ -50,7 +50,7 @@ def golowtran(obsalt_km,zenang_deg,wlnm):
         T.append(TX[:,9])
     T = asarray(T).T
 
-    Tdf = DataFrame(data=T,columns=zenang,index=ALAM*1e3)
+    Tdf = DataFrame(data=T,columns=zenang_deg,index=ALAM*1e3)
 
     return Tdf
 
