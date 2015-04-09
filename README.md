@@ -1,7 +1,7 @@
 # lowtran
 LOWTRAN7 FORTRAN77 atmospheric absportion extinction model--now in Python!
 
-[LOWTRAN7 User manual](www.dtic.mil/dtic/tr/fulltext/u2/a206773.pdf) -- you may refer to this to understand what parameters I've set to default. Currently I don't have any aerosols enabled for example, though it's trivial to add.
+[LOWTRAN7 User manual](https://www.dtic.mil/dtic/tr/fulltext/u2/a206773.pdf) -- you may refer to this to understand what parameters I've set to default. Currently I don't have any aerosols enabled for example, though it's trivial to add.
 
 Updated by Michael Hirsch to compile in modern compilers and to be easily accessible from Python.
 
