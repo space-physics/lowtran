@@ -3,6 +3,8 @@ LOWTRAN FORTRAN77 atmospheric absportion extinction model--now in Python!
 
 Updated by Michael Hirsch to compile in modern compilers and to be easily accessible from Python.
 
+![Lowtran7 example output](http://blogs.bu.edu/mhirsch/files/2015/04/lowtran.png "Lowtran7 absorption")
+
 Linux compile:
 -------------------
 ```
