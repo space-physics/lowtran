@@ -22,7 +22,7 @@ Right now a lot of features are not implemented, please submit a request for mor
 from __future__ import division,print_function,absolute_import
 from matplotlib.pyplot import figure,show
 from pandas import DataFrame
-from numpy import asarray,arange,atleast_1d
+from numpy import asarray,arange,atleast_1d,ceil
 from os import mkdir
 from warnings import warn
 
@@ -57,9 +57,9 @@ def golowtran(obsalt_km,zenang_deg,wlnm):
 def nm2lt7(wlnm):
     """converts wavelength in nm to cm^-1"""
     wlcminvstep = 20
-    wlnm= asarray(wlnm)
-    wlcminv = 1e7/wlnm
-    nwl = int(round((wlcminv[0]-wlcminv[1])/wlcminvstep))+1
+    wlnm= asarray(wlnm,dtype=float) #for proper division
+    wlcminv = 1.e7/wlnm
+    nwl = int(ceil((wlcminv[0]-wlcminv[1])/wlcminvstep))+1 #yes, ceil
     return wlcminv,wlcminvstep,nwl
 
 def plottrans(trans,log):
