@@ -9,6 +9,7 @@ from __future__ import division,print_function,absolute_import
 from matplotlib.pyplot import figure,show
 from pandas import DataFrame
 from numpy import asarray,arange,atleast_1d
+from os import mkdir
 
 import lowtran7 as lt7
 
@@ -59,6 +60,11 @@ if __name__=='__main__':
     p.add_argument('-w','--wavelen',help='wavelength range nm (start,stop)',type=float,nargs=2,default=(200,1500))
     p=p.parse_args()
 
+
+    try:
+        mkdir('out')
+    except OSError:
+        pass
     zenang = arange(p.zenang[0],p.zenang[1],p.zenang[2])
 
     trans = golowtran(p.obsalt,zenang,p.wavelen)
