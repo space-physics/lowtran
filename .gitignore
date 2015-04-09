@@ -1,4 +1,6 @@
 out/*
+*.pyd
+
 
 # Compiled Object files
 *.slo
