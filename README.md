@@ -30,3 +30,5 @@ Prereqs:
 ```
 pip install -r requirements.txt
 ```
+
+Tested with Gfortran 4.6-4.9.2 and MinGW. 
