@@ -20,7 +20,6 @@ www.dtic.mil/dtic/tr/fulltext/u2/a206773.pdf
 Right now a lot of features are not implemented, please submit a request for more!
 """
 from __future__ import division,print_function,absolute_import
-from matplotlib.pyplot import figure,show
 from pandas import DataFrame
 from numpy import asarray,arange,atleast_1d,ceil
 from os import mkdir
@@ -63,6 +62,8 @@ def nm2lt7(wlnm):
     return wlcminv,wlcminvstep,nwl
 
 def plottrans(trans,log):
+    from matplotlib.pyplot import figure,show
+
     ax = figure().gca()
     for za,t in zip(zenang,trans):
         ax.plot(trans.index,trans[t],label=str(za))
@@ -94,8 +95,11 @@ if __name__=='__main__':
 
     trans = golowtran(p.obsalt,zenang,p.wavelen)
 
-    plottrans(trans,False)
-    plottrans(trans,True)
+    try:
+        plottrans(trans,False)
+        plottrans(trans,True)
+        show()
+    except ImportError as e:
+        print('could not plot results. {}'.format(e))
 
-
-    show()
+    
