@@ -1,3 +1,5 @@
+[![Coverage Status](https://coveralls.io/repos/scienceopen/lowtran/badge.svg)](https://coveralls.io/r/scienceopen/lowtran)
+
 # lowtran
 LOWTRAN7 FORTRAN77 atmospheric absportion extinction model--now in Python!
 
