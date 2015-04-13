@@ -22,7 +22,6 @@ Right now a lot of features are not implemented, please submit a request for mor
 from __future__ import division,print_function,absolute_import
 from pandas import DataFrame
 from numpy import asarray,arange,atleast_1d,ceil
-from os import mkdir
 from warnings import warn
 
 import lowtran7 as lt7
@@ -86,11 +85,6 @@ if __name__=='__main__':
     p.add_argument('-w','--wavelen',help='wavelength range nm (start,stop)',type=float,nargs=2,default=(200,2500))
     p=p.parse_args()
 
-
-    try:
-        mkdir('out')
-    except OSError:
-        pass
     zenang = arange(p.zenang[0],p.zenang[1],p.zenang[2])
 
     trans = golowtran(p.obsalt,zenang,p.wavelen)
