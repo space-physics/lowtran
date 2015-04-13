@@ -27,7 +27,7 @@ install:
  - conda install --yes --file requirements.txt
 
 before_script:
- - f2py -m lowtran7 -c lowtran7.f
+ - f2py --quiet -m lowtran7 -c lowtran7.f
  
 script:  
   - if [[ -z $pyv ]]; then
