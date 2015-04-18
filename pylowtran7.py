@@ -22,7 +22,7 @@ Right now a lot of features are not implemented, please submit a request for mor
 from __future__ import division,print_function,absolute_import
 from matplotlib.pyplot import figure,show
 from pandas import DataFrame
-from numpy import asarray,arange,atleast_1d,ceil
+from numpy import asarray,arange,atleast_1d,ceil,isfinite
 from os import mkdir
 from warnings import warn
 
@@ -36,6 +36,9 @@ def golowtran(obsalt_km,zenang_deg,wlnm):
 
     zenang_deg=atleast_1d(zenang_deg)
 
+    if not (isfinite(obsalt_km).all() and isfinite(zenang_deg).all() and isfinite(wlnm).all()):
+        warn('** LOWTRAN7: NaN or Inf detected in input, exiting...')
+        return None
     wlcminv,wlcminvstep,nwl =nm2lt7(wlnm)
     if wlcminvstep<5:
         warn('** LOWTRAN7: minimum resolution 5 cm^-1, specified resolution 20 cm^-1')
