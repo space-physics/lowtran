@@ -1,0 +1,43 @@
+sudo: true
+language: python
+python:
+  - "3.4"
+  - "2.7"
+
+before_install:
+  - sudo apt-get install gfortran
+  
+  - "export DISPLAY=:99.0"
+  - "sh -e /etc/init.d/xvfb start"
+
+  - if [[ $(python --version 2>&1) == "Python 3."* ]]; then
+     pyv=3;
+    fi
+  - url=http://repo.continuum.io/miniconda/Miniconda"$pyv"-latest-Linux-x86_64.sh
+  - wget $url -O miniconda.sh
+  - bash miniconda.sh -b -p $HOME/miniconda
+  - export PATH=$HOME/miniconda/bin:$PATH
+  - conda update --yes conda
+  - python --version #just checking
+
+install:
+ - if [[ -z $pyv ]]; then
+   pip -q install coveralls;
+  fi
+ - conda install --yes --file requirements.txt
+
+before_script:
+ - f2py --quiet -m lowtran7 -c lowtran7.f
+ 
+script:  
+  - if [[ -z $pyv ]]; then
+        echo "running coverage";
+        coverage run test.py;
+    else
+        python test.py;
+    fi
+    
+after_success:
+  - if [[ -z $pyv ]]; then
+     coveralls;
+    fi
