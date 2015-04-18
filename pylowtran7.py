@@ -97,8 +97,9 @@ if __name__=='__main__':
 
     trans = golowtran(p.obsalt,zenang,p.wavelen)
 
-    plottrans(trans,False)
-    plottrans(trans,True)
-
-
-    show()
+    try:
+        plottrans(trans,False)
+        plottrans(trans,True)
+        show()
+    except ImportError as e:
+        print('could not plot results. {}'.format(e))
