@@ -1,3 +1,6 @@
+[![Build Status](https://travis-ci.org/scienceopen/lowtran.svg?branch=master)](https://travis-ci.org/scienceopen/lowtran)
+[![Coverage Status](https://coveralls.io/repos/scienceopen/lowtran/badge.svg?branch=master)](https://coveralls.io/r/scienceopen/lowtran?branch=master)
+
 # lowtran
 LOWTRAN7 FORTRAN77 atmospheric absportion extinction model--now in Python!
 
@@ -27,3 +30,5 @@ Prereqs:
 ```
 pip install -r requirements.txt
 ```
+
+Tested with Gfortran 4.6-4.9.2 and MinGW. 
