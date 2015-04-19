@@ -20,7 +20,10 @@ www.dtic.mil/dtic/tr/fulltext/u2/a206773.pdf
 Right now a lot of features are not implemented, please submit a request for more!
 """
 from __future__ import division,print_function,absolute_import
-from matplotlib.pyplot import figure,show
+try:
+    from matplotlib.pyplot import figure,show
+except ImportError as e:
+    print('lowtran: matplotlib not available. Plots disabled.  {}'.format(e))
 from pandas import DataFrame
 from numpy import asarray,arange,atleast_1d,ceil,isfinite
 from os import mkdir
@@ -66,20 +69,23 @@ def nm2lt7(wlnm):
     return wlcminv,wlcminvstep,nwl
 
 def plottrans(trans,log):
-    ax = figure().gca()
-    for za,t in zip(zenang,trans):
-        ax.plot(trans.index,trans[t],label=str(za))
-    ax.set_xlabel('wavelength [nm]')
-    ax.set_ylabel('transmission (unitless)')
-    ax.set_title('zenith angle [deg] = '+str(zenang),fontsize=16)
-    ax.legend(loc='best')
-    ax.grid(True)
-    if log:
-        ax.set_yscale('log')
-        ax.set_ylim(1e-6,1)
-    ax.invert_xaxis()
-    ax.set_xlim(left=trans.index[0])
-
+    try:
+        ax = figure().gca()
+        for za,t in zip(zenang,trans):
+            ax.plot(trans.index,trans[t],label=str(za))
+        ax.set_xlabel('wavelength [nm]')
+        ax.set_ylabel('transmission (unitless)')
+        ax.set_title('zenith angle [deg] = '+str(zenang),fontsize=16)
+        ax.legend(loc='best')
+        ax.grid(True)
+        if log:
+            ax.set_yscale('log')
+            ax.set_ylim(1e-6,1)
+        ax.invert_xaxis()
+        ax.set_xlim(left=trans.index[0])
+    except Exception as e:
+        print('trouble plotting   {}'.format(e))
+        
 if __name__=='__main__':
     from argparse import ArgumentParser
     p = ArgumentParser(description='Lowtran 7 interface')
