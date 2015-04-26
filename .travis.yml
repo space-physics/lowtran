@@ -32,12 +32,12 @@ before_script:
  - f2py --quiet -m lowtran7 -c lowtran7.f
  
 script:  
-#  - if [[ -z $pyv ]]; then
-#        echo "running coverage";
-#        coverage run test.py;
-#    else
--        python test.py;
-#    fi
+   - if [[ -z $pyv ]]; then
+         echo "running coverage";
+        coverage run test.py;
+     else
+        python test.py;
+    fi
     
 after_success:
   - if [[ -z $pyv ]]; then
