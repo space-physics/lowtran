@@ -981,8 +981,8 @@ C
         MODEL=ModelPy; IType=ITypePy; IEMSCT=IEMSCTPy
         M1=0; M2=0; M3=0; M4=0; M5=0; M6=0 !FIXME get from function inp
       Else
-      READ(IRD,1110)MODEL,ITYPE,IEMSCT,IMULT,M1,M2,M3,                  
-     & M4,M5,M6,MDEF,IM,NOPRT,TBOUND,SALB
+        READ(IRD,1110)MODEL,ITYPE,IEMSCT,IMULT,M1,M2,M3,
+     &        M4,M5,M6,MDEF,IM,NOPRT,TBOUND,SALB
       End If
 1110  FORMAT(13I5,F8.3,F7.2)                                            
       WRITE(IPR,1111)MODEL,ITYPE,IEMSCT,IMULT,M1,M2,M3,                 

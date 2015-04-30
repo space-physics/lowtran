@@ -18,6 +18,41 @@ user manual:
 www.dtic.mil/dtic/tr/fulltext/u2/a206773.pdf
 
 Right now a lot of features are not implemented, please submit a request for more!
+
+--------
+Card 1:
+     MODEL=0 IF METEOROLOGICAL DATA ARE SPECIFIED(HORIZONTAL PATH ONLY)
+           1 TROPICAL ATMOSPHERE
+           2 MIDLATITUDE SUMMER
+           3 MIDLATITUDE WINTER
+           4 SUBARCTIC   SUMMER
+           5 SUBARCTIC   WINTER
+           6 1976 U.S. STANDARD ATMOSPHERE
+
+     ITYPE=1 FOR A HORIZONTAL (CONSTANT-PRESSURE) PATH
+           2 VERTICAL OR SLANT PATH BETWEEN TWO ALTITUDES
+           3 FOR A VERTICAL OR SLANT PATH TO SPACE
+
+     IEMSCT=0    PROGRAM EXECUTION IN TRANSMITTANCE MODE.
+            1    PROGRAM EXECUTION IN RADIANCE MODE.
+            2    PROGRAM EXECUTION IN RADIANCE MODE WITH SOLAR/LUNAR SCATTERED RADIANCE INCLUDED.
+            3    DIRECT SOLAR IRRADIANCE
+
+CARD2:
+     IHAZE=0  NO AEROSOL ATTENUATION INCLUDED IN CALCULATION.
+          =1  RURAL EXTINCTION, 23-KM VIS.
+          =2  RURAL EXTINCTION, 5-KM VIS.
+          =3  NAVY MARITIME EXTINCTION,SETS OWN VIS.
+          =4  MARITIME EXTINCTION, 23-KM VIS.    (LOWTRAN 5 MODEL)
+          =5  URBAN EXTINCTION, 5-KM VIS.
+          =6  TROPOSPHERIC EXTINCTION, 50-KM VIS.
+          =7  USER DEFINED  AEROSOL EXTINCTION COEFFICIENTS
+              TRIGGERS READING IREG FOR UP TO 4 REGIONS OF
+              USER DEFINED EXTINCTION ABSORPTION AND ASYMMETRY
+          =8  FOG1 (ADVECTIVE FOG) EXTINCTION, 0.2-KM VIS.
+          =9  FOG2 (RADIATIVE FOG) EXTINCTION, 0.5-KM VIS.
+          =10 DESERT EXTINCTION  SETS OWN VISIBILITY FROM WIND SPEED
+
 """
 from __future__ import division,print_function,absolute_import
 try:
@@ -31,7 +66,7 @@ from warnings import warn
 
 import lowtran7 as lt7
 
-def golowtran(obsalt_km,zenang_deg,wlnm):
+def golowtran(obsalt_km,zenang_deg,wlnm,c1):
     obsalt_km = atleast_1d(obsalt_km)
     if obsalt_km.size>1:
         obsalt_km = obsalt_km[0]
@@ -49,11 +84,17 @@ def golowtran(obsalt_km,zenang_deg,wlnm):
         warn('** LOWTRAN7: specified model range 0 <= wlcminv <= 50000')
     #TX,V,ALAM,TRACE,UNIF,SUMA = lt7.lwtrn7(True,nwl)
     T = []
+#%% invoke lowtran
+    """
+    Note we invoke case "3a" from table 14, only observer altitude and apparent
+    angle are specified
+    """
     for za in zenang_deg:
         TX,V,ALAM = lt7.lwtrn7(True,nwl,wlcminv[1],wlcminv[0],wlcminvstep,
-                           5,3,0,
-                          obsalt_km,0,za)[:3]
+                               c1['model'],c1['itype'],c1['iemsct'],
+                               obsalt_km,0,zenang_deg)[:3]
         T.append(TX[:,9])
+#%% collect results
     T = asarray(T).T
 
     Tdf = DataFrame(data=T,columns=zenang_deg,index=ALAM*1e3)
@@ -62,7 +103,7 @@ def golowtran(obsalt_km,zenang_deg,wlnm):
 
 def nm2lt7(wlnm):
     """converts wavelength in nm to cm^-1"""
-    wlcminvstep = 20
+    wlcminvstep = 5
     wlnm= asarray(wlnm,dtype=float) #for proper division
     wlcminv = 1.e7/wlnm
     nwl = int(ceil((wlcminv[0]-wlcminv[1])/wlcminvstep))+1 #yes, ceil
@@ -85,15 +126,20 @@ def plottrans(trans,log):
         ax.set_xlim(left=trans.index[0])
     except Exception as e:
         print('trouble plotting   {}'.format(e))
-        
+
 if __name__=='__main__':
     from argparse import ArgumentParser
     p = ArgumentParser(description='Lowtran 7 interface')
     p.add_argument('-z','--obsalt',help='altitude of observer [km]',type=float,default=0.)
     p.add_argument('-a','--zenang',help='zenith angle [deg] (start,stop,step)',type=float,nargs='+',default=(0,75+12.5,12.5))
     p.add_argument('-w','--wavelen',help='wavelength range nm (start,stop)',type=float,nargs=2,default=(200,2500))
+    p.add_argument('--model',help='0-6, see Card1 "model" reference. 5=subarctic winter',type=int,default=5)
+    p.add_argument('--itype',help='1-3, see Card1 "itype". 3=path to space',type=int,default=3)
+    p.add_argument('--iemsct',help='0-3, 0=transmittance',type=int,default=0)
+
     p=p.parse_args()
 
+    c1={'model':p.model,'itype':p.itype,'iemsct':p.iemsct}
 
     try:
         mkdir('out')
@@ -101,7 +147,7 @@ if __name__=='__main__':
         pass
     zenang = arange(p.zenang[0],p.zenang[1],p.zenang[2])
 
-    trans = golowtran(p.obsalt,zenang,p.wavelen)
+    trans = golowtran(p.obsalt,zenang,p.wavelen,c1)
 
     try:
         plottrans(trans,False)
