@@ -63,7 +63,10 @@ from pandas import DataFrame
 from numpy import asarray,arange,atleast_1d,ceil,isfinite
 from os import mkdir
 from warnings import warn
-
+#
+import sys,os
+sys.path.append(os.path.dirname(os.path.abspath(__file__)))
+#
 import lowtran7 as lt7
 
 def golowtran(obsalt_km,zenang_deg,wlnm,c1):
