@@ -15,7 +15,7 @@ Right now a lot of features aren't implemented, please request those you want.
 Linux compile:
 -------------------
 ```
-f2py3 -m lowtran7 -c lowtran7.f
+make -f Makefile.f2py
 ```
 
 Windows compile:
