@@ -1,3 +1,4 @@
+[![Code Climate](https://codeclimate.com/github/scienceopen/lowtran/badges/gpa.svg)](https://codeclimate.com/github/scienceopen/lowtran)
 [![Build Status](https://travis-ci.org/scienceopen/lowtran.svg?branch=master)](https://travis-ci.org/scienceopen/lowtran)
 [![Coverage Status](https://coveralls.io/repos/scienceopen/lowtran/badge.svg?branch=master)](https://coveralls.io/r/scienceopen/lowtran?branch=master)
 
