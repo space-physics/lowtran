@@ -30,6 +30,9 @@ python pylowtran7.py
 should generate a plot on your screen.
 
 
+## Notes:
+* If you're using Python 2.7, you can edit ``` Makefile.f2py ``` to use ``` f2py ``` instead of ``` f2py3 ```.
+or just type ``` f2py --quiet -m lowtran7 -c lowtran7.f ```
 
 Windows compile:
 -----------------
