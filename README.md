@@ -13,11 +13,23 @@ Right now a lot of features aren't implemented, please request those you want.
 
 ![Lowtran7 example output](http://blogs.bu.edu/mhirsch/files/2015/04/lowtran.png "Lowtran7 absorption")
 
-Linux compile:
--------------------
+Installation:
+-------------
 ```
+git clone --depth 1 --recursive https://github.com/scienceopen/lowtran
+conda install --file requirements.txt
 make -f Makefile.f2py
 ```
+
+Example Use:
+-------------
+```
+python pylowtran7.py
+```
+
+should generate a plot on your screen.
+
+
 
 Windows compile:
 -----------------
@@ -26,10 +38,5 @@ Yes, even though you're[ using a 64-bit compiler](http://blogs.bu.edu/mhirsch/20
 f2py --compiler=mingw32 -m lowtran7 -c lowtran7.f
 ```
 
-Prereqs:
---------
-```
-pip install -r requirements.txt
-```
 
 Tested with Gfortran 4.6-4.9.2 and MinGW. 
