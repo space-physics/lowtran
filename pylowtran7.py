@@ -67,7 +67,10 @@ from warnings import warn
 import sys,os
 sys.path.append(os.path.dirname(os.path.abspath(__file__)))
 #
-import lowtran7 as lt7
+try:
+    import lowtran7 as lt7
+except ImportError as e:
+    exit('you must compile the Fortran code first. See README.md.  {}'.format(e))    
 
 def golowtran(obsalt_km,zenang_deg,wlnm,c1):
     obsalt_km = atleast_1d(obsalt_km)
