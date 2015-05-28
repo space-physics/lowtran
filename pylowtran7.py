@@ -60,7 +60,7 @@ try:
 except ImportError as e:
     print('lowtran: matplotlib not available. Plots disabled.  {}'.format(e))
 from pandas import DataFrame
-from numpy import asarray,arange,atleast_1d,ceil,isfinite
+from numpy import asarray,atleast_1d,ceil,isfinite
 from os import mkdir
 from warnings import warn
 #
@@ -115,7 +115,7 @@ def nm2lt7(wlnm):
     nwl = int(ceil((wlcminv[0]-wlcminv[1])/wlcminvstep))+1 #yes, ceil
     return wlcminv,wlcminvstep,nwl
 
-def plottrans(trans,log):
+def plottrans(trans,zenang,log):
     try:
         ax = figure().gca()
         for za,t in zip(zenang,trans):
@@ -137,7 +137,7 @@ if __name__=='__main__':
     from argparse import ArgumentParser
     p = ArgumentParser(description='Lowtran 7 interface')
     p.add_argument('-z','--obsalt',help='altitude of observer [km]',type=float,default=0.)
-    p.add_argument('-a','--zenang',help='zenith angle [deg] (start,stop,step)',type=float,nargs='+',default=(0,75+12.5,12.5))
+    p.add_argument('-a','--zenang',help='zenith angle [deg]  can be single value or list of values',type=float,nargs='+',default=[0])
     p.add_argument('-w','--wavelen',help='wavelength range nm (start,stop)',type=float,nargs=2,default=(200,2500))
     p.add_argument('--model',help='0-6, see Card1 "model" reference. 5=subarctic winter',type=int,default=5)
     p.add_argument('--itype',help='1-3, see Card1 "itype". 3=path to space',type=int,default=3)
@@ -151,13 +151,12 @@ if __name__=='__main__':
         mkdir('out')
     except OSError:
         pass
-    zenang = arange(p.zenang[0],p.zenang[1],p.zenang[2])
 
-    trans = golowtran(p.obsalt,zenang,p.wavelen,c1)
+    trans = golowtran(p.obsalt,p.zenang,p.wavelen,c1)
 
     try:
-        plottrans(trans,False)
-        plottrans(trans,True)
+        plottrans(trans,p.zenang,False)
+        plottrans(trans,p.zenang,True)
         show()
     except ImportError as e:
         print('could not plot results. {}'.format(e))
