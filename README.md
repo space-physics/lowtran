@@ -24,10 +24,10 @@ make -f Makefile.f2py
 Example Use:
 -------------
 ```
-python pylowtran7.py
+python pylowtran7.py -a 0 12.5 25
 ```
 
-should generate a plot on your screen.
+should generate a plot shown above on your screen.
 
 
 ## Notes:
