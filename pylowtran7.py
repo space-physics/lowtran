@@ -98,7 +98,7 @@ def golowtran(obsalt_km,zenang_deg,wlnm,c1):
     for za in zenang_deg:
         TX,V,ALAM = lt7.lwtrn7(True,nwl,wlcminv[1],wlcminv[0],wlcminvstep,
                                c1['model'],c1['itype'],c1['iemsct'],
-                               obsalt_km,0,zenang_deg)[:3]
+                               obsalt_km,0,za)[:3]
         T.append(TX[:,9])
 #%% collect results
     T = asarray(T).T
