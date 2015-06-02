@@ -55,14 +55,14 @@ CARD2:
 
 """
 from __future__ import division,print_function,absolute_import
+from warnings import warn
 try:
     from matplotlib.pyplot import figure,show
 except ImportError as e:
-    print('lowtran: matplotlib not available. Plots disabled.  {}'.format(e))
+    warn('lowtran: matplotlib not available. Plots disabled.  {}'.format(e))
 from pandas import DataFrame
 from numpy import asarray,atleast_1d,ceil,isfinite
 from os import mkdir
-from warnings import warn
 #
 import sys,os
 sys.path.append(os.path.dirname(os.path.abspath(__file__)))
@@ -70,22 +70,22 @@ sys.path.append(os.path.dirname(os.path.abspath(__file__)))
 try:
     import lowtran7 as lt7
 except ImportError as e:
-    exit('you must compile the Fortran code first. See README.md.  {}'.format(e))    
+    exit('you must compile the Fortran code first. f2py -m lowtran7 -c lowtran7.f  {}'.format(e))    
 
 def golowtran(obsalt_km,zenang_deg,wlnm,c1):
     obsalt_km = atleast_1d(obsalt_km)
     if obsalt_km.size>1:
         obsalt_km = obsalt_km[0]
-        warn('** LOWTRAN7: for now I only handle single altitudes. Using first value of {} [km]'.format(obsalt_km))
+        warn('for now I only handle single altitudes. Using first value of {} [km]'.format(obsalt_km))
 
     zenang_deg=atleast_1d(zenang_deg)
 
     if not (isfinite(obsalt_km).all() and isfinite(zenang_deg).all() and isfinite(wlnm).all()):
-        warn('** LOWTRAN7: NaN or Inf detected in input, exiting...')
+        warn('NaN or Inf detected in input, exiting...')
         return None
     wlcminv,wlcminvstep,nwl =nm2lt7(wlnm)
     if wlcminvstep<5:
-        warn('** LOWTRAN7: minimum resolution 5 cm^-1, specified resolution 20 cm^-1')
+        warn('minimum resolution 5 cm^-1, specified resolution 20 cm^-1')
     if not ((0<=wlcminv) & (wlcminv<=50000)).all():
         warn('** LOWTRAN7: specified model range 0 <= wlcminv <= 50000')
     #TX,V,ALAM,TRACE,UNIF,SUMA = lt7.lwtrn7(True,nwl)
@@ -131,7 +131,7 @@ def plottrans(trans,zenang,log):
         ax.invert_xaxis()
         ax.set_xlim(left=trans.index[0])
     except Exception as e:
-        print('trouble plotting   {}'.format(e))
+        warn('trouble plotting   {}'.format(e))
 
 if __name__=='__main__':
     from argparse import ArgumentParser
@@ -159,4 +159,4 @@ if __name__=='__main__':
         plottrans(trans,p.zenang,True)
         show()
     except ImportError as e:
-        print('could not plot results. {}'.format(e))
+        warn('could not plot results. {}'.format(e))
