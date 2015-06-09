@@ -70,7 +70,7 @@ sys.path.append(os.path.dirname(os.path.abspath(__file__)))
 try:
     import lowtran7 as lt7
 except ImportError as e:
-    exit('you must compile the Fortran code first. f2py -m lowtran7 -c lowtran7.f  {}'.format(e))    
+    exit('you must compile the Fortran code first. f2py -m lowtran7 -c lowtran7.f  {}'.format(e))
 
 def golowtran(obsalt_km,zenang_deg,wlnm,c1):
     obsalt_km = atleast_1d(obsalt_km)
