@@ -70,42 +70,43 @@ sys.path.append(os.path.dirname(os.path.abspath(__file__)))
 try:
     import lowtran7 as lt7
 except ImportError as e:
-    exit('you must compile the Fortran code first. f2py -m lowtran7 -c lowtran7.f  {}'.format(e))
+    warn('you must compile the Fortran code first. f2py -m lowtran7 -c lowtran7.f  {}'.format(e))
+    raise
 
 def golowtran(obsalt_km,zenang_deg,wlnm,c1):
+#%% altitude
     obsalt_km = atleast_1d(obsalt_km)
     if obsalt_km.size>1:
         obsalt_km = obsalt_km[0]
         warn('for now I only handle single altitudes. Using first value of {} [km]'.format(obsalt_km))
-
+#%% zenith angle
     zenang_deg=atleast_1d(zenang_deg)
-
+#%% input check
     if not (isfinite(obsalt_km).all() and isfinite(zenang_deg).all() and isfinite(wlnm).all()):
-        warn('NaN or Inf detected in input, exiting...')
+        warn('NaN or Inf detected in input, skipping LOWTRAN')
         return None
+#%% setup wavelength        
     wlcminv,wlcminvstep,nwl =nm2lt7(wlnm)
     if wlcminvstep<5:
         warn('minimum resolution 5 cm^-1, specified resolution 20 cm^-1')
     if not ((0<=wlcminv) & (wlcminv<=50000)).all():
         warn('** LOWTRAN7: specified model range 0 <= wlcminv <= 50000')
     #TX,V,ALAM,TRACE,UNIF,SUMA = lt7.lwtrn7(True,nwl)
-    T = []
+    T = DataFrame(columns=zenang_deg)
 #%% invoke lowtran
     """
     Note we invoke case "3a" from table 14, only observer altitude and apparent
     angle are specified
     """
     for za in zenang_deg:
-        TX,V,ALAM = lt7.lwtrn7(True,nwl,wlcminv[1],wlcminv[0],wlcminvstep,
+        Tx,V,Alam = lt7.lwtrn7(True,nwl,wlcminv[1],wlcminv[0],wlcminvstep,
                                c1['model'],c1['itype'],c1['iemsct'],
                                obsalt_km,0,za)[:3]
-        T.append(TX[:,9])
+        T[za]= Tx[:,9]
 #%% collect results
-    T = asarray(T).T
+    T.index=Alam*1e3
 
-    Tdf = DataFrame(data=T,columns=zenang_deg,index=ALAM*1e3)
-
-    return Tdf
+    return T
 
 def nm2lt7(wlnm):
     """converts wavelength in nm to cm^-1"""
@@ -127,9 +128,9 @@ def plottrans(trans,zenang,log):
         ax.grid(True)
         if log:
             ax.set_yscale('log')
-            ax.set_ylim(1e-6,1)
+            ax.set_ylim(1e-5,1)
         ax.invert_xaxis()
-        ax.set_xlim(left=trans.index[0])
+        ax.set_xlim(left=trans.index[0], right=trans.index[-1])
     except Exception as e:
         warn('trouble plotting   {}'.format(e))
 
