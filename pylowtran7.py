@@ -68,7 +68,7 @@ import sys,os
 sys.path.append(os.path.dirname(os.path.abspath(__file__)))
 #
 try:
-    import lowtran7 as lt7
+    import lowtran as lt7
 except ImportError as e:
     warn('you must compile the Fortran code first. f2py -m lowtran7 -c lowtran7.f  {}'.format(e))
     raise
