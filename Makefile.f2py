@@ -5,7 +5,7 @@ F2PY_FLAGS = --quiet
 #F2PY_FLAGS +=-DF2PY_REPORT_ON_ARRAY_COPY=1
 #F2PY_FLAGS +=--noarch --f90flags='${ARCHFLAGS}'
 
-MODULE=lowtran7
+MODULE=lowtran
 
 SOURCES = lowtran7.f
 
