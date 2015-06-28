@@ -37,8 +37,7 @@ script:
         coverage run test.py;
      else
 #        pip -q install nose;
-#        nosetest -v test.py;
-        python test.py;
+        nosetests -v test.py;
     fi
     
 after_success:
