@@ -56,10 +56,6 @@ CARD2:
 """
 from __future__ import division,print_function,absolute_import
 from warnings import warn
-try:
-    from matplotlib.pyplot import figure,show
-except ImportError as e:
-    warn('lowtran: matplotlib not available. Plots disabled.  {}'.format(e))
 from pandas import DataFrame
 from numpy import asarray,atleast_1d,ceil,isfinite
 from os import mkdir
@@ -68,9 +64,13 @@ import sys,os
 sys.path.append(os.path.dirname(os.path.abspath(__file__)))
 #
 try:
-    import lowtran as lt7
+    try:
+        from . import lowtran7 as lt7
+    except (SystemError,ValueError):
+        import lowtran7 as lt7
 except ImportError as e:
-    raise('you must compile the Fortran code first. f2py -m lowtran -c lowtran7.f  {}'.format(e))
+    warn('you must compile the Fortran code first. f2py -m lowtran7 -c lowtran7.f  {}'.format(e))
+    raise
 
 def golowtran(obsalt_km,zenang_deg,wlnm,c1):
 #%% altitude
@@ -84,7 +84,7 @@ def golowtran(obsalt_km,zenang_deg,wlnm,c1):
     if not (isfinite(obsalt_km).all() and isfinite(zenang_deg).all() and isfinite(wlnm).all()):
         warn('NaN or Inf detected in input, skipping LOWTRAN')
         return None
-#%% setup wavelength        
+#%% setup wavelength
     wlcminv,wlcminvstep,nwl =nm2lt7(wlnm)
     if wlcminvstep<5:
         warn('minimum resolution 5 cm^-1, specified resolution 20 cm^-1')
@@ -134,6 +134,11 @@ def plottrans(trans,zenang,log):
         warn('trouble plotting   {}'.format(e))
 
 if __name__=='__main__':
+    try:
+        from matplotlib.pyplot import figure,show
+    except ImportError as e:
+        warn('lowtran: matplotlib not available. Plots disabled.  {}'.format(e))
+
     from argparse import ArgumentParser
     p = ArgumentParser(description='Lowtran 7 interface')
     p.add_argument('-z','--obsalt',help='altitude of observer [km]',type=float,default=0.)
