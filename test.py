@@ -1,7 +1,9 @@
 #!/usr/bin/env python
 from __future__ import division,absolute_import
-from pylowtran7 import golowtran
 from numpy.testing import assert_array_almost_equal
+#
+try: from .pylowtran7 import golowtran
+except: from pylowtran7 import golowtran
 
 def test_atmosphere_transmission():
 
