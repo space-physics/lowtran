@@ -1,6 +1,7 @@
-numpy>=1.9
-matplotlib>=1.4
-six>=1.9
-dateutil>=2.4.1
-pytz>=2015
-pandas>=0.15
+numpy
+matplotlib
+six
+dateutil
+pytz
+pandas
+nose
