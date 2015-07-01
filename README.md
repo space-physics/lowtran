@@ -34,8 +34,8 @@ should generate a plot shown above on your screen.
 * If you're using Python 2.7, you can edit ``` Makefile.f2py ``` to use ``` f2py ``` instead of ``` f2py3 ```.
 or just type ``` f2py --quiet -m lowtran7 -c lowtran7.f ```
 
-Windows compile:
------------------
+Windows compile
+---------------
 Yes, even though you're[ using a 64-bit compiler](http://blogs.bu.edu/mhirsch/2015/04/f2py-running-fortran-code-in-python-on-windows/).
 ```
 f2py --compiler=mingw32 -m lowtran7 -c lowtran7.f
@@ -44,4 +44,6 @@ f2py --compiler=mingw32 -m lowtran7 -c lowtran7.f
 
 Tested with Gfortran 4.6-4.9.2 and MinGW. 
 
+Reference
+---------
 [Original 1994 Lowtran7 Code](http://www1.ncdc.noaa.gov/pub/data/software/lowtran/)
