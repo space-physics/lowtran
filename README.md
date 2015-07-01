@@ -43,3 +43,5 @@ f2py --compiler=mingw32 -m lowtran7 -c lowtran7.f
 
 
 Tested with Gfortran 4.6-4.9.2 and MinGW. 
+
+[Original 1994 Lowtran7 Code](http://www1.ncdc.noaa.gov/pub/data/software/lowtran/)
