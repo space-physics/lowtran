@@ -19,9 +19,8 @@ Installation
 -------------
 In Terminal, type::
 
-  git clone --depth 1 --recursive https://github.com/scienceopen/lowtran
+  git clone --depth 1 https://github.com/scienceopen/lowtran
   conda install --file requirements.txt
-  f2py --quiet -m lowtran7 -c lowtran7.f
   python setup.py develop
 
 
@@ -30,7 +29,6 @@ Example Use:
 From Terminal::
 
   python pylowtran7.py -a 0 12.5 25
-
 
 should generate the plot shown above on your screen.
 
@@ -42,8 +40,10 @@ Notes
 Right now a lot of features aren't implemented, please request those you want.
 
 
-Windows compile
----------------
+Windows compiler 
+----------------
+(this is handled automatically by setup.py, noted here for debugging)
+
 Yes, even though you're `using a 64-bit compiler <https://scivision.co/f2py-running-fortran-code-in-python-on-windows/>`_::
 
   f2py --compiler=mingw32 -m lowtran7 -c lowtran7.f
