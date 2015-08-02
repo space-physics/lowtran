@@ -27,16 +27,14 @@ install:
    pip -q install coveralls;
   fi
  - conda install --yes --file requirements.txt
+ - python setup.py develop
 
-before_script:
- - f2py --quiet -m lowtran7 -c lowtran7.f
- 
 script:  
    - if [[ -z $pyv ]]; then
          echo "running coverage";
-        coverage run test.py;
+        coverage run test/test.py;
      else
-        nosetests -v test.py;
+        nosetests -v test/test.py;
     fi
     
 after_success:
