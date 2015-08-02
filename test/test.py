@@ -2,8 +2,7 @@
 from __future__ import division,absolute_import
 from numpy.testing import assert_array_almost_equal
 #
-try: from .pylowtran7 import golowtran
-except: from pylowtran7 import golowtran
+from lowtran.pylowtran7 import golowtran
 
 def test_atmosphere_transmission():
 

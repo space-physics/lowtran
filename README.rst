@@ -21,7 +21,8 @@ In Terminal, type::
 
   git clone --depth 1 --recursive https://github.com/scienceopen/lowtran
   conda install --file requirements.txt
-  make -f Makefile.f2py
+  f2py --quiet -m lowtran7 -c lowtran7.f
+  python setup.py develop
 
 
 Example Use:
@@ -36,11 +37,6 @@ should generate the plot shown above on your screen.
 
 Notes
 -----
-If you're using Python 2.7, you can edit ``Makefile.f2py`` to use ``f2py`` instead of ``f2py3``.
-or just type::
-
-  f2py --quiet -m lowtran7 -c lowtran7.f
-
 `LOWTRAN7 User manual <http://www.dtic.mil/dtic/tr/fulltext/u2/a206773.pdf>`_ -- you may refer to this to understand what parameters I've set to default. Currently I don't have any aerosols enabled for example, though it's trivial to add.
 
 Right now a lot of features aren't implemented, please request those you want.
