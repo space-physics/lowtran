@@ -61,7 +61,7 @@ from numpy import asarray,atleast_1d,ceil,isfinite
 from os import mkdir
 #
 try:
-    import lowtran7 as lt7   
+    import lowtran7 as lt7   #don't use dot in front, it's linking to .dll, .pyd, or .so
 except ImportError as e:
     warn('you must compile the Fortran code first. f2py -m lowtran7 -c lowtran7.f  {}'.format(e))
     raise
