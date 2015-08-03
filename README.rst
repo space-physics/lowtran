@@ -21,7 +21,9 @@ In Terminal, type::
 
   git clone --depth 1 https://github.com/scienceopen/lowtran
   conda install --file requirements.txt
-  python setup.py develop
+  python setup.py install
+  
+Note: ``python setup.py develop`` will not work due to the need to compile the lowtran7.f as part of the setup.py functionality
 
 
 Example Use:
