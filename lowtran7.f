@@ -922,8 +922,9 @@ C     nulunix if on Unix/Linux, nuwin if on windows
       IPR = 16
       IPU = 17
       IPR1= 18
-      If (.not.Python) OPEN(IRD,FILE='TAPE5',STATUS='OLD')
+
       If (.not.Python) Then
+          OPEN(IRD,FILE='TAPE5',STATUS='OLD')
           OPEN(IPR,FILE=IPRfn,STATUS='OLD')
           OPEN(IPU,FILE=IPUfn,STATUS='OLD')
           OPEN(IPR1,FILE=IPR1fn,STATUS='OLD')
@@ -933,8 +934,8 @@ C     Python we pass data out as variable in RAM.
           IPU=IPR; IPR1=IPR
           OPEN(IPR,FILE=nulunix,STATUS='OLD',ERR=666)
           GOTO 667
-C         if using Windows w/o Cygwin
-666       OPEN(IPR,FILE=nulwin,STATUS='OLD')
+C         if using Windows w/o Cygwin -- NUL or NUL: gives SIGSEGV on Windows 10
+666       OPEN(IPR,STATUS='SCRATCH')
 C     Don't open IPU or IPR1 in this case, they all talk to the same
 C     /dev/null
 667   EndIf
