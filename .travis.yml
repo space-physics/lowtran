@@ -30,10 +30,10 @@ install:
  - python setup.py develop
 
 script:  
-   - if [[ -z $pyv ]]; then
-         echo "running coverage";
+  - if [[ -z $pyv ]]; then
+        echo "running coverage";
         coverage run test/test.py;
-     else
+    else
         nosetests -v test/test.py;
     fi
     
