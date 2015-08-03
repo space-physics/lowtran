@@ -914,23 +914,30 @@ c            Print *,Python,nwl,V1Py,V2Py,DVPy,
 c     & MODELPy,ITYPEPy,IEMSCTPy,
 c     & H1Py,H2Py,ANGLEPy
       CHARACTER(len=*),PARAMETER :: IPRfn='out/TAPE6',
-     & IPUfn='out/TAPE7', IPR1fn='out/TAPE8', nulfn='/dev/null'
+     & IPUfn='out/TAPE7', IPR1fn='out/TAPE8'
+C     nulunix if on Unix/Linux, nuwin if on windows
+      CHARACTER(len=*),PARAMETER :: nulunix='/dev/null', nulwin='NUL'
 
       IRD = 15
       IPR = 16
       IPU = 17
       IPR1= 18
-      If (.not.Python) OPEN (IRD,FILE='TAPE5',STATUS='OLD')
+      If (.not.Python) OPEN(IRD,FILE='TAPE5',STATUS='OLD')
       If (.not.Python) Then
-          OPEN (IPR,FILE=IPRfn,STATUS='UNKNOWN')
-          OPEN (IPU,FILE=IPUfn,STATUS='UNKNOWN')
-          OPEN (IPR1,FILE=IPR1fn,STATUS='UNKNOWN')
+          OPEN(IPR,FILE=IPRfn,STATUS='OLD')
+          OPEN(IPU,FILE=IPUfn,STATUS='OLD')
+          OPEN(IPR1,FILE=IPR1fn,STATUS='OLD')
       Else
+C     dump all the huge verbose output text to NULL, since when using
+C     Python we pass data out as variable in RAM.
           IPU=IPR; IPR1=IPR
-          OPEN(IPR,FILE=nulfn,STATUS='UNKNOWN')
+          OPEN(IPR,FILE=nulunix,STATUS='OLD',ERR=666)
+          GOTO 667
+C         if using Windows w/o Cygwin
+666       OPEN(IPR,FILE=nulwin,STATUS='OLD')
 C     Don't open IPU or IPR1 in this case, they all talk to the same
 C     /dev/null
-      EndIf
+667   EndIf
 
 C
 C     ALTITUDE PARAMETERS
