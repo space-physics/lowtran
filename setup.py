@@ -1,5 +1,4 @@
 #!/usr/bin/env python3
-import sys
 #from setuptools import setup
 from numpy.distutils.core import setup,Extension
 
@@ -20,4 +19,3 @@ setup(name='lowtran',
       ext_modules=[Extension(name='lowtran7',sources=['lowtran7.f'],
                     f2py_options=['quiet'])]
 	  )
-  	  
