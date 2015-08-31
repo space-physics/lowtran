@@ -12,6 +12,9 @@ Lowtran
 LOWTRAN7 FORTRAN77 atmospheric absportion extinction model--now in Python!
 Updated by Michael Hirsch to compile in modern compilers and to be easily accessible from Python.
 
+:Python API Author: Michael Hirsch
+:License: Affero GPLv3+
+
 .. image:: http://blogs.bu.edu/mhirsch/files/2015/04/lowtran.png
     :alt: "Lowtran7 absorption"
 
@@ -21,8 +24,8 @@ In Terminal, type::
 
   git clone --depth 1 https://github.com/scienceopen/lowtran
   conda install --file requirements.txt
-  python setup.py install
-  
+  python setup.py develop
+
 Note: ``python setup.py develop`` will not work due to the need to compile the lowtran7.f as part of the setup.py functionality
 
 
@@ -42,7 +45,7 @@ Notes
 Right now a lot of features aren't implemented, please request those you want.
 
 
-Windows compiler 
+Windows compiler
 ----------------
 (this is handled automatically by setup.py, noted here for debugging)
 
