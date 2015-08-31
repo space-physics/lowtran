@@ -1,9 +1,9 @@
 #!/usr/bin/env python3
-#from setuptools import setup
+import setuptools #enables develop
 from numpy.distutils.core import setup,Extension
 
 
-with open('README.rst') as f:
+with open('README.rst','r') as f:
 	long_description = f.read()
 
 #%% install
