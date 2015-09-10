@@ -1,9 +1,6 @@
 .. image:: https://codeclimate.com/github/scienceopen/lowtran/badges/gpa.svg
    :target: https://codeclimate.com/github/scienceopen/lowtran
    :alt: Code Climate
-
-.. image:: https://travis-ci.org/scienceopen/lowtran.svg?branch=master
-    :target: https://travis-ci.org/scienceopen/lowtran
 .. image:: https://coveralls.io/repos/scienceopen/lowtran/badge.svg?branch=master
     :target: https://coveralls.io/r/scienceopen/lowtran?branch=master
 =======
