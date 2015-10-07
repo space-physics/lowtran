@@ -1,7 +1,8 @@
 *.pyc
 __pycache__/*
 *.pyd
-
+*.egg-info
+build/
 
 # Compiled Object files
 *.slo
