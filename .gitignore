@@ -1,3 +1,5 @@
+archive/
+
 *.pyc
 __pycache__/*
 *.pyd
