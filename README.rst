@@ -51,7 +51,7 @@ Yes, even though you're `using a 64-bit compiler <https://scivision.co/f2py-runn
 
   f2py --compiler=mingw32 -m lowtran7 -c lowtran7.f
 
-Tested with Gfortran 4.6-5.1.0 and MinGW.
+Tested with Gfortran 4.6-5.2 and MinGW.
 
 Reference
 ---------
