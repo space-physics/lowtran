@@ -13,7 +13,6 @@ setup(name='lowtran',
 	  long_description=long_description,
 	  author='Michael Hirsch',
 	  url='https://github.com/scienceopen/lowtran',
-	  install_requires=['numpy','six','pytz','pandas'],
       packages=['lowtran'],
       ext_modules=[Extension(name='lowtran7',sources=['lowtran7.f'],
                     f2py_options=['quiet'])]

@@ -1,3 +1,5 @@
+.. image:: https://travis-ci.org/scienceopen/lowtran.svg?branch=master
+    :target: https://travis-ci.org/scienceopen/lowtran
 .. image:: https://codeclimate.com/github/scienceopen/lowtran/badges/gpa.svg
    :target: https://codeclimate.com/github/scienceopen/lowtran
    :alt: Code Climate
@@ -17,13 +19,12 @@ Updated by Michael Hirsch to compile in modern compilers and to be easily access
 
 Installation
 -------------
-In Terminal, type::
+::
 
   git clone --depth 1 https://github.com/scienceopen/lowtran
   conda install --file requirements.txt
   python setup.py develop
 
-Note: ``python setup.py develop`` will not work due to the need to compile the lowtran7.f as part of the setup.py functionality
 
 
 Example Use:
