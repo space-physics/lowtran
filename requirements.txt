@@ -1,7 +1,9 @@
-numpy
-matplotlib
+setuptools
 six
-dateutil
+python-dateutil
 pytz
-pandas
 nose
+numpy
+pandas
+matplotlib
+seaborn
