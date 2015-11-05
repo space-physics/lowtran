@@ -15,5 +15,5 @@ setup(name='lowtran',
 	  url='https://github.com/scienceopen/lowtran',
       packages=['lowtran'],
       ext_modules=[Extension(name='lowtran7',sources=['lowtran7.f'],
-                    f2py_options=['quiet'])]
+                    f2py_options=['--quiet'])]
 	  )
