@@ -21,8 +21,6 @@ Installation
 -------------
 ::
 
-  git clone --depth 1 https://github.com/scienceopen/lowtran
-  conda install --file requirements.txt
   python setup.py develop
 
 
