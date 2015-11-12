@@ -22,8 +22,6 @@ before_install:
     - chmod +x miniconda.sh
     - bash miniconda.sh -b -p $HOME/miniconda
     - export PATH=$HOME/miniconda/bin:$PATH
-    - hash -r
-    - conda update --quiet --yes conda
 
 install:
     - conda create --yes -n test python=$TRAVIS_PYTHON_VERSION
@@ -31,7 +29,6 @@ install:
     - if [[ ${TRAVIS_PYTHON_VERSION::1} -eq 2 ]]; then
          pip -q install coveralls;
       fi
-    - conda install --quiet --yes --file requirements.txt
     - python setup.py develop
 
 script:
