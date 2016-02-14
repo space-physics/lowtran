@@ -1,6 +1,5 @@
 #!/usr/bin/env python
-from __future__ import division,absolute_import
-from numpy.testing import assert_array_almost_equal
+from numpy.testing import assert_array_almost_equal,run_module_suite
 #
 from lowtran.pylowtran7 import golowtran
 
@@ -14,4 +13,4 @@ def test_atmosphere_transmission():
     assert_array_almost_equal([0.87720001, 0.85709256],T.values[[0,-1]].squeeze())
 
 if __name__ == '__main__':
-    test_atmosphere_transmission()
+    run_module_suite()
