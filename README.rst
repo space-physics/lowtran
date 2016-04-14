@@ -17,22 +17,35 @@ Updated by Michael Hirsch to compile in modern compilers and to be easily access
 .. image:: http://blogs.bu.edu/mhirsch/files/2015/04/lowtran.png
     :alt: "Lowtran7 absorption"
 
+.. contents::
+
 Installation
--------------
+============
 ::
 
   python setup.py develop
 
+Examples
+========
 
-
-Example Use:
--------------
-From Terminal::
+Python
+------
+::
 
   python pylowtran7.py -a 0 12.5 25
 
 should generate the plot shown above on your screen.
 
+Fortran
+-------
+::
+
+    cd bin
+    cmake ..
+    make
+    ./testlowtran
+
+should generate `this text output <https://gist.github.com/scienceopen/89ef2060d8f15b0a60914d13a61e33ab>`_.
 
 Notes
 -----
@@ -41,7 +54,7 @@ Notes
 Right now a lot of features aren't implemented, please request those you want.
 
 
-Windows compiler
+Windows f2py
 ----------------
 (this is handled automatically by setup.py, noted here for debugging)
 
@@ -49,7 +62,7 @@ Yes, even though you're `using a 64-bit compiler <https://scivision.co/f2py-runn
 
   f2py --compiler=mingw32 -m lowtran7 -c lowtran7.f
 
-Tested with Gfortran 4.6-5.2 and MinGW.
+Tested with Gfortran 4.6-5.3 and MinGW.
 
 Reference
 ---------
