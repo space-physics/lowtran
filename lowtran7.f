@@ -1602,6 +1602,8 @@ C@    RETURN
 
        SUBROUTINE AERNSM(JPRT,  GNDALT, Python)
       Logical,Intent(in) :: Python
+      real, intent(in) :: gndalt
+      Integer, Intent(out) :: Jprt
 C**********************************************************************
 C     DEFINES ALTITUDE DEPENDENT VARIABLES Z,P,T,WH,WO AND HAZE
 C     CLD RAIN  CLDTYPE
@@ -2007,7 +2009,7 @@ C
       IF((AHAZE.NE.0.).OR.(EQLWCZ.NE.0.)) GO TO 8
 CCC   IF(RRATZ.NE.0.) GO TO 8
       IF((IVSA.EQ.1).AND.(ICLD1.EQ.0)) THEN
-           IF(MODEL.NE.7)CALL LAYVSA(K,RH,AHAZE,IHA1,ZMDL)
+           IF(MODEL.NE.7)CALL LAYVSA(K,RH,AHAZE,IHA1)!,ZMDL)
       ELSE
            CALL LAYCLD(K,EQLWCZ,RRATZ,ICLD1,GNDALT,RAINRT)
            IF(RAINRT .GT. 0 .AND. ZMDL(K) .LT.6.)RRATZ = RAINRT
@@ -2613,6 +2615,7 @@ C
       END BLOCKDATA DSTDTA
 
       SUBROUTINE FLAYZ(ML,MODEL,ICLD,ZMDL,GNDALT,IVSA)
+      real,intent(in) :: gndalt
 C
 C     SUBROUTINE TO CREATE FINAL LOWTRAN BOUNDARIES
 C
@@ -3279,7 +3282,7 @@ C100  CONTINUE
 C     RETURN
       END Subroutine LAYCLD
 
-      SUBROUTINE LAYVSA(K,RH,AHAZE,IHA1,ZNEW)
+      SUBROUTINE LAYVSA(K,RH,AHAZE,IHA1) !,ZNEW)
 C
 C     RETURNS HAZE FOR VSA OPTION
 C
@@ -3296,7 +3299,7 @@ C
       COMMON /ZVSALY/ ZVSA(10),RHVSA(10),AHVSA(10),IHVSA(10)
       COMMON /IFIL/IRD,IPR,IPU,NPR,IPR1
 C
-      DIMENSION ZNEW(64)
+C      DIMENSION ZNEW(64)
       RH=0.
       AHAZE=0
       IHA1=0
@@ -6594,9 +6597,15 @@ C             FOR A TEMPERATURE INDEPENDENT CASE
      2' PARAMETER IS CALCULATED FOR 50 MM/HR')
       END Subroutine RNSCAT
 
-      SUBROUTINE BS(I,A,B,N,S)
+      pure SUBROUTINE BS(I,A,B,N,S)
+      implicit none
+      integer,intent(out) :: I
+      real, intent(out) :: S
+      real,intent(in) :: A,B(*)
+      integer, intent(in) :: N
+
+      integer j,m
 C**********************************************************************
-      DIMENSION B(9)
 C
 C             THIS SUBROUTINE DOES THE BINARY SEARCH FOR THE INDEX I
 C             SUCH THAT A IS IN BETWEEN B(I) AND B(I+1)
@@ -6607,12 +6616,14 @@ C
       J=N
    10 M=(I+J)/2
       IF(A.LE.B(M)) THEN
-      J=M
+        J=M
       ELSE
-      I=M
+        I=M
       ENDIF
       IF(J.GT.I+1) GO TO 10
+
       S=(A-B(I))/(B(I+1)-B(I))
+
       END Subroutine BS
 
       FUNCTION   TAB(I,J,K,WC)

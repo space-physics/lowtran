@@ -1,10 +1,13 @@
         Program LowtranDemo
 
+        use iso_fortran_env, only : stdout=>OUTPUT_UNIT
+
         IMPLICIT NONE
+
 
 c       Python .true.:   Use common blocks (from f2py)
 c       Python .false.: Read the Tape5 file (like it's the 1960s again)
-        Logical, Parameter :: Python= .True. 
+        Logical, Parameter :: Python= .true. 
         
         Integer, Parameter :: nwl = 51  ! number of wavelengths
         Integer, Parameter :: ncol = 63  ! number of columns in output
@@ -20,8 +23,8 @@ c       Python .false.: Read the Tape5 file (like it's the 1960s again)
      &  MODEL,ITYPE,IEMSCT,
      &  H1,H2,ANGLE)
 
-        Write (*,'(A21/,201F7.0)') 'for wavelengths [nm]:', 1e3*ALAMPy
-        Write (*,'(A21/,201F7.3)') 'transmission:',TXPy(1:nwl,9)
+        Write (stdout,*) 'for wavelengths [nm]:', 1e3*ALAMPy
+        Write (stdout,*) 'transmission:',TXPy(1:nwl,9)
 
         End Program
         
