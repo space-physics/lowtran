@@ -2,7 +2,6 @@
 import os,sys
 import setuptools #enables develop
 import subprocess
-from numpy.distutils.core import setup,Extension
 
 exepath = os.path.dirname(sys.executable)
 try:
@@ -16,6 +15,8 @@ with open('README.rst','r') as f:
 	
 
 #%% install
+from numpy.distutils.core import setup,Extension
+
 setup(name='lowtran',
       version='0.1',
 	  description='Python wrapper for LOWTRAN7 atmosphere transmission model',
