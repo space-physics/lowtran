@@ -32,7 +32,7 @@ Python
 ------
 ::
 
-  python pylowtran7.py -a 0 12.5 25
+  python DemoLowtran.py -a 0 12.5 25
 
 should generate the plot shown above on your screen.
 
