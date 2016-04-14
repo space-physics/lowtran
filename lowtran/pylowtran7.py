@@ -57,7 +57,6 @@ CARD2:
 import logging
 from xarray import DataArray
 from numpy import asarray,atleast_1d,ceil,isfinite,empty
-from os import mkdir
 #
 try:
     import lowtran7 as lt7   #don't use dot in front, it's linking to .dll, .pyd, or .so
