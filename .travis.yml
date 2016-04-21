@@ -3,7 +3,8 @@ language: python
 python:
     - 3.5
 
-sudo: false
+sudo: true
+dist: trusty
 
 notifications:
   email: false
@@ -27,7 +28,6 @@ install:
     - source activate test
     - pip -q install coveralls
     - python setup.py develop
-    - conda install --yes scipy=0.16.1 #patch for library travis
 
 script:
     - coverage run test/test.py
