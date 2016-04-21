@@ -12,7 +12,6 @@ except Exception as e:
 
 with open('README.rst','r') as f:
 	long_description = f.read()
-	
 
 #%% install
 from numpy.distutils.core import setup,Extension
@@ -27,4 +26,3 @@ setup(name='lowtran',
       ext_modules=[Extension(name='lowtran7',sources=['lowtran7.f'],
                     f2py_options=['--quiet'])]
 	  )
-	 
