@@ -9,7 +9,7 @@ def test_atmosphere_transmission():
 
     T = golowtran(0,0,[500,900],c1)
 
-    assert_array_almost_equal([900.090027,  500.],T.index.values[[0,-1]])
+    assert_array_almost_equal([900.090027,  500.],T.wavelength_nm.values[[0,-1]])
     assert_array_almost_equal([0.87720001, 0.85709256],T.values[[0,-1]].squeeze())
 
 if __name__ == '__main__':
