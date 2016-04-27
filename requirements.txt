@@ -4,6 +4,6 @@ python-dateutil
 pytz
 nose
 numpy
-pandas
+xarray
 matplotlib
 seaborn
