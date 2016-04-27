@@ -1,3 +1,6 @@
+sudo: true
+dist: trusty
+
 language: python
 
 python:
@@ -26,8 +29,8 @@ install:
     - conda create --yes -n test python=$TRAVIS_PYTHON_VERSION
     - source activate test
     - pip -q install coveralls
-    - conda install --yes --quiet numpy 
     - python setup.py develop
+    - conda install --yes scipy=0.16.1 #patch for library travis
 
 script:
     - coverage run test/test.py
