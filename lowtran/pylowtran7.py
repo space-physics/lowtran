@@ -54,38 +54,36 @@ CARD2:
           =10 DESERT EXTINCTION  SETS OWN VISIBILITY FROM WIND SPEED
 
 """
-from __future__ import division,print_function,absolute_import
-from warnings import warn
-from pandas import DataFrame
-from numpy import asarray,atleast_1d,ceil,isfinite
-from os import mkdir
+import logging
+from xarray import DataArray
+from numpy import asarray,atleast_1d,ceil,isfinite,empty
 #
 try:
     import lowtran7 as lt7   #don't use dot in front, it's linking to .dll, .pyd, or .so
 except ImportError as e:
-    warn('you must compile the Fortran code first. f2py -m lowtran7 -c lowtran7.f  {}'.format(e))
-    raise
+    raise ImportError('you must compile the Fortran code first. f2py -m lowtran7 -c lowtran7.f  {}'.format(e))
 
-def golowtran(obsalt_km,zenang_deg,wlnm,c1):
+def golowtran(obsalt_km,zenang_deg,wlnm,c1) -> DataArray:
 #%% altitude
     obsalt_km = atleast_1d(obsalt_km)
     if obsalt_km.size>1:
         obsalt_km = obsalt_km[0]
-        warn('for now I only handle single altitudes. Using first value of {} [km]'.format(obsalt_km))
+        logging.error('for now I only handle single altitudes. Using first value of {} [km]'.format(obsalt_km))
 #%% zenith angle
     zenang_deg=atleast_1d(zenang_deg)
 #%% input check
     if not (isfinite(obsalt_km).all() and isfinite(zenang_deg).all() and isfinite(wlnm).all()):
-        warn('NaN or Inf detected in input, skipping LOWTRAN')
-        return None
+        logging.critical('NaN or Inf detected in input, skipping LOWTRAN')
+        return
 #%% setup wavelength
     wlcminv,wlcminvstep,nwl =nm2lt7(wlnm)
     if wlcminvstep<5:
-        warn('minimum resolution 5 cm^-1, specified resolution 20 cm^-1')
+        logging.error('minimum resolution 5 cm^-1, specified resolution 20 cm^-1')
     if not ((0<=wlcminv) & (wlcminv<=50000)).all():
-        warn('** LOWTRAN7: specified model range 0 <= wlcminv <= 50000')
+       logging.error('specified model range 0 <= wlcminv <= 50000')
     #TX,V,ALAM,TRACE,UNIF,SUMA = lt7.lwtrn7(True,nwl)
-    T = DataFrame(columns=zenang_deg)
+    T = DataArray(data=empty((nwl,zenang_deg.size)), dims=['wavelength_nm','zenith_angle'])
+    T['zenith_angle']=zenang_deg
 #%% invoke lowtran
     """
     Note we invoke case "3a" from table 14, only observer altitude and apparent
@@ -95,9 +93,9 @@ def golowtran(obsalt_km,zenang_deg,wlnm,c1):
         Tx,V,Alam = lt7.lwtrn7(True,nwl,wlcminv[1],wlcminv[0],wlcminvstep,
                                c1['model'],c1['itype'],c1['iemsct'],
                                obsalt_km,0,za)[:3]
-        T[za]= Tx[:,9]
+        T.loc[:,za] = Tx[:,9]
 #%% collect results
-    T.index=Alam*1e3
+    T['wavelength_nm']=Alam*1e3
 
     return T
 
@@ -108,54 +106,3 @@ def nm2lt7(wlnm):
     wlcminv = 1.e7/wlnm
     nwl = int(ceil((wlcminv[0]-wlcminv[1])/wlcminvstep))+1 #yes, ceil
     return wlcminv,wlcminvstep,nwl
-
-def plottrans(trans,zenang,log):
-    try:
-        ax = figure().gca()
-        for za,t in zip(zenang,trans):
-            ax.plot(trans.index,trans[t],label=str(za))
-        ax.set_xlabel('wavelength [nm]')
-        ax.set_ylabel('transmission (unitless)')
-        ax.set_title('zenith angle [deg] = '+str(zenang),fontsize=16)
-        ax.legend(loc='best')
-        ax.grid(True)
-        if log:
-            ax.set_yscale('log')
-            ax.set_ylim(1e-5,1)
-        ax.invert_xaxis()
-        ax.set_xlim(left=trans.index[0], right=trans.index[-1])
-    except Exception as e:
-        warn('trouble plotting   {}'.format(e))
-
-if __name__=='__main__':
-    try:
-        from matplotlib.pyplot import figure,show
-    except ImportError as e:
-        warn('lowtran: matplotlib not available. Plots disabled.  {}'.format(e))
-
-    from argparse import ArgumentParser
-    p = ArgumentParser(description='Lowtran 7 interface')
-    p.add_argument('-z','--obsalt',help='altitude of observer [km]',type=float,default=0.)
-    p.add_argument('-a','--zenang',help='zenith angle [deg]  can be single value or list of values',type=float,nargs='+',default=[0])
-    p.add_argument('-w','--wavelen',help='wavelength range nm (start,stop)',type=float,nargs=2,default=(200,2500))
-    p.add_argument('--model',help='0-6, see Card1 "model" reference. 5=subarctic winter',type=int,default=5)
-    p.add_argument('--itype',help='1-3, see Card1 "itype". 3=path to space',type=int,default=3)
-    p.add_argument('--iemsct',help='0-3, 0=transmittance',type=int,default=0)
-
-    p=p.parse_args()
-
-    c1={'model':p.model,'itype':p.itype,'iemsct':p.iemsct}
-
-    try:
-        mkdir('out')
-    except OSError:
-        pass
-
-    trans = golowtran(p.obsalt,p.zenang,p.wavelen,c1)
-
-    try:
-        plottrans(trans,p.zenang,False)
-        plottrans(trans,p.zenang,True)
-        show()
-    except ImportError as e:
-        warn('could not plot results. {}'.format(e))
