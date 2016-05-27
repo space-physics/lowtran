@@ -6,7 +6,8 @@ git:
   depth: 3
   
 env: 
-  - pyv=3.5
+  global:
+    - pyv=3.5
 
 matrix:
   include:
