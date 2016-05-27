@@ -21,10 +21,10 @@ matrix:
         - brew install gcc
 
     - os: linux
-      env: 
-        - osv=Linux
       sudo: required
       dist: trusty
+      env: 
+        - osv=Linux
       addons:
         apt:
           packages:
@@ -40,8 +40,7 @@ install:
     - source activate test
     - pip -q install coveralls
     - python setup.py develop
-#    - conda install --yes scipy=0.16.1 #patch for library travis
-    
+
 script:
     - coverage run test/test.py
 
