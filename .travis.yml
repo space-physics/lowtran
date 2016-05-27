@@ -12,7 +12,6 @@ env:
 matrix:
   include:
     - os: osx
-      osx_image: xcode7.3
       env: 
         - osv=MacOSX
       compiler: gcc
@@ -21,8 +20,6 @@ matrix:
         - brew install gcc
 
     - os: linux
-      sudo: required
-      dist: trusty
       env: 
         - osv=Linux
       addons:
