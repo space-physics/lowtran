@@ -5,7 +5,8 @@ notifications:
 git:
   depth: 1
   
-env: pyv=3.5
+env: 
+  - pyv=3.5
 
 matrix:
   include:
