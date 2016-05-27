@@ -10,12 +10,12 @@ env: pyv=3.5
 matrix:
   include:
     - os: osx
-        env: 
-          - osv=MacOSX
-        osx_image: xcode7.3
-        compiler: gcc
-        before_install:
-            - brew install gcc
+      osx_image: xcode7.3
+      env: 
+        - osv=MacOSX
+      compiler: gcc
+      before_install:
+        - brew install gcc
 
     - os: linux
         env: 
