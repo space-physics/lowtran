@@ -18,14 +18,14 @@ matrix:
         - brew install gcc
 
     - os: linux
-        env: 
-          - osv=Linux
-        sudo: required
-        dist: trusty
-        addons:
-          apt:
-            packages:
-              - gfortran
+      env: 
+        - osv=Linux
+      sudo: required
+      dist: trusty
+      addons:
+        apt:
+          packages:
+            - gfortran
 
 
 before_install:
