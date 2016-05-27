@@ -30,12 +30,10 @@ matrix:
             - gfortran
 
 
-before_install:
+install:
     - wget http://repo.continuum.io/miniconda/Miniconda-latest-$osv-x86_64.sh -O miniconda.sh
     - bash miniconda.sh -b -p $HOME/miniconda
     - export PATH=$HOME/miniconda/bin:$PATH
-
-install:
     - conda create --yes -n test python=$pyv
     - source activate test
     - pip -q install coveralls
