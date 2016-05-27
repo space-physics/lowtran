@@ -1,40 +1,46 @@
-sudo: true
-dist: trusty
-
-language: python
-
-python:
-    - 3.5
-
-sudo: true
-dist: trusty
 
 notifications:
   email: false
 
 git:
   depth: 1
+  
+env: pyv=3.5
 
-addons:
-  apt:
-    packages:
-      - gfortran
+matrix:
+  include:
+    - os: osx
+        env: osv=MacOSX
+        osx_image: xcode7.3
+        compiler: gcc
+        before_install:
+            - brew install gcc
+
+    - os: linux
+        env: osv=Linux
+        sudo: required
+        dist: trusty
+        addons:
+          apt:
+            packages:
+              - gfortran
+
 
 before_install:
-    - wget http://repo.continuum.io/miniconda/Miniconda-latest-Linux-x86_64.sh -O miniconda.sh
-    - chmod +x miniconda.sh
+    - wget http://repo.continuum.io/miniconda/Miniconda-latest-$osv-x86_64.sh -O miniconda.sh
     - bash miniconda.sh -b -p $HOME/miniconda
     - export PATH=$HOME/miniconda/bin:$PATH
 
 install:
-    - conda create --yes -n test python=$TRAVIS_PYTHON_VERSION
+    - conda create --yes -n test python=$pyv
     - source activate test
     - pip -q install coveralls
     - python setup.py develop
-    - conda install --yes scipy=0.16.1 #patch for library travis
-
+#    - conda install --yes scipy=0.16.1 #patch for library travis
+    
 script:
     - coverage run test/test.py
 
 after_success:
     - coveralls
+
