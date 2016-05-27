@@ -3,7 +3,7 @@ notifications:
   email: false
 
 git:
-  depth: 1
+  depth: 3
   
 env: 
   - pyv=3.5
