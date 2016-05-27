@@ -18,7 +18,7 @@ Updated by Michael Hirsch to be platform independent and easily accessible from 
 
 .. image:: http://blogs.bu.edu/mhirsch/files/2015/04/lowtran.png
     :alt: "Lowtran7 absorption"
-    :scale: 50%
+    :scale: 25%
 
 
 
