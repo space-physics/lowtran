@@ -15,9 +15,6 @@ matrix:
       env: 
         - osv=MacOSX
       compiler: gcc
-      before_install:
-        - brew update
-        - brew install gcc
 
     - os: linux
       env: 
