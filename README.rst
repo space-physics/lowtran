@@ -8,16 +8,19 @@
 =======
 Lowtran
 =======
-LOWTRAN7 FORTRAN77 atmospheric absportion extinction model--now in Python!
-Updated by Michael Hirsch to compile in modern compilers and to be easily accessible from Python.
+LOWTRAN7 atmospheric absportion extinction model.
+Updated by Michael Hirsch to be platform independent and easily accessible from Python.
 
 :Python API Author: Michael Hirsch
 :License: MIT
 
+.. contents::
+
 .. image:: http://blogs.bu.edu/mhirsch/files/2015/04/lowtran.png
     :alt: "Lowtran7 absorption"
+    :scale: 50%
 
-.. contents::
+
 
 Installation
 ============
@@ -36,8 +39,8 @@ Python
 
 should generate the plot shown above on your screen.
 
-Fortran
--------
+Fortran (optional)
+-------------------
 ::
 
     cd bin
