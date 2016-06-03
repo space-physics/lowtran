@@ -5,20 +5,34 @@ notifications:
 git:
   depth: 3
   
-env: 
-  global:
-    - pyv=3.5
 
 matrix:
   include:
     - os: osx
       env: 
         - osv=MacOSX
+        - pyv=3.5
+      compiler: gcc
+
+    - os: osx
+      env: 
+        - osv=MacOSX
+        - pyv=2.7
       compiler: gcc
 
     - os: linux
       env: 
         - osv=Linux
+        - pyv=3.5
+      addons:
+        apt:
+          packages:
+            - gfortran
+
+    - os: linux
+      env: 
+        - osv=Linux
+        - pyv=2.7
       addons:
         apt:
           packages:
@@ -36,7 +50,7 @@ install:
     - python setup.py develop
 
 script:
-    - coverage run test/test.py
+    - coverage run test/test.py -v
 
 after_success:
     - coveralls
