@@ -63,7 +63,7 @@ try:
 except ImportError as e:
     raise ImportError('you must compile the Fortran code first. f2py -m lowtran7 -c lowtran7.f  {}'.format(e))
 
-def golowtran(obsalt_km,zenang_deg,wlnm,c1) -> DataArray:
+def golowtran(obsalt_km,zenang_deg,wlnm,c1):# -> DataArray:
 #%% altitude
     obsalt_km = atleast_1d(obsalt_km)
     if obsalt_km.size>1:
