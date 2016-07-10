@@ -1,7 +1,6 @@
-#!/usr/bin/env python3
+#!/usr/bin/env python
 """
 Michael Hirsch
-GPLv3+
 Python wrapper of the venerable LOWTRAN7 atmospheric absorption and solar transmission
 model circa 1994.
 For now, assumes arctic environment

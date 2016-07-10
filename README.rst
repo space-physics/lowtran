@@ -11,6 +11,13 @@ Lowtran
 LOWTRAN7 atmospheric absportion extinction model.
 Updated by Michael Hirsch to be platform independent and easily accessible from Python.
 
+The main LOWTRAN program has been made accessible from Python by using direct memory transfers instead of the cumbersome and error-prone process of writing/reading text files.
+
+The ``LOWFIL`` program in reference/lowtran7.10.f was not connected as I had previously implemented my own filter function directly in Python.
+
+The ``LOWSCAN`` spectral sampling (scanning) program in reference/lowtran7.13.f was not connected as I had no need for coarser spectral resolution.
+
+
 :Python API Author: Michael Hirsch
 :License: MIT
 
