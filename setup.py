@@ -4,8 +4,7 @@ import setuptools #enables develop
 import subprocess
 
 try:
-    subprocess.call(['conda','install','--yes','--file','requirements.txt'],
-                    cwd=os.path.dirname(sys.executable))
+    subprocess.call(['conda','install','--yes','--file','requirements.txt'])
 except Exception as e:
     pass
 
