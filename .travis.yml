@@ -4,46 +4,33 @@ notifications:
 git:
   depth: 3
   
+python:
+    - 2.7
+    - 3.5
+  
+os:
+    - osx
+    - linux
 
-matrix:
-  include:
-    - os: osx
-      env: 
-        - osv=MacOSX
-        - pyv=3.5
-      compiler: gcc
-
-    - os: osx
-      env: 
-        - osv=MacOSX
-        - pyv=2.7
-      compiler: gcc
-
-    - os: linux
-      env: 
-        - osv=Linux
-        - pyv=3.5
-      addons:
-        apt:
-          packages:
-            - gfortran
-
-    - os: linux
-      env: 
-        - osv=Linux
-        - pyv=2.7
-      addons:
-        apt:
-          packages:
-            - gfortran
-
+addons:
+    apt:
+      packages:
+        - gfortran
 
 install:
-    - wget http://repo.continuum.io/miniconda/Miniconda-latest-$osv-x86_64.sh -O miniconda.sh
+    - if [[ $TRAVIS_OS_NAME == osx ]]; then
+        wget http://repo.continuum.io/miniconda/Miniconda-latest-MacOSX-x86_64.sh -O miniconda.sh
+      else 
+        wget http://repo.continuum.io/miniconda/Miniconda-latest-Linux-x86_64.sh -O miniconda.sh
+      fi
+      
     - bash miniconda.sh -b -p $HOME/miniconda
     - export PATH=$HOME/miniconda/bin:$PATH
-    - conda update --yes --quiet conda
-    - conda create --yes -n test python=$pyv
+    - hash -r
+    
+    - conda config --set always_yes yes --set changeps1 no
+    - conda update -q conda
+    - conda create --yes -n test python=$TRAVIS_PYTHON_VERSION
     - source activate test
     - pip -q install coveralls
     - python setup.py develop
