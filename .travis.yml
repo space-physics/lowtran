@@ -1,4 +1,4 @@
-language: python
+language: generic
 
 notifications:
   email: false
@@ -10,9 +10,19 @@ python:
     - 2.7 
     - 3.5
   
-os:
-    - osx
-    - linux
+matrix:
+  include:
+    - os: osx
+      env: pyv=2.7
+
+    - os: linux
+      env: pyv=2.7
+      
+    - os: osx
+      env: pyv=3.5
+
+    - os: linux
+      env: pyv=3.5
 
 addons:
     apt:
@@ -32,14 +42,11 @@ install:
     
     - conda config --set always_yes yes --set changeps1 no
     - conda update -q conda
-    - conda create -n test python=$TRAVIS_PYTHON_VERSION
+    - conda create -n test python=$pyv
     - source activate test
     - pip -q install coveralls
     - python setup.py develop
 
-script:
-    - coverage run tests/test.py -v
+script: coverage run tests/test.py -v
 
-after_success:
-    - coveralls
-
+after_success: coveralls
