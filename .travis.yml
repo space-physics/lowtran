@@ -6,10 +6,6 @@ notifications:
 git:
   depth: 3
   
-python:
-    - 2.7 
-    - 3.5
-  
 matrix:
   include:
     - os: osx
