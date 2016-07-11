@@ -1,5 +1,4 @@
-language: 
-    python
+language: generic
 
 notifications:
   email: false
@@ -33,7 +32,7 @@ install:
     
     - conda config --set always_yes yes --set changeps1 no
     - conda update -q conda
-    - conda create --yes -n test python=$TRAVIS_PYTHON_VERSION
+    - conda create -n test python=$TRAVIS_PYTHON_VERSION
     - source activate test
     - pip -q install coveralls
     - python setup.py develop
