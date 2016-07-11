@@ -7,7 +7,7 @@ git:
   depth: 3
   
 python:
-#    - 2.7 #temporarily disabled due to Travis Python 2.7 bug for MacOSX in general
+    - 2.7 
     - 3.5
   
 os:
