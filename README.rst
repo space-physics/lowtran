@@ -17,17 +17,14 @@ The ``LOWFIL`` program in reference/lowtran7.10.f was not connected as I had pre
 
 The ``LOWSCAN`` spectral sampling (scanning) program in reference/lowtran7.13.f was not connected as I had no need for coarser spectral resolution.
 
-
 :Python API Author: Michael Hirsch
 :License: MIT
 
 .. contents::
 
-.. image:: http://blogs.bu.edu/mhirsch/files/2015/04/lowtran.png
+.. image:: gfx/lowtran.png
     :alt: "Lowtran7 absorption"
     :scale: 25 %
-
-
 
 Installation
 ============
@@ -48,7 +45,7 @@ should generate the plot shown above on your screen.
 
 Fortran (optional)
 -------------------
-::
+This is not necessary for normal users::
 
     cd bin
     cmake ..
@@ -61,18 +58,27 @@ Notes
 -----
 `LOWTRAN7 User manual <http://www.dtic.mil/dtic/tr/fulltext/u2/a206773.pdf>`_ -- you may refer to this to understand what parameters I've set to default. Currently I don't have any aerosols enabled for example, though it's trivial to add.
 
-Right now a lot of features aren't implemented, please request those you want.
+Right now a lot of configuration features aren't implemented, please request those you want.
 
 
 Windows f2py
-----------------
+------------
 (this is handled automatically by setup.py, noted here for debugging)
 
 Yes, even though you're `using a 64-bit compiler <https://scivision.co/f2py-running-fortran-code-in-python-on-windows/>`_::
 
   f2py --compiler=mingw32 -m lowtran7 -c lowtran7.f
 
-Tested with Gfortran 4.6-5.3 and MinGW.
+Tested on Windows with `MinGW <https://sourceforge.net/projects/mingw-w64/>`_.
+
+Windows Fortran compile
+-----------------------
+Normal users don't need to do this. I suggest that you instead use Cygwin or Windows Subsytem for Linux::
+
+    cd bin
+    cmake -G "MinGW Makefiles" ..
+    make
+    ./testlowtran
 
 Reference
 ---------

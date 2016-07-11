@@ -1,14 +1,11 @@
         Program LowtranDemo
 
-        use iso_fortran_env, only : stdout=>OUTPUT_UNIT
+        Implicit none
 
-        IMPLICIT NONE
+!       Python .true.:   Use common blocks (from f2py)
+!       Python .false.: Read the Tape5 file (like it's the 1960s again)
+        Logical, Parameter :: Python= .true.
 
-
-c       Python .true.:   Use common blocks (from f2py)
-c       Python .false.: Read the Tape5 file (like it's the 1960s again)
-        Logical, Parameter :: Python= .true. 
-        
         Integer, Parameter :: nwl = 51  ! number of wavelengths
         Integer, Parameter :: ncol = 63  ! number of columns in output
         Real :: TXPy(nwl,ncol), VPy(nwl), ALAMPy(nwl), TRACEPy(nwl),
@@ -23,32 +20,32 @@ c       Python .false.: Read the Tape5 file (like it's the 1960s again)
      &  MODEL,ITYPE,IEMSCT,
      &  H1,H2,ANGLE)
 
-        Write (stdout,*) 'for wavelengths [nm]:', 1e3*ALAMPy
-        Write (stdout,*) 'transmission:',TXPy(1:nwl,9)
+        print *, 'for wavelengths [nm]:', 1e3*ALAMPy
+        print *, 'transmission:',TXPy(1:nwl,9)
 
-        End Program
-        
-        
+        end program
+
+
 c        Block Data setcards
 c        Integer   MODEL,ITYPE,IEMSCT,M1,M2,M3,IM,NOPRT,M4,M5,M6,MDEF
 c     &    IRD1,IRD2
 c        Real      TBOUND,SALB,H1,H2,ANGLE,RANGE,BETA,RE
-c        
+c
 c        Common /CARD1/MODEL,ITYPE,IEMSCT,M1,M2,M3,IM,NOPRT,TBOUND,SALB
 c        Data Model/5/, ITYPE/3/, IEMSCT/0/, M1/0/,M2/0/,M3/0/,NOPRT/0/,
 c     &       TBOUND/0/,SALB/0/
 c
 c        COMMON /CARD1A/ M4,M5,M6,MDEF,        IRD1,IRD2
 c        Data M4/0/,M5/0/,M6/0/,MDEF/0/ !No need to init IRD1,IRD2
-c        
+c
 c        COMMON /CARD2/ IHAZE,ISEASN,IVULCN,ICSTL,ICLD,IVSA,VIS,WSS,WHH,
 c     &    RAINRT
 c        DATA IHAZE/0/  !no need for the rest
-c        
+c
 c        COMMON /CARD3/ H1,H2,ANGLE,RANGE,BETA,RE,LEN
 c        Data H1/0./,H2/0./,Angle/0./
-c        
+c
 c       COMMON /CARD4/ V1,V2,DV
 c        Data V1/8333./, V2/33333./, DV/500./
-c        
+c
 c        End Block Data setcards
