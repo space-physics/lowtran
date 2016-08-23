@@ -2,7 +2,7 @@
 from os import makedirs
 from matplotlib.pyplot import show
 #
-from lowtran.pylowtran7 import golowtran
+from lowtran import golowtran
 from lowtran.plots import plottrans
 
 if __name__=='__main__':

@@ -1,7 +1,7 @@
 #!/usr/bin/env python
 from numpy.testing import assert_array_almost_equal,run_module_suite
 #
-from lowtran.pylowtran7 import golowtran
+from lowtran import golowtran
 
 def test_atmosphere_transmission():
 
