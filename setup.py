@@ -15,7 +15,7 @@ setup(name='lowtran',
 	  description='Python wrapper for LOWTRAN7 atmosphere transmission model',
 	  author='Michael Hirsch',
 	  url='https://github.com/scienceopen/lowtran',
-      install_requires=['pathlib2'],
+      install_requires=[],
       ext_modules=[Extension(name='lowtran7',sources=['lowtran7.f'],
                     f2py_options=['--quiet'])]
 	  )

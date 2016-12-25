@@ -1,5 +1,6 @@
 setuptools
 six
+pathlib2
 python-dateutil
 pytz
 nose
