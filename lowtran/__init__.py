@@ -1,8 +1,3 @@
-try:
-    from pathlib import Path
-    Path().expanduser()
-except (ImportError,AttributeError):
-    from pathlib2 import Path
 """
 Michael Hirsch
 Python wrapper of the venerable LOWTRAN7 atmospheric absorption and solar transmission
