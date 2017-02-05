@@ -26,23 +26,31 @@ The ``LOWSCAN`` spectral sampling (scanning) program in reference/lowtran7.13.f 
 
 Installation
 ============
+`See this page if you have errors on Fortran compilation. <https://www.scivision.co/f2py-running-fortran-code-in-python-on-windows>`_
 ::
 
   python setup.py develop
 
 Examples
 ========
-
-Python
-------
 ::
 
   python DemoLowtran.py -a 0 12.5 25
 
 should generate the plot shown above on your screen.
 
+Notes
+=====
+`LOWTRAN7 User manual <http://www.dtic.mil/dtic/tr/fulltext/u2/a206773.pdf>`_ -- you may refer to this to understand what parameters I've set to default. Currently I don't have any aerosols enabled for example, though it's trivial to add.
+
+Right now a lot of configuration features aren't implemented, please request those you want.
+
+Reference
+~~~~~~~~~
+`Original 1994 Lowtran7 Code <http://www1.ncdc.noaa.gov/pub/data/software/lowtran/>`_
+
 Fortran (optional)
--------------------
+~~~~~~~~~~~~~~~~~~
 This is not necessary for normal users::
 
     cd bin
@@ -52,16 +60,10 @@ This is not necessary for normal users::
 
 should generate `this text output <https://gist.github.com/scienceopen/89ef2060d8f15b0a60914d13a61e33ab>`_.
 
-Notes
------
-`LOWTRAN7 User manual <http://www.dtic.mil/dtic/tr/fulltext/u2/a206773.pdf>`_ -- you may refer to this to understand what parameters I've set to default. Currently I don't have any aerosols enabled for example, though it's trivial to add.
-
-Right now a lot of configuration features aren't implemented, please request those you want.
-
 
 Windows f2py
-------------
-(this is handled automatically by setup.py, noted here for debugging)
+~~~~~~~~~~~~
+(this is handled automatically by ``setup.py`, noted here for debugging)
 
 Yes, even though you're `using a 64-bit compiler <https://scivision.co/f2py-running-fortran-code-in-python-on-windows/>`_::
 
@@ -70,14 +72,10 @@ Yes, even though you're `using a 64-bit compiler <https://scivision.co/f2py-runn
 Tested on Windows with `MinGW <https://sourceforge.net/projects/mingw-w64/>`_.
 
 Windows Fortran compile
------------------------
+~~~~~~~~~~~~~~~~~~~~~~~
 Normal users don't need to do this. I suggest that you instead use Cygwin or Windows Subsytem for Linux::
 
     cd bin
     cmake -G "MinGW Makefiles" ..
     make
     ./testlowtran
-
-Reference
----------
-`Original 1994 Lowtran7 Code <http://www1.ncdc.noaa.gov/pub/data/software/lowtran/>`_
