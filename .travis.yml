@@ -36,6 +36,7 @@ install:
     - source activate test
     - pip -q install coveralls
     - pip install .
+    - python setup.py develop
 
 script: coverage run tests/test.py -v
 
