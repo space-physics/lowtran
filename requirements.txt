@@ -1,8 +1,0 @@
-setuptools
-python-dateutil
-pytz
-nose
-numpy
-xarray
-matplotlib
-seaborn
