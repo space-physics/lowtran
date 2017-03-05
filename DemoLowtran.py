@@ -1,7 +1,7 @@
 #!/usr/bin/env python
 from matplotlib.pyplot import show
 #
-from lowtran import golowtran
+import lowtran
 from lowtran.plots import plottrans
 
 if __name__=='__main__':
@@ -19,7 +19,7 @@ if __name__=='__main__':
 
     c1={'model':p.model,'itype':p.itype,'iemsct':p.iemsct}
 
-    trans = golowtran(p.obsalt,p.zenang,p.wavelen,c1)
+    trans = lowtran.golowtran(p.obsalt,p.zenang,p.wavelen,c1)
 
     try:
         plottrans(trans,False)
