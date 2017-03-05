@@ -1,7 +1,7 @@
 """
 Michael Hirsch
 Python wrapper of the venerable LOWTRAN7 atmospheric absorption and solar transmission
-model circa 1994.
+model circa 1984.
 For now, assumes arctic environment
 
 Note: specified Lowtran7 model limitations include
@@ -57,7 +57,7 @@ from xarray import DataArray
 from numpy import asarray,atleast_1d,ceil,isfinite,empty
 #
 try:
-    import lowtran7 as lt7   #don't use dot in front, it's linking to .dll, .pyd, or .so
+    import lowtran7   #don't use dot in front, it's linking to .dll, .pyd, or .so
 except ImportError as e:
     raise ImportError('you must compile the Fortran code first. f2py -m lowtran7 -c lowtran7.f  {}'.format(e))
 
@@ -79,7 +79,7 @@ def golowtran(obsalt_km,zenang_deg,wlnm,c1):# -> DataArray:
         logging.error('minimum resolution 5 cm^-1, specified resolution 20 cm^-1')
     if not ((0<=wlcminv) & (wlcminv<=50000)).all():
        logging.error('specified model range 0 <= wlcminv <= 50000')
-    #TX,V,ALAM,TRACE,UNIF,SUMA = lt7.lwtrn7(True,nwl)
+    #TX,V,ALAM,TRACE,UNIF,SUMA = lowtran7.lwtrn7(True,nwl)
     T = DataArray(data=empty((nwl,zenang_deg.size)), dims=['wavelength_nm','zenith_angle'])
     T['zenith_angle']=zenang_deg
 #%% invoke lowtran
@@ -88,7 +88,7 @@ def golowtran(obsalt_km,zenang_deg,wlnm,c1):# -> DataArray:
     angle are specified
     """
     for za in zenang_deg:
-        Tx,V,Alam = lt7.lwtrn7(True,nwl,wlcminv[1],wlcminv[0],wlcminvstep,
+        Tx,V,Alam = lowtran7.lwtrn7(True,nwl,wlcminv[1],wlcminv[0],wlcminvstep,
                                c1['model'],c1['itype'],c1['iemsct'],
                                obsalt_km,0,za)[:3]
         T.loc[:,za] = Tx[:,9]
