@@ -1,5 +1,4 @@
 #!/usr/bin/env python
-from os import makedirs
 from matplotlib.pyplot import show
 #
 from lowtran import golowtran
@@ -19,8 +18,6 @@ if __name__=='__main__':
     p=p.parse_args()
 
     c1={'model':p.model,'itype':p.itype,'iemsct':p.iemsct}
-
-    makedirs('out',exist_ok=True)
 
     trans = golowtran(p.obsalt,p.zenang,p.wavelen,c1)
 
