@@ -43,7 +43,7 @@
 ! TODO M1-M6=0 to use JCHAR of card 2C.1 (p.22)
 
 !      real, parameter :: h1 = 0.05  (kilometers altitude of horizontal path)
-!      real, parameter :: angle = 0. ! TODO truthfully it's 90. for horizontal path, have to check/test to see if Lowtran uses this value for model=0
+!      real, parameter :: angle = 0. ! TODO truthfully it's 90. for horizontal path, have to check/test to see if Lowtran uses this value for model=0 horiz. path.
 !-------- END model config -----------------
 
 !-------- array assignments --------
