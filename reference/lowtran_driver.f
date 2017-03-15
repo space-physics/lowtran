@@ -18,7 +18,9 @@
 ! Model bounds and resolution (can't increase resolution beyond model limits)
       integer, Parameter :: nwl = 51  ! number of wavelengths
       integer, Parameter :: ncol = 63  ! number of columns in output
-      real, Parameter :: v1=8333., v2=33333. ! wavenumber cm^-1 bounds
+      real, Parameter :: v1=8333., v2=33333. ! frequency cm^-1 bounds
+      ! DV: frequency cm^1 step (lower limit 5. per Card 4 p.40)
+      real, parameter :: dv=500. 
 ! Model configuration, see Lowtran manual p. 21(30) s. 3.2
 ! Use only one of the following model scenarios
 
@@ -40,8 +42,6 @@
         Real :: TXPy(nwl,ncol), VPy(nwl), ALAMPy(nwl), TRACEPy(nwl),
      &      UNIFPy(nwl), SUMAPy(nwl),H1,H2,ANGLE,DV
 
-
-        DV=500.
         H1=0.; H2=0.; ANGLE=0.
 
         call LWTRN7(Python,nwl,V1,V2,DV,
