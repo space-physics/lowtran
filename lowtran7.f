@@ -1184,7 +1184,8 @@ C
       IF(IEMSCT.EQ.3) GO TO 315
       If (Python) Then
         H1 = H1Py; H2=H2Py; ANGLE=AnglePy
-        Range=0; Beta=0; Ro=0; Len=0
+! TODO add RANGE to API
+        Range=0.; Beta=0.; Ro=0; Len=0
       Else
         READ(IRD,1312)H1,H2,ANGLE,RANGE,BETA,RO,LEN
       EndIf
