@@ -15,7 +15,7 @@
       character(len=8) :: arg
       integer :: model,itype,iemsct,im
       integer :: iseasn,ml,ird1
-      real :: angle,h1
+      real :: angle,h1,range
 
 !     Python .true.:   Use common blocks (from f2py)
 !     Python .false.: Read the Tape5 file (like it's the 1960s again)
@@ -55,6 +55,7 @@
           ANGLE=0. ! initial zenith angle; in Python set to camera boresight angle (for our cameras typically magnetic inclination of E-layer ionosphere, e.g. angle is about 12.5 at Poker Flat Research Range)
           h1=0. ! our cameras are at ground level (kilometers)
 ! in lowtran7.f, I set M1-M6, MDEF all =0 per p.21
+          range=0. ! not used
       elseif (imodel.eq.1) then
 !!! Horizontal model (only way to use meterological data) !!!
           model=0 ! 0: Specify meterological data (horiz path)
@@ -68,6 +69,7 @@
 ! TODO M1-M6=0 to use JCHAR of card 2C.1 (p.22)
           h1 = 0.05  !(kilometers altitude of horizontal path)
           angle = 0. ! TODO truthfully it's 90. for horizontal path, have to check/test to see if Lowtran uses this value for model=0 horiz. path.
+          range=h1
       else
          error stop 'unknown model selection'
       endif
@@ -78,7 +80,7 @@
      &  TXPy,VPy,ALAMPy,TRACEPy,UNIFPy, SUMAPy,
      &  MODEL,ITYPE,IEMSCT,IM,
      &  ISEASN,ML,IRD1,
-     &  H1,H2,ANGLE)
+     &  H1,H2,ANGLE,range)
 
         print *, 'for wavelengths [nm]:', 1e3*ALAMPy
         print *, 'transmission:',TXPy(1:nwl,9)
