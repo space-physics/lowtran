@@ -74,6 +74,8 @@
           h1 = 0.05  !(kilometers altitude of horizontal path)
           angle = 0. ! TODO truthfully it's 90. for horizontal path, have to check/test to see if Lowtran uses this value for model=0 horiz. path.
           range=h1
+          zmdl(1) = h1
+          p(1) = .21*101.325*10 ! millibar
       else
          error stop 'unknown model selection'
       endif
