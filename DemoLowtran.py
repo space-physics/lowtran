@@ -19,7 +19,7 @@ if __name__=='__main__':
     p=p.parse_args()
 
     c1={'model':p.model,'itype':p.itype,'iemsct':p.iemsct,'im':p.im,
-        'iseasn':0}
+        'iseasn':0,'ml':0,'ird1':0}
 
     trans = lowtran.golowtran(p.obsalt,p.zenang,p.wavelen,c1)
 
