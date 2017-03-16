@@ -1,6 +1,7 @@
       SUBROUTINE LWTRN7(Python,nwl,V1Py,V2Py,DVPy,
      & TXPy,VPy,ALAMPy,TRACEPy,UNIFPy, SUMAPy,
      & MODELPy,ITYPEPy,IEMSCTPy,IMpy,
+     & ISEASNPy,
      & H1Py,H2Py,ANGLEPy)
 
       Logical,Intent(in) :: Python
@@ -1028,7 +1029,8 @@ C
 ! ---------- CARD 2 AEROSOL MODEL
       If (Python) Then
       !FIXME make it read input parameter
-        IHAZE=0;ISEASN=0;IVULCN=0; ICSTL=0; ICLD=0; IVSA=0; VIS=0.;
+        ISEASN=ISEASNPy
+        IHAZE=0;IVULCN=0; ICSTL=0; ICLD=0; IVSA=0; VIS=0.;
         WSS=0.; WHH=0.; RAINRT=0.; GNDALT=0.
       Else
        READ(IRD,1200)IHAZE,ISEASN,IVULCN,ICSTL,ICLD,
@@ -1324,7 +1326,7 @@ C
 1501   FORMAT(20X,'  M4 = ',I5,' M5 = ',I5,' M6 = ',I5,' MDEF = ' ,I5)
 C
 510   IF(JPRT.EQ.0) GO TO 520
-      IF(ISEASN.EQ.0)ISEASN=1
+      IF(ISEASN.EQ.0) ISEASN=1
       IF(IVULCN.LE.0) IVULCN=1
       IHVUL=IVULCN+10
       IF( IVULCN .EQ. 6) IHVUL = 11
