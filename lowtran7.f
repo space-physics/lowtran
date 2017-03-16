@@ -1,11 +1,12 @@
       SUBROUTINE LWTRN7(Python,nwl,V1Py,V2Py,DVPy,
      & TXPy,VPy,ALAMPy,TRACEPy,UNIFPy, SUMAPy,
      & MODELPy,ITYPEPy,IEMSCTPy,IMpy,
-     & ISEASNPy,
+     & ISEASNPy,MLpy,IRD1py,
      & H1Py,H2Py,ANGLEPy)
 
       Logical,Intent(in) :: Python
       Integer,Intent(in) :: nwl,MODELPy,ITYPEPy,IEMSCTPy,IMpy
+      Integer,Intent(in) :: ISEASNpy,MLpy,IRD1py
       Real, Intent(in)  :: V1Py,V2Py,DVPy,H1Py,H2Py,ANGLEPy
       Real, Intent(Out) :: TXPy(nwl,63), VPy(nwl), ALAMPy(nwl),
      &      TRACEPy(nwl),UNIFPy(nwl), SUMAPy(nwl)
@@ -1109,11 +1110,17 @@ C
            IF((MODEL.EQ.7.AND.IM.EQ.1) .OR.(MODEL.EQ.0)) THEN
 C
 C*****CARD 2C  USER SUPPLIED ATMOSPHERIC PROFILE
-C
-       If (.not.Python) READ (IRD,1250) ML,IRD1,IRD2,(HMODEL(I,7),I=1,5)
+              If (Python) then
+                ML=MLpy; IRD1=IRD1py; IRD2=0
+                ! NOTE didn't assign HMODEL because it's just text labels (?)
+              else
+                READ (IRD,1250) ML,IRD1,IRD2,(HMODEL(I,7),I=1,5)
+              endif
+
+
 1250          FORMAT(3I5,18A4)
               WRITE(IPR,1251)ML,IRD1,IRD2,(HMODEL(I,7),I=1,5)
-              IF(IVSA.EQ.1)CALL RDNSM(Python)
+              IF(IVSA.EQ.1) CALL RDNSM(Python)
 1251          FORMAT('0 CARD 2C *****',3I5,18A4)
            ENDIF
       ENDIF
