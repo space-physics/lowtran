@@ -883,6 +883,7 @@ C***********************************************************************
       COMMON /IFIL/ IRD,IPR,IPU,NPR,IPR1
       COMMON /CARD1/ MODEL,ITYPE,IEMSCT,M1,M2,M3,IM,NOPRT,TBOUND,SALB
       COMMON /CARD1A/ M4,M5,M6,MDEF,IRD1,IRD2
+      COMMON /CARD1B/ JUNIT(15),WMOL(12),WAIR1,JLOW ! added M. Hirsch 
       COMMON /CARD2/ IHAZE,ISEASN,IVULCN,ICSTL,ICLD,IVSA,VIS,WSS,WHH,
      1    RAINRT
       COMMON /CARD2A/ CTHIK,CALT,CEXT
@@ -1119,6 +1120,12 @@ C*****CARD 2C  USER SUPPLIED ATMOSPHERIC PROFILE
                     ZM(ipy2) = ZMDLPy(ipy2) ! ZM = ZMDL
                     PM(ipy2)    = Ppy(ipy2) ! PM = P
                    TM(ipy2)     = Tpy(ipy2) ! TM = T
+                enddo
+
+                junit(1)=10; !10: units of total pressure: millibar
+                junit(2)=10  !10: units of temperature: Kelvin
+                do ipy2 = 3,15
+                   junit(ipy2) = 14   !FIXME hard set to PARTIAL PRESSURE for Local Meterological experiments. Can be upgraded.
                 enddo
 
                 ! NOTE didn't assign HMODEL because it's just text labels (?)
@@ -1811,8 +1818,8 @@ C
       WHNO3(K)= 0
       DO 10 KM = 1,15
       JCHAR(KM) = ' '
-      IF(KM. GT. 12) GO TO 10
-      WMOL(KM) = 0.
+      IF(KM. GT. 12) GO TO 10 
+      if (.not.Python) WMOL(KM) = 0. ! if python keep WMOL from common populated in Main subroutine
 10    CONTINUE
 C
 C
@@ -1871,6 +1878,8 @@ C
 C
       IF(IRD0 .EQ. 1) THEN
         !NOTE if Python, then we plug in these values into COMMON blocks in main subroutine.
+        ! common block will give: 
+        ! ZMDL, P, T,
       If (.not.Python)  READ(IRD,80)ZMDL(K),P(K),T(K),
      &     WMOL(1),WMOL(2),WMOL(3),
      X     (JCHAR(KM),KM=1,14)
@@ -1940,7 +1949,10 @@ C
            HMDLZ(7) = AHAZE
       ENDIF
       DO 12 KM = 1,15
-12    JUNIT(KM) = JOU(JCHAR(KM))
+         ! if python it was set from main common.
+12      if (.not.python) JUNIT(KM) = JOU(JCHAR(KM))
+
+
       IF(IRD0 .EQ. 0) THEN
           JUNIT(1) = M1
           JUNIT(2) = M1
@@ -2937,7 +2949,7 @@ CC    WMOL1(1) = DENSAT(A)*(WMOL/100.0)
       GO TO 200
  199   WRITE(IPR,951)JUNIT
  951  FORMAT(/,'  **** ERROR IN WATVAP ****, JUNIT = ',I5)
-      STOP'JUNIT'
+       error STOP'JUNIT'
   200 CONTINUE
       WMOL1(1)=2.989E-23 *WMOL1(1) *WAIR
       DENST = DENSAT(A)
@@ -3337,7 +3349,7 @@ C     HMXVSA=ZVSA(9)
       IHA1=IHVSA(K)
       END Subroutine LAYVSA
 
-      FUNCTION   JOU(CHAR)
+      FUNCTION JOU(CHAR)
       COMMON /IFIL/ IRD,IPR,IPU,NOPR,NFHDRF
 C
       CHARACTER*1 CHAR,HOLVEC(22)
@@ -3358,7 +3370,7 @@ C
 110   IF (INDX .EQ. 0) THEN
         WRITE(IPR,910) CHAR
 910     FORMAT('0 INVALID PARAMETER :',2X,A1)
-        STOP ' JOU: BAD PARAM '
+        error STOP ' JOU: BAD PARAM '
       ENDIF
 920   FORMAT(5X,A1,I5)
       JOU=INDX
@@ -3648,6 +3660,7 @@ C
 82         FORMAT(10X,3F10.3,4I5)
       ENDIF
       DO 12 KM = 1,15
+!TODO this needs to be directly set if using Python
 12    JUNIT(KM) = JOU(JCHAR(KM))
       IF(M1 .NE. 0) JUNIT(1) = M1
       IF(M1 .NE. 0) JUNIT(2) = M1
