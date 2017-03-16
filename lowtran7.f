@@ -2,11 +2,13 @@
      & TXPy,VPy,ALAMPy,TRACEPy,UNIFPy, SUMAPy,
      & MODELPy,ITYPEPy,IEMSCTPy,IMpy,
      & ISEASNPy,MLpy,IRD1py,
+     & ZMDLpy, Ppy, Tpy,
      & H1Py,H2Py,ANGLEPy,RangePy)
 
       Logical,Intent(in) :: Python
       Integer,Intent(in) :: nwl,MODELPy,ITYPEPy,IEMSCTPy,IMpy
       Integer,Intent(in) :: ISEASNpy,MLpy,IRD1py
+      real,intent(in) :: ZMDLpy(mlpy),Ppy(mlpy),Tpy(mlpy)
       Real, Intent(in)  :: V1Py,V2Py,DVPy,H1Py,H2Py,ANGLEPy,RangePy
       Real, Intent(Out) :: TXPy(nwl,63), VPy(nwl), ALAMPy(nwl),
      &      TRACEPy(nwl),UNIFPy(nwl), SUMAPy(nwl)
@@ -1112,6 +1114,13 @@ C
 C*****CARD 2C  USER SUPPLIED ATMOSPHERIC PROFILE
               If (Python) then
                 ML=MLpy; IRD1=IRD1py; IRD2=0
+                ! for common blocks instead of reading in AERNSM
+                do ipy2 = 1,ml
+                    ZM(ipy2) = ZMDLPy(ipy2) ! ZM = ZMDL
+                    PM(ipy2)    = Ppy(ipy2) ! PM = P
+                   TM(ipy2)     = Tpy(ipy2) ! TM = T
+                enddo
+
                 ! NOTE didn't assign HMODEL because it's just text labels (?)
               else
                 READ (IRD,1250) ML,IRD1,IRD2,(HMODEL(I,7),I=1,5)
@@ -1125,6 +1134,8 @@ C*****CARD 2C  USER SUPPLIED ATMOSPHERIC PROFILE
            ENDIF
       ENDIF
       M=7
+
+      !NOTE if python, we plug in 2C1 values just above into the COMMON blocks
       CALL AERNSM(JPRT,  GNDALT, Python)
       IF(ICLD .LT. 20) GO TO 260
 C
@@ -1594,8 +1605,7 @@ C
       IF (IRPT.EQ.0) GO TO 900
       IF (IRPT.EQ.4) GO TO 400
       IF (IRPT.GT.1 .AND. IEMSCT.GE.2) THEN
-          PRINT*,'/!! ERROR IN INPUT IEMSCT GE 2 IRPT GT 1!'
-          STOP
+          error stop '/!! ERROR IN INPUT IEMSCT GE 2 IRPT GT 1!'
       ENDIF
       IF (IRPT.GT.4) GO TO 900
       GO TO (100,900,300,400), IRPT
@@ -1860,6 +1870,7 @@ C      THEREFORE, WHEN  'JCHAR(K) = 1-5', JCHAR(K) WILL BE RESET TO 6
 C
 C
       IF(IRD0 .EQ. 1) THEN
+        !NOTE if Python, then we plug in these values into COMMON blocks in main subroutine.
       If (.not.Python)  READ(IRD,80)ZMDL(K),P(K),T(K),
      &     WMOL(1),WMOL(2),WMOL(3),
      X     (JCHAR(KM),KM=1,14)
@@ -2642,7 +2653,7 @@ C     ZVSA  VSA ALTITUDES
 C
       COMMON /CARD2A/ CTHIK,CALT,CEXT
       COMMON /ZVSALY/ ZVSA(10),RHVSA(10),AHVSA(10),IHVSA(10)
-      DIMENSION ZNEWV(24),ZMDL( *)
+      DIMENSION ZNEWV(24),ZMDL(*)
       DIMENSION ZNEW(17),ZCLD(16),ZAER(34),ZST(34)
       DATA ZCLD/ 0.0,0.16,0.33,0.66,1.0,1.5,2.0,2.4,2.7,
      1 3.0,3.5,4.0,4.5,5.0,5.5,6.0/
@@ -3589,8 +3600,12 @@ C      FOR MOLECULES 8-35, ONLY US STD PROFILES ARE AVIALABLE
 C      THEREFORE, WHEN  'JCHAR(K) = 1-5', JCHAR(K) WILL BE RESET TO 6
 C
 C
-      READ(IRD,80)ZMDL(K),P(K),T(K),WMOL(1),WMOL(2),WMOL(3),
+      if(Python) then
+        print*,'WARNING: this case untested in RNDSM'
+      else
+        READ(IRD,80)ZMDL(K),P(K),T(K),WMOL(1),WMOL(2),WMOL(3),
      X (JCHAR(KM),KM=1,15)
+      endif
 80    FORMAT ( F10.3,5E10.3,15A1)
        WRITE(IPR,81)ZMDL(K),P(K),T(K),WMOL(1),WMOL(2),WMOL(3),
      X (JCHAR(KM),KM=1,15)
