@@ -2,12 +2,12 @@
      & TXPy,VPy,ALAMPy,TRACEPy,UNIFPy, SUMAPy,
      & MODELPy,ITYPEPy,IEMSCTPy,IMpy,
      & ISEASNPy,MLpy,IRD1py,
-     & H1Py,H2Py,ANGLEPy)
+     & H1Py,H2Py,ANGLEPy,RangePy)
 
       Logical,Intent(in) :: Python
       Integer,Intent(in) :: nwl,MODELPy,ITYPEPy,IEMSCTPy,IMpy
       Integer,Intent(in) :: ISEASNpy,MLpy,IRD1py
-      Real, Intent(in)  :: V1Py,V2Py,DVPy,H1Py,H2Py,ANGLEPy
+      Real, Intent(in)  :: V1Py,V2Py,DVPy,H1Py,H2Py,ANGLEPy,RangePy
       Real, Intent(Out) :: TXPy(nwl,63), VPy(nwl), ALAMPy(nwl),
      &      TRACEPy(nwl),UNIFPy(nwl), SUMAPy(nwl)
 
@@ -1193,9 +1193,8 @@ C*****CARD 3 GEOMETERY PARAMETERS
 C
       IF(IEMSCT.EQ.3) GO TO 315
       If (Python) Then
-        H1 = H1Py; H2=H2Py; ANGLE=AnglePy
-! TODO add RANGE to API
-        Range=0.; Beta=0.; Ro=0; Len=0
+        H1 = H1Py; H2=H2Py; ANGLE=AnglePy; Range=RangePy
+        Beta=0.; Ro=0; Len=0
       Else
         READ(IRD,1312)H1,H2,ANGLE,RANGE,BETA,RO,LEN
       EndIf
