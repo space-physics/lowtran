@@ -13,7 +13,7 @@
 
       integer imodel,nargin
       character(len=8) :: arg
-      integer :: model,itype,iemsct
+      integer :: model,itype,iemsct,im
       real :: angle,h1
 
 !     Python .true.:   Use common blocks (from f2py)
@@ -65,7 +65,7 @@
 
         call LWTRN7(Python,nwl,V1,V2,DV,
      &  TXPy,VPy,ALAMPy,TRACEPy,UNIFPy, SUMAPy,
-     &  MODEL,ITYPE,IEMSCT,
+     &  MODEL,ITYPE,IEMSCT,IM,
      &  H1,H2,ANGLE)
 
         print *, 'for wavelengths [nm]:', 1e3*ALAMPy

@@ -14,10 +14,11 @@ if __name__=='__main__':
     p.add_argument('--model',help='0-6, see Card1 "model" reference. 5=subarctic winter',type=int,default=5)
     p.add_argument('--itype',help='1-3, see Card1 "itype". 3=path to space',type=int,default=3)
     p.add_argument('--iemsct',help='0-3, 0=transmittance',type=int,default=0)
+    p.add_argument('--im',help='parameter IM',type=int,default=0)
 
     p=p.parse_args()
 
-    c1={'model':p.model,'itype':p.itype,'iemsct':p.iemsct}
+    c1={'model':p.model,'itype':p.itype,'iemsct':p.iemsct,'im':p.im}
 
     trans = lowtran.golowtran(p.obsalt,p.zenang,p.wavelen,c1)
 

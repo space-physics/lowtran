@@ -1,9 +1,10 @@
       SUBROUTINE LWTRN7(Python,nwl,V1Py,V2Py,DVPy,
      & TXPy,VPy,ALAMPy,TRACEPy,UNIFPy, SUMAPy,
-     & MODELPy,ITYPEPy,IEMSCTPy,
+     & MODELPy,ITYPEPy,IEMSCTPy,IMpy,
      & H1Py,H2Py,ANGLEPy)
+
       Logical,Intent(in) :: Python
-      Integer,Intent(in) :: nwl,MODELPy,ITYPEPy,IEMSCTPy
+      Integer,Intent(in) :: nwl,MODELPy,ITYPEPy,IEMSCTPy,IMpy
       Real, Intent(in)  :: V1Py,V2Py,DVPy,H1Py,H2Py,ANGLEPy
       Real, Intent(Out) :: TXPy(nwl,63), VPy(nwl), ALAMPy(nwl),
      &      TRACEPy(nwl),UNIFPy(nwl), SUMAPy(nwl)
@@ -995,9 +996,9 @@ C@    WRITE(IPR,1010) HDATE,HTIME
 !------- CARD 1 -------------------------------------------------------
 
       If (Python) Then
-        MODEL=ModelPy; IType=ITypePy; IEMSCT=IEMSCTPy
-        ! TODO get M1-M6 from function input
-        M1=0; M2=0; M3=0; M4=0; M5=0; M6=0; MDEF=0; IM=0; IMULT=0
+        MODEL=ModelPy; IType=ITypePy; IEMSCT=IEMSCTPy; IM=IMpy
+        M1=0; M2=0; M3=0; M4=0; M5=0; M6=0; MDEF=0
+        IMULT=0
         TBOUND=0; SALB=0; NOPRT=0
       Else
         READ(IRD,1110)MODEL,ITYPE,IEMSCT,IMULT,M1,M2,M3,
