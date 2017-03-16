@@ -91,6 +91,7 @@ def golowtran(obsalt_km,zenang_deg,wlnm,c1):# -> DataArray:
         Tx,V,Alam = lowtran7.lwtrn7(True,nwl,wlcminv[1],wlcminv[0],wlcminvstep,
                                c1['model'],c1['itype'],c1['iemsct'],c1['im'],
                                c1['iseasn'],c1['ml'],c1['ird1'],
+                               c1['zmdl'],c1['p'],c1['t'],
                                obsalt_km,0,za,c1['range_km'])[:3]
         T.loc[:,za] = Tx[:,9]
 #%% collect results

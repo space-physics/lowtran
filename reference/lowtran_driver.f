@@ -14,7 +14,7 @@
       integer imodel,nargin
       character(len=8) :: arg
       integer :: model,itype,iemsct,im
-      integer :: iseasn,ml,ird1
+      integer :: iseasn,ird1
       real :: angle,h1,range
 
 !     Python .true.:   Use common blocks (from f2py)
@@ -29,6 +29,10 @@
       real, parameter :: dv=500. 
 ! currently unused variables (don't have to be parameter)
       real, parameter :: H2=0. ! only used for IEMSCT 1 or 2
+
+      ! these are ignored for auroral case
+      integer, parameter ::  ml=1 !1: one level of horiz atmosphere (as per lowtran manual for this sim)
+      real :: ZMDL(ml),P(ml),T(ml)
 
       real :: TXPy(nwl,ncol), VPy(nwl), ALAMPy(nwl), TRACEPy(nwl),
      &      UNIFPy(nwl), SUMAPy(nwl)
@@ -49,8 +53,9 @@
           iemsct=0! 0: transmittance model
 
           iseasn=0 ! 0: default for this type redirects to 1: spring/summer
-          ml=0 ! 0: not used
           IRD1=0 !0: not used
+
+          ! ZMDL, P, T not used -- don't care about uninitialized value
 
           ANGLE=0. ! initial zenith angle; in Python set to camera boresight angle (for our cameras typically magnetic inclination of E-layer ionosphere, e.g. angle is about 12.5 at Poker Flat Research Range)
           h1=0. ! our cameras are at ground level (kilometers)
@@ -63,7 +68,6 @@
           iemsct=0 ! 0: transmittance model
 
           iseasn=0 !0: default for this type redirects to 1: spring/summer
-          ml=1 !1: one level of horiz atmosphere (as per lowtran manual for this sim)
           ird1=1 !1: use card 2C2
 
 ! TODO M1-M6=0 to use JCHAR of card 2C.1 (p.22)
@@ -80,6 +84,7 @@
      &  TXPy,VPy,ALAMPy,TRACEPy,UNIFPy, SUMAPy,
      &  MODEL,ITYPE,IEMSCT,IM,
      &  ISEASN,ML,IRD1,
+     &  ZMDL,P,T,
      &  H1,H2,ANGLE,range)
 
         print *, 'for wavelengths [nm]:', 1e3*ALAMPy
