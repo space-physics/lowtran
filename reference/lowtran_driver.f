@@ -7,13 +7,18 @@
 !  * Fortran 77 can only have program text in columns 7..72
 !  * Fortran 77 comments must start in column 1 or >= 7
 !  * Fortran 77 columns 2-5 for line numbers, column 6 for continuation symbol
-        Program LowtranDemo
+      Program LowtranDemo
 
-        implicit none
+      implicit none
 
-!       Python .true.:   Use common blocks (from f2py)
-!       Python .false.: Read the Tape5 file (like it's the 1960s again)
-        logical, parameter :: Python= .true.
+      integer imodel,nargin
+      character(len=8) :: arg
+      integer :: model,itype,iemsct
+      real :: angle,h1
+
+!     Python .true.:   Use common blocks (from f2py)
+!     Python .false.: Read the Tape5 file (like it's the 1960s again)
+      logical, parameter :: Python= .true.
 
 ! Model bounds and resolution (can't increase resolution beyond model limits)
       integer, Parameter :: nwl = 51  ! number of wavelengths
@@ -22,33 +27,41 @@
       ! DV: frequency cm^1 step (lower limit 5. per Card 4 p.40)
       real, parameter :: dv=500. 
 ! currently unused variables (don't have to be parameter)
-      real, parameter :: H2=0. ! only for IEMSCT 1 or 2
+      real, parameter :: H2=0. ! only used for IEMSCT 1 or 2
+
+      real :: TXPy(nwl,ncol), VPy(nwl), ALAMPy(nwl), TRACEPy(nwl),
+     &      UNIFPy(nwl), SUMAPy(nwl)
 
 ! Model configuration, see Lowtran manual p. 21(30) s. 3.2
-! Use only one of the following model scenarios
 
+! Command line selection
+      imodel=0
+      nargin = command_argument_count()
+      if (nargin.ge.1) then
+        call GET_COMMAND_ARGUMENT(1,arg); read(arg,*) imodel
+      endif
+ 
+      if (imodel.eq.0) then
 !!! Auroral oval Model e.g. central Alaska !!!
-      integer, parameter :: model=5 ! 5: subarctic winter
-      integer, parameter :: itype=3 ! 3: vertical or slant path to space
-      integer, parameter :: iemsct=0! 0: transmittance model
-      real, parameter :: ANGLE=0. ! initial zenith angle; in Python set to camera boresight angle (for our cameras typically magnetic inclination of E-layer ionosphere, e.g. angle is about 12.5 at Poker Flat Research Range)
-      
-      real, parameter :: h1=0. ! our cameras are at ground level (kilometers)
+          model =5 ! 5: subarctic winter
+          itype=3 ! 3: vertical or slant path to space
+          iemsct=0! 0: transmittance model
+          ANGLE=0. ! initial zenith angle; in Python set to camera boresight angle (for our cameras typically magnetic inclination of E-layer ionosphere, e.g. angle is about 12.5 at Poker Flat Research Range)
+          h1=0. ! our cameras are at ground level (kilometers)
 ! in lowtran7.f, I set M1-M6, MDEF all =0 per p.21
-
+      elseif (imodel.eq.1) then
 !!! Horizontal model (only way to use meterological data) !!!
-!      integer, parameter :: model=0 ! 0: Specify meterological data (horiz path)
-!      integer, parameter :: itype=1 ! 1: Horizontal, constant pressure path
-!      integer, parameter :: iemsct=0! 0: transmittance model
+          model=0 ! 0: Specify meterological data (horiz path)
+          itype=1 ! 1: Horizontal, constant pressure path
+          iemsct=0! 0: transmittance model
 ! TODO M1-M6=0 to use JCHAR of card 2C.1 (p.22)
-
-!      real, parameter :: h1 = 0.05  (kilometers altitude of horizontal path)
-!      real, parameter :: angle = 0. ! TODO truthfully it's 90. for horizontal path, have to check/test to see if Lowtran uses this value for model=0 horiz. path.
+          h1 = 0.05  !(kilometers altitude of horizontal path)
+          angle = 0. ! TODO truthfully it's 90. for horizontal path, have to check/test to see if Lowtran uses this value for model=0 horiz. path.
+      else
+         error stop 'unknown model selection'
+      endif
 !-------- END model config -----------------
-
-!-------- array assignments --------
-        Real :: TXPy(nwl,ncol), VPy(nwl), ALAMPy(nwl), TRACEPy(nwl),
-     &      UNIFPy(nwl), SUMAPy(nwl)
+!-------- END command line parse ------------
 
         call LWTRN7(Python,nwl,V1,V2,DV,
      &  TXPy,VPy,ALAMPy,TRACEPy,UNIFPy, SUMAPy,
