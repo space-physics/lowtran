@@ -14,7 +14,7 @@ setup(name='lowtran',
       author='Michael Hirsch, Ph.D',
       description='Model of Earth atmosphere absorption and transmission vs. wavelength and location on Earth.',
       version='0.5',
-      url = 'https://github.com/scienceopen/lowtran',
+      url = 'https://github.com/scivision/lowtran',
       classifiers=[
       'Intended Audience :: Science/Research',
       'Development Status :: 3 - Alpha',

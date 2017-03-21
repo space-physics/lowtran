@@ -1,7 +1,7 @@
 .. image:: https://zenodo.org/badge/DOI/10.5281/zenodo.213475.svg
    :target: https://doi.org/10.5281/zenodo.213475
-.. image:: https://travis-ci.org/scienceopen/lowtran.svg?branch=master
-    :target: https://travis-ci.org/scienceopen/lowtran
+.. image:: https://travis-ci.org/scivision/lowtran.svg?branch=master
+    :target: https://travis-ci.org/scivision/lowtran
 
 =======
 Lowtran
