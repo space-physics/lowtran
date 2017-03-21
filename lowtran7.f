@@ -8,7 +8,7 @@
       Real, Intent(Out) :: TXPy(nwl,63), VPy(nwl), ALAMPy(nwl),
      &      TRACEPy(nwl),UNIFPy(nwl), SUMAPy(nwl)
 
-cccccccccccccccccccccccccccccccc
+!------------------------------
 c written to TAPE6:
 c  I,ZM(I),PM(I),TM(I),(DENSTY(K,I),K=4,6),RFNDX(I),DENSTY(8,I),DENSTY(58,I)
 c
@@ -18,7 +18,7 @@ c      WRITE(IPR1,907)      V,TX(17),TX(31),TX(36),TX(44),TX(46),
 c    + TX(47),TX(50),TX(52),TX(54),TX(55),TX(56)
 c      WRITE(IPU,907)      V,TX(9),TX(17),UNIF,TX(31),TRACE,
 c     + TX(4),TX(5),TX(6),TX(7),TX(11),TX(10),ALTX9
-ccccccccccccccccccccccccccccccccc
+!-------------------------------
 C***********************************************************************
 C     LOWTRAN7  (LAST REVISED FEB 1 1992)   REVISION 4.2
 C
@@ -991,16 +991,19 @@ C@    WRITE(IPR,1010) HDATE,HTIME
  80   ASYM(I,J)=0.
       JPRT = 0
       IKLO=1
-C
-C*****CARD 1
-C
+
+!------- CARD 1 -------------------------------------------------------
+
       If (Python) Then
         MODEL=ModelPy; IType=ITypePy; IEMSCT=IEMSCTPy
-        M1=0; M2=0; M3=0; M4=0; M5=0; M6=0 !FIXME get from function inp
+        ! TODO get M1-M6 from function input
+        M1=0; M2=0; M3=0; M4=0; M5=0; M6=0; MDEF=0; IM=0; IMULT=0
+        TBOUND=0; SALB=0; NOPRT=0
       Else
         READ(IRD,1110)MODEL,ITYPE,IEMSCT,IMULT,M1,M2,M3,
      &        M4,M5,M6,MDEF,IM,NOPRT,TBOUND,SALB
       EndIf
+
 1110  FORMAT(13I5,F8.3,F7.2)
       WRITE(IPR,1111)MODEL,ITYPE,IEMSCT,IMULT,M1,M2,M3,
      & M4,M5,M6,MDEF,IM,NOPRT,TBOUND,SALB
@@ -1021,7 +1024,7 @@ C
 110   CONTINUE
       M=MODEL
       NPR = NOPRT
-C*****CARD 2 AEROSOL MODEL
+! ---------- CARD 2 AEROSOL MODEL
       If (Python) Then
       !FIXME make it read input parameter
         IHAZE=0;ISEASN=0;IVULCN=0; ICSTL=0; ICLD=0; IVSA=0; VIS=0.;
@@ -1181,7 +1184,8 @@ C
       IF(IEMSCT.EQ.3) GO TO 315
       If (Python) Then
         H1 = H1Py; H2=H2Py; ANGLE=AnglePy
-        Range=0; Beta=0; Ro=0; Len=0
+! TODO add RANGE to API
+        Range=0.; Beta=0.; Ro=0; Len=0
       Else
         READ(IRD,1312)H1,H2,ANGLE,RANGE,BETA,RO,LEN
       EndIf
