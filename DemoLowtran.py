@@ -20,7 +20,7 @@ if __name__=='__main__':
 
     c1={'model':p.model,'itype':p.itype,'iemsct':p.iemsct,'im':p.im,
         'iseasn':0,'ml':0,'ird1':0,
-        'range_km':0,'zmdl':0,'p':0,'t':0}
+        'range_km':0,'zmdl':0,'p':0,'t':0,'wmol':93.96}
 
     trans = lowtran.golowtran(p.obsalt,p.zenang,p.wavelen,c1)
 
