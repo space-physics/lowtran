@@ -2,13 +2,13 @@
      & TXPy,VPy,ALAMPy,TRACEPy,UNIFPy, SUMAPy,
      & MODELPy,ITYPEPy,IEMSCTPy,IMpy,
      & ISEASNPy,MLpy,IRD1py,
-     & ZMDLpy, Ppy, Tpy,
+     & ZMDLpy, Ppy, Tpy,WMOLpy,
      & H1Py,H2Py,ANGLEPy,RangePy)
 
       Logical,Intent(in) :: Python
       Integer,Intent(in) :: nwl,MODELPy,ITYPEPy,IEMSCTPy,IMpy
       Integer,Intent(in) :: ISEASNpy,MLpy,IRD1py
-      real,intent(in) :: ZMDLpy(mlpy),Ppy(mlpy),Tpy(mlpy)
+      real,intent(in) :: ZMDLpy(mlpy),Ppy(mlpy),Tpy(mlpy),WMOLpy(12)
       Real, Intent(in)  :: V1Py,V2Py,DVPy,H1Py,H2Py,ANGLEPy,RangePy
       Real, Intent(Out) :: TXPy(nwl,63), VPy(nwl), ALAMPy(nwl),
      &      TRACEPy(nwl),UNIFPy(nwl), SUMAPy(nwl)
@@ -908,6 +908,10 @@ C***********************************************************************
       COMMON /MNLT/TBBSS(68),TBBMS(34),WPMS(34,63),IMSMX,WPMSS(34,63)
       COMMON /PATH/ PL(68),QTHETA(68),ITEST,HI,HF,AHT(68)
       COMMON /AERTM/TAE7,TAE12,TAE13,TAE14,TAE16
+!added M. Hirsch
+      COMMON /MDATA/  Z(50),P(50),T(50),WH(50),WCO2(50),WO(50),
+     & WN2O(50),WCO(50),WCH4(50),WO2(50),
+     & CLD(50,7),RR(50,7)
 C*****HDATE AND HTIME CARRY THE DATA AND TIME AND MUST BE DOUBLE
 C*****PRECISION ON A 32 BIT WORD COMPUTER
 C@    DOUBLE PRECISION HDATE,HTIME
@@ -923,6 +927,7 @@ c     & H1Py,H2Py,ANGLEPy
      & IPUfn='out/TAPE7', IPR1fn='out/TAPE8'
 C     nulunix if on Unix/Linux, nuwin if on windows
       CHARACTER(len=*),PARAMETER :: nulunix='/dev/null', nulwin='NUL'
+
 
       IRD = 15
       IPR = 16
@@ -1107,8 +1112,11 @@ C
       DO 250 I=1,5
       IF(MDELS.NE.0)HMODEL(I,7)=HMODEL(I,MDELS)
 250   IF(MDELS.EQ.0)HMODEL(I,7)=HMODEL(I,8)
-C
-C
+
+
+!       print *,'IM ',IM
+!       print *,'MODEL',MODEL
+
       IF(IM .EQ. 1) THEN
            IF((MODEL.EQ.7.AND.IM.EQ.1) .OR.(MODEL.EQ.0)) THEN
 C
@@ -1118,17 +1126,26 @@ C*****CARD 2C  USER SUPPLIED ATMOSPHERIC PROFILE
                 ! for common blocks instead of reading in AERNSM
                 do ipy2 = 1,ml
                     ZM(ipy2) = ZMDLPy(ipy2) ! ZM = ZMDL
-                    PM(ipy2)    = Ppy(ipy2) ! PM = P
-                   TM(ipy2)     = Tpy(ipy2) ! TM = T
+                    P(ipy2)    = Ppy(ipy2) 
+                    T(ipy2)    = Tpy(ipy2) 
                 enddo
 
-                junit(1)=10; !10: units of total pressure: millibar
+                junit(1)=10  !10: units of total pressure: millibar
                 junit(2)=10  !10: units of temperature: Kelvin
-                do ipy2 = 3,15
+                junit(3)=17  !17: H20 as relative humidity (%)
+
+                ! now set WMOL units
+                do ipy2 = 4,15
                    junit(ipy2) = 14   !FIXME hard set to PARTIAL PRESSURE for Local Meterological experiments. Can be upgraded.
                 enddo
+                
+                do ipy2 = 1,12
+                   WMOL(ipy2) = WMOLpy(ipy2)
+                enddo
 
-                ! NOTE didn't assign HMODEL because it's just text labels (?)
+            ! NOTE didn't assign HMODEL because it's just text labels (?)
+
+                
               else
                 READ (IRD,1250) ML,IRD1,IRD2,(HMODEL(I,7),I=1,5)
               endif
@@ -1142,7 +1159,7 @@ C*****CARD 2C  USER SUPPLIED ATMOSPHERIC PROFILE
       ENDIF
       M=7
 
-      !NOTE if python, we plug in 2C1 values just above into the COMMON blocks
+!NOTE if python, we plug in 2C1 values just above into the COMMON blocks
       CALL AERNSM(JPRT,  GNDALT, Python)
       IF(ICLD .LT. 20) GO TO 260
 C
@@ -2767,6 +2784,7 @@ C     MODEL 7
       END Subroutine FLAYZ
 
       SUBROUTINE CONVRT (P,T)
+      real,intent(in) :: P,T
 C*************************************************************
 C
 C        WRITTEN APR, 1985 TO ACCOMMODATE 'JCHAR' DEFINITIONS FOR
@@ -2794,6 +2812,7 @@ C
       DATA C1/18.9766/,C2/-14.9595/,C3/-2.43882/
       DENSAT(ATEMP) = ATEMP*B*EXP(C1+C2*ATEMP+C3*ATEMP**2)*1.0E-6
 C*****
+      print *,'P',P,'T',T
       RHOAIR = ALOSMT*(P/PZERO)*(TZERO/T)
 C     NOPRNT = 0
 C     A = TZERO/T
@@ -2841,10 +2860,11 @@ CC    WMOL1(K)= ALOSMT*(WMOL/PZERO)*(TZERO/T)
 299   CONTINUE
       WRITE(IPR,951)JUNIT
   951 FORMAT(/,'   **** ERROR IN CONVERT ****, JUNIT = ',I5)
-      STOP
+      Error STOP
       END Subroutine CONVRT
 
       SUBROUTINE WATVAP(P,T)
+      real, intent(in) :: p,t
 C*************************************************************
 C
 C        WRITTEN APR, 1985 TO ACCOMMODATE 'JCHAR' DEFINITIONS FOR

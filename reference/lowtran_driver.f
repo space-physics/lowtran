@@ -15,7 +15,7 @@
       character(len=8) :: arg
       integer :: model,itype,iemsct,im
       integer :: iseasn,ird1
-      real :: angle,h1,range
+      real :: angle,h1,range,v1,v2,dv
 
 !     Python .true.:   Use common blocks (from f2py)
 !     Python .false.: Read the Tape5 file (like it's the 1960s again)
@@ -24,15 +24,12 @@
 ! Model bounds and resolution (can't increase resolution beyond model limits)
       integer, Parameter :: nwl = 51  ! number of wavelengths
       integer, Parameter :: ncol = 63  ! number of columns in output
-      real, Parameter :: v1=8333., v2=33333. ! frequency cm^-1 bounds
-      ! DV: frequency cm^1 step (lower limit 5. per Card 4 p.40)
-      real, parameter :: dv=500. 
 ! currently unused variables (don't have to be parameter)
       real, parameter :: H2=0. ! only used for IEMSCT 1 or 2
 
       ! these are ignored for auroral case
       integer, parameter ::  ml=1 !1: one level of horiz atmosphere (as per lowtran manual for this sim)
-      real :: ZMDL(ml),P(ml),T(ml)
+      real :: ZMDL(ml),P(ml),T(ml), WMOL(12)
 
       real :: TXPy(nwl,ncol), VPy(nwl), ALAMPy(nwl), TRACEPy(nwl),
      &      UNIFPy(nwl), SUMAPy(nwl)
@@ -47,6 +44,9 @@
       endif
  
       if (imodel.eq.0) then
+          v1=8333.; v2=33333. ! frequency cm^-1 bounds
+          dv=500. ! DV: frequency cm^1 step (lower limit 5. per Card 4 p.40)
+
 !!! Auroral oval Model e.g. central Alaska !!!
           model =5 ! 5: subarctic winter
           itype=3 ! 3: vertical or slant path to space
@@ -63,9 +63,13 @@
           range=0. ! not used
       elseif (imodel.eq.1) then
 !!! Horizontal model (only way to use meterological data) !!!
+          v1=714.2857; v2=1250. ! frequency cm^-1 bounds
+          dv=13.  ! DV: frequency cm^1 step (lower limit 5. per Card 4 p.40)
+
           model=0 ! 0: Specify meterological data (horiz path)
           itype=1 ! 1: Horizontal, constant pressure path
           iemsct=0 ! 0: transmittance model
+          im=1 ! 1: horizontal path: p.42 of manual
 
           iseasn=0 !0: default for this type redirects to 1: spring/summer
           ird1=1 !1: use card 2C2
@@ -75,7 +79,9 @@
           angle = 0. ! TODO truthfully it's 90. for horizontal path, have to check/test to see if Lowtran uses this value for model=0 horiz. path.
           range=h1
           zmdl(1) = h1
-          p(1) = .21*101.325*10 ! millibar
+          P(1) = 949 ! millibar
+          T(1) = 283.8 ! Kelvin
+          WMOL = [93.96,0.,0.,0.,0.,0.,0.,0.,0.,0.,0.,0.]
       else
          error stop 'unknown model selection'
       endif
@@ -86,11 +92,13 @@
      &  TXPy,VPy,ALAMPy,TRACEPy,UNIFPy, SUMAPy,
      &  MODEL,ITYPE,IEMSCT,IM,
      &  ISEASN,ML,IRD1,
-     &  ZMDL,P,T,
+     &  ZMDL,P,T,WMOL,
      &  H1,H2,ANGLE,range)
 
-        print *, 'for wavelengths [nm]:', 1e3*ALAMPy
-        print *, 'transmission:',TXPy(1:nwl,9)
+        print *, 'for wavelengths [nm]:'
+        print *, 1e3*ALAMPy
+        print *, 'transmission:'
+        print *, TXPy(1:nwl,9)
 
         end program
 
