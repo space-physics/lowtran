@@ -1,12 +1,18 @@
       SUBROUTINE LWTRN7(Python,nwl,V1Py,V2Py,DVPy,
-     & TXPy,VPy,ALAMPy,TRACEPy,UNIFPy, SUMAPy,
-     & MODELPy,ITYPEPy,IEMSCTPy,
-     & H1Py,H2Py,ANGLEPy)
+     & TXPy,VPy,ALAMPy,TRACEPy,UNIFPy, SUMAPy,IrradPy,
+     & MODELPy,ITYPEPy,IEMSCTPy,IMpy,
+     & ISEASNPy,MLpy,IRD1py,
+     & ZMDLpy, Ppy, Tpy,WMOLpy,
+     & H1Py,H2Py,ANGLEPy,RangePy)
+
+! note MLpy is implicit, don't pass it in from Numpy
       Logical,Intent(in) :: Python
-      Integer,Intent(in) :: nwl,MODELPy,ITYPEPy,IEMSCTPy
-      Real, Intent(in)  :: V1Py,V2Py,DVPy,H1Py,H2Py,ANGLEPy
+      Integer,Intent(in) :: nwl,MODELPy,ITYPEPy,IEMSCTPy,IMpy
+      Integer,Intent(in) :: ISEASNpy,MLpy,IRD1py
+      real,intent(in) :: ZMDLpy(mlpy),Ppy(mlpy),Tpy(mlpy),WMOLpy(12)
+      Real, Intent(in)  :: V1Py,V2Py,DVPy,H1Py,H2Py,ANGLEPy,RangePy
       Real, Intent(Out) :: TXPy(nwl,63), VPy(nwl), ALAMPy(nwl),
-     &      TRACEPy(nwl),UNIFPy(nwl), SUMAPy(nwl)
+     &      TRACEPy(nwl),UNIFPy(nwl), SUMAPy(nwl), IrradPy(nwl,2)
 
 !------------------------------
 c written to TAPE6:
@@ -878,6 +884,10 @@ C***********************************************************************
       COMMON /IFIL/ IRD,IPR,IPU,NPR,IPR1
       COMMON /CARD1/ MODEL,ITYPE,IEMSCT,M1,M2,M3,IM,NOPRT,TBOUND,SALB
       COMMON /CARD1A/ M4,M5,M6,MDEF,IRD1,IRD2
+
+! added M. Hirsch 
+      COMMON /CARD1B/ JUNIT(15),WMOL(12),WAIR1,JLOW 
+
       COMMON /CARD2/ IHAZE,ISEASN,IVULCN,ICSTL,ICLD,IVSA,VIS,WSS,WHH,
      1    RAINRT
       COMMON /CARD2A/ CTHIK,CALT,CEXT
@@ -902,6 +912,10 @@ C***********************************************************************
       COMMON /MNLT/TBBSS(68),TBBMS(34),WPMS(34,63),IMSMX,WPMSS(34,63)
       COMMON /PATH/ PL(68),QTHETA(68),ITEST,HI,HF,AHT(68)
       COMMON /AERTM/TAE7,TAE12,TAE13,TAE14,TAE16
+!added M. Hirsch
+      COMMON /MDATA/  Z(50),P(50),T(50),WH(50),WCO2(50),WO(50),
+     & WN2O(50),WCO(50),WCH4(50),WO2(50),
+     & CLD(50,7),RR(50,7)
 C*****HDATE AND HTIME CARRY THE DATA AND TIME AND MUST BE DOUBLE
 C*****PRECISION ON A 32 BIT WORD COMPUTER
 C@    DOUBLE PRECISION HDATE,HTIME
@@ -917,6 +931,7 @@ c     & H1Py,H2Py,ANGLEPy
      & IPUfn='out/TAPE7', IPR1fn='out/TAPE8'
 C     nulunix if on Unix/Linux, nuwin if on windows
       CHARACTER(len=*),PARAMETER :: nulunix='/dev/null', nulwin='NUL'
+
 
       IRD = 15
       IPR = 16
@@ -995,9 +1010,9 @@ C@    WRITE(IPR,1010) HDATE,HTIME
 !------- CARD 1 -------------------------------------------------------
 
       If (Python) Then
-        MODEL=ModelPy; IType=ITypePy; IEMSCT=IEMSCTPy
-        ! TODO get M1-M6 from function input
-        M1=0; M2=0; M3=0; M4=0; M5=0; M6=0; MDEF=0; IM=0; IMULT=0
+        MODEL=ModelPy; IType=ITypePy; IEMSCT=IEMSCTPy; IM=IMpy
+        M1=0; M2=0; M3=0; M4=0; M5=0; M6=0; MDEF=0
+        IMULT=0
         TBOUND=0; SALB=0; NOPRT=0
       Else
         READ(IRD,1110)MODEL,ITYPE,IEMSCT,IMULT,M1,M2,M3,
@@ -1027,7 +1042,8 @@ C
 ! ---------- CARD 2 AEROSOL MODEL
       If (Python) Then
       !FIXME make it read input parameter
-        IHAZE=0;ISEASN=0;IVULCN=0; ICSTL=0; ICLD=0; IVSA=0; VIS=0.;
+        ISEASN=ISEASNPy
+        IHAZE=0;IVULCN=0; ICSTL=0; ICLD=0; IVSA=0; VIS=0.;
         WSS=0.; WHH=0.; RAINRT=0.; GNDALT=0.
       Else
        READ(IRD,1200)IHAZE,ISEASN,IVULCN,ICSTL,ICLD,
@@ -1100,21 +1116,54 @@ C
       DO 250 I=1,5
       IF(MDELS.NE.0)HMODEL(I,7)=HMODEL(I,MDELS)
 250   IF(MDELS.EQ.0)HMODEL(I,7)=HMODEL(I,8)
-C
-C
+
+
+!       print *,'IM ',IM
+!       print *,'MODEL',MODEL
+
       IF(IM .EQ. 1) THEN
            IF((MODEL.EQ.7.AND.IM.EQ.1) .OR.(MODEL.EQ.0)) THEN
 C
 C*****CARD 2C  USER SUPPLIED ATMOSPHERIC PROFILE
-C
-       If (.not.Python) READ (IRD,1250) ML,IRD1,IRD2,(HMODEL(I,7),I=1,5)
+              If (Python) then
+                ML=MLpy; IRD1=IRD1py; IRD2=0
+                ! for common blocks instead of reading in AERNSM
+                do ipy2 = 1,ml
+                    ZM(ipy2) = ZMDLPy(ipy2) ! ZM = ZMDL
+                    P(ipy2)    = Ppy(ipy2) 
+                    T(ipy2)    = Tpy(ipy2) 
+                enddo
+
+                junit(1)=10  !10: units of total pressure: millibar
+                junit(2)=10  !10: units of temperature: Kelvin
+                junit(3)=17  !17: H20 as relative humidity (%)
+
+                ! now set WMOL units
+                do ipy2 = 4,15
+                   junit(ipy2) = 14   !FIXME hard set to PARTIAL PRESSURE for Local Meterological experiments. Can be upgraded.
+                enddo
+                
+                do ipy2 = 1,12
+                   WMOL(ipy2) = WMOLpy(ipy2)
+                enddo
+
+            ! NOTE didn't assign HMODEL because it's just text labels (?)
+
+                
+              else
+                READ (IRD,1250) ML,IRD1,IRD2,(HMODEL(I,7),I=1,5)
+              endif
+
+
 1250          FORMAT(3I5,18A4)
               WRITE(IPR,1251)ML,IRD1,IRD2,(HMODEL(I,7),I=1,5)
-              IF(IVSA.EQ.1)CALL RDNSM(Python)
+              IF(IVSA.EQ.1) CALL RDNSM(Python)
 1251          FORMAT('0 CARD 2C *****',3I5,18A4)
            ENDIF
       ENDIF
       M=7
+
+!NOTE if python, we plug in 2C1 values just above into the COMMON blocks
       CALL AERNSM(JPRT,  GNDALT, Python)
       IF(ICLD .LT. 20) GO TO 260
 C
@@ -1178,17 +1227,19 @@ C
       PSIPO =-99.
       ANGLEM=-99.
       G     =-99.
-C
-C*****CARD 3 GEOMETERY PARAMETERS
-C
-      IF(IEMSCT.EQ.3) GO TO 315
+
+!*****CARD 3 GEOMETERY PARAMETERS
       If (Python) Then
-        H1 = H1Py; H2=H2Py; ANGLE=AnglePy
-! TODO add RANGE to API
-        Range=0.; Beta=0.; Ro=0; Len=0
-      Else
-        READ(IRD,1312)H1,H2,ANGLE,RANGE,BETA,RO,LEN
-      EndIf
+        H1 = H1Py; 
+        H2=H2Py; 
+        ANGLE=AnglePy; 
+!        print*,rangepy
+        Range=RangePy
+        Beta=0.; Ro=0; Len=0
+      Endif
+
+      IF(IEMSCT.EQ.3) GO TO 315
+      if (.not.Python)  READ(IRD,1312)H1,H2,ANGLE,RANGE,BETA,RO,LEN
 1312  FORMAT(6F10.3,I5)
       WRITE(IPR,1313)H1,H2,ANGLE,RANGE,BETA,RO,LEN
 1313  FORMAT('0 CARD 3  *****',6F10.3,I5)
@@ -1323,7 +1374,7 @@ C
 1501   FORMAT(20X,'  M4 = ',I5,' M5 = ',I5,' M6 = ',I5,' MDEF = ' ,I5)
 C
 510   IF(JPRT.EQ.0) GO TO 520
-      IF(ISEASN.EQ.0)ISEASN=1
+      IF(ISEASN.EQ.0) ISEASN=1
       IF(IVULCN.LE.0) IVULCN=1
       IHVUL=IVULCN+10
       IF( IVULCN .EQ. 6) IHVUL = 11
@@ -1567,8 +1618,8 @@ CCC    CALCULATE EQUIVALENT LIQUID WATER CONSTANTS
 CCC
       CALL EQULWC
 C
-      CALL TRANS (IPH,ISOURC,IDAY,ANGLEM,nwl,TXPy,VPy,ALAMPy,TRACEPy,
-     &      UNIFPy, SUMAPy)
+      CALL TRANS(IPH,ISOURC,IDAY,ANGLEM,nwl,TXPy,VPy,ALAMPy,TRACEPy,
+     &      UNIFPy, SUMAPy, IrradPy)
 C
 C*****WRITE END OF FILE ON TAPE 7
 630   IF(IERROR .GT. 0) THEN
@@ -1585,8 +1636,7 @@ C
       IF (IRPT.EQ.0) GO TO 900
       IF (IRPT.EQ.4) GO TO 400
       IF (IRPT.GT.1 .AND. IEMSCT.GE.2) THEN
-          PRINT*,'/!! ERROR IN INPUT IEMSCT GE 2 IRPT GT 1!'
-          STOP
+          error stop '/!! ERROR IN INPUT IEMSCT GE 2 IRPT GT 1!'
       ENDIF
       IF (IRPT.GT.4) GO TO 900
       GO TO (100,900,300,400), IRPT
@@ -1792,8 +1842,8 @@ C
       WHNO3(K)= 0
       DO 10 KM = 1,15
       JCHAR(KM) = ' '
-      IF(KM. GT. 12) GO TO 10
-      WMOL(KM) = 0.
+      IF(KM. GT. 12) GO TO 10 
+      if (.not.Python) WMOL(KM) = 0. ! if python keep WMOL from common populated in Main subroutine
 10    CONTINUE
 C
 C
@@ -1851,6 +1901,9 @@ C      THEREFORE, WHEN  'JCHAR(K) = 1-5', JCHAR(K) WILL BE RESET TO 6
 C
 C
       IF(IRD0 .EQ. 1) THEN
+        !NOTE if Python, then we plug in these values into COMMON blocks in main subroutine.
+        ! common block will give: 
+        ! ZMDL, P, T,
       If (.not.Python)  READ(IRD,80)ZMDL(K),P(K),T(K),
      &     WMOL(1),WMOL(2),WMOL(3),
      X     (JCHAR(KM),KM=1,14)
@@ -1920,7 +1973,10 @@ C
            HMDLZ(7) = AHAZE
       ENDIF
       DO 12 KM = 1,15
-12    JUNIT(KM) = JOU(JCHAR(KM))
+         ! if python it was set from main common.
+12      if (.not.python) JUNIT(KM) = JOU(JCHAR(KM))
+
+
       IF(IRD0 .EQ. 0) THEN
           JUNIT(1) = M1
           JUNIT(2) = M1
@@ -2633,7 +2689,7 @@ C     ZVSA  VSA ALTITUDES
 C
       COMMON /CARD2A/ CTHIK,CALT,CEXT
       COMMON /ZVSALY/ ZVSA(10),RHVSA(10),AHVSA(10),IHVSA(10)
-      DIMENSION ZNEWV(24),ZMDL( *)
+      DIMENSION ZNEWV(24),ZMDL(*)
       DIMENSION ZNEW(17),ZCLD(16),ZAER(34),ZST(34)
       DATA ZCLD/ 0.0,0.16,0.33,0.66,1.0,1.5,2.0,2.4,2.7,
      1 3.0,3.5,4.0,4.5,5.0,5.5,6.0/
@@ -2735,6 +2791,7 @@ C     MODEL 7
       END Subroutine FLAYZ
 
       SUBROUTINE CONVRT (P,T)
+      real,intent(in) :: P,T
 C*************************************************************
 C
 C        WRITTEN APR, 1985 TO ACCOMMODATE 'JCHAR' DEFINITIONS FOR
@@ -2762,6 +2819,9 @@ C
       DATA C1/18.9766/,C2/-14.9595/,C3/-2.43882/
       DENSAT(ATEMP) = ATEMP*B*EXP(C1+C2*ATEMP+C3*ATEMP**2)*1.0E-6
 C*****
+
+!      print *,'P',P,'T',T
+
       RHOAIR = ALOSMT*(P/PZERO)*(TZERO/T)
 C     NOPRNT = 0
 C     A = TZERO/T
@@ -2809,10 +2869,11 @@ CC    WMOL1(K)= ALOSMT*(WMOL/PZERO)*(TZERO/T)
 299   CONTINUE
       WRITE(IPR,951)JUNIT
   951 FORMAT(/,'   **** ERROR IN CONVERT ****, JUNIT = ',I5)
-      STOP
+      Error STOP
       END Subroutine CONVRT
 
       SUBROUTINE WATVAP(P,T)
+      real, intent(in) :: p,t
 C*************************************************************
 C
 C        WRITTEN APR, 1985 TO ACCOMMODATE 'JCHAR' DEFINITIONS FOR
@@ -2917,7 +2978,7 @@ CC    WMOL1(1) = DENSAT(A)*(WMOL/100.0)
       GO TO 200
  199   WRITE(IPR,951)JUNIT
  951  FORMAT(/,'  **** ERROR IN WATVAP ****, JUNIT = ',I5)
-      STOP'JUNIT'
+       error STOP'JUNIT'
   200 CONTINUE
       WMOL1(1)=2.989E-23 *WMOL1(1) *WAIR
       DENST = DENSAT(A)
@@ -3317,7 +3378,7 @@ C     HMXVSA=ZVSA(9)
       IHA1=IHVSA(K)
       END Subroutine LAYVSA
 
-      FUNCTION   JOU(CHAR)
+      FUNCTION JOU(CHAR)
       COMMON /IFIL/ IRD,IPR,IPU,NOPR,NFHDRF
 C
       CHARACTER*1 CHAR,HOLVEC(22)
@@ -3338,7 +3399,7 @@ C
 110   IF (INDX .EQ. 0) THEN
         WRITE(IPR,910) CHAR
 910     FORMAT('0 INVALID PARAMETER :',2X,A1)
-        STOP ' JOU: BAD PARAM '
+        error STOP ' JOU: BAD PARAM '
       ENDIF
 920   FORMAT(5X,A1,I5)
       JOU=INDX
@@ -3580,8 +3641,12 @@ C      FOR MOLECULES 8-35, ONLY US STD PROFILES ARE AVIALABLE
 C      THEREFORE, WHEN  'JCHAR(K) = 1-5', JCHAR(K) WILL BE RESET TO 6
 C
 C
-      READ(IRD,80)ZMDL(K),P(K),T(K),WMOL(1),WMOL(2),WMOL(3),
+      if(Python) then
+        print*,'WARNING: this case untested in RNDSM'
+      else
+        READ(IRD,80)ZMDL(K),P(K),T(K),WMOL(1),WMOL(2),WMOL(3),
      X (JCHAR(KM),KM=1,15)
+      endif
 80    FORMAT ( F10.3,5E10.3,15A1)
        WRITE(IPR,81)ZMDL(K),P(K),T(K),WMOL(1),WMOL(2),WMOL(3),
      X (JCHAR(KM),KM=1,15)
@@ -3624,6 +3689,7 @@ C
 82         FORMAT(10X,3F10.3,4I5)
       ENDIF
       DO 12 KM = 1,15
+!TODO this needs to be directly set if using Python
 12    JUNIT(KM) = JOU(JCHAR(KM))
       IF(M1 .NE. 0) JUNIT(1) = M1
       IF(M1 .NE. 0) JUNIT(2) = M1
@@ -5211,10 +5277,10 @@ C*****LINEAR INTERPOLATION
       END SUBROUTINE LAYER
 
       SUBROUTINE TRANS(IPH,ISOURC,IDAY,ANGLEM,nwl,TXPy,VPy,ALAMPy,
-     & TRACEPy,  UNIFPy, SUMAPy)
+     & TRACEPy,  UNIFPy, SUMAPy, IrradPy)
       Integer, Intent(IN)::nwl
       Real, Intent(Out) :: TXPy(nwl,63), VPy(*), ALAMPy(*), TRACEPy(*),
-     &      UNIFPy(*), SUMAPy(*)
+     &      UNIFPy(*), SUMAPy(*), IrradPy(nwl,2)
 C***********************************************************************
 C     CALCULATES TRANSMITTANCE AND RADIANCE VALUES BETWEEN V1 AND V2
 C        FOR A GIVEN ATMOSPHERIC SLANT PATH
@@ -6251,10 +6317,16 @@ C*****
       IF(SUMT.LE.RADMIN) RADMIN=SUMT
   710 CONTINUE
       IMULT=IMLT
+!! Python hook
+      ! Ipython is wavelength index, result for each wavelength as lowtran loops
         TXPy(IPython,:) = TX(9)
       VPy(IPython) = V; ALAMPy(IPython) = ALAM; TRACEPy(IPython)=TRACE
       UNIFPy(IPython) = UNIF; SUMAPy(IPython) = SUMA
+
+      IrradPy(IPython,1) = TSOLIL; IrradPy(Ipython,2) = SOLIL
+
       IPython = IPython+1
+!! End Python hook
       IF (IV.LT.IV2) GO TO 5
 C*****END OF FREQUENCY LOOP
       AB=1.0-SUMA/FLOAT(IV-IV1)

@@ -15,7 +15,7 @@ The ``LOWFIL`` program in reference/lowtran7.10.f was not connected as I had pre
 
 The ``LOWSCAN`` spectral sampling (scanning) program in reference/lowtran7.13.f was not connected as I had no need for coarser spectral resolution.
 
-:Python API Author: Michael Hirsch
+:Python API Author: Michael Hirsch, Ph.D.
 :License: MIT
 
 .. contents::
