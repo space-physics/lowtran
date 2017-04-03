@@ -6,7 +6,8 @@ import lowtran
 def test_atmosphere_transmission():
 
     c1={'model':5,'itype':3,'iemsct':0,'im':0,
-        'iseasn':0,'ml':0,'ird1':0,'range_km':0,'zmdl':0,'p':0,'t':0}
+        'iseasn':0,'ird1':0,'range_km':0,'zmdl':0,'p':0,'t':0,
+        'wmol':[93.96,0.,0.,0.,0.,0.,0.,0.,0.,0.,0.,0.]}
 
     T = lowtran.golowtran(0,0,[500,900],c1)
 
