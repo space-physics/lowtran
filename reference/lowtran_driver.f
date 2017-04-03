@@ -11,7 +11,7 @@
 
       implicit none
 
-      integer imodel,nargin
+      integer imodel,nargin,i
       character(len=8) :: arg
       integer :: model,itype,iemsct,im
       integer :: iseasn,ird1
@@ -33,7 +33,7 @@
       real :: ZMDL(ml),P(ml),T(ml), WMOL(12)
 
       real :: TXPy(nwl,ncol), VPy(nwl), ALAMPy(nwl), TRACEPy(nwl),
-     &      UNIFPy(nwl), SUMAPy(nwl)
+     &      UNIFPy(nwl), SUMAPy(nwl), IrradPy(nwl,2)
 
 ! Model configuration, see Lowtran manual p. 21(30) s. 3.2
 
@@ -99,7 +99,6 @@
 
           h1 = 0.05
           angle = 0. ! arbitrary, zenith angle
-          range = h1
           iday = 0 ! 0: use mean earth-sun distance
           ro = 0 ! 0: use model earth radius
           isourc = 0 ! 0: sun, 1: moon
@@ -113,16 +112,19 @@
 !-------- END command line parse ------------
 
         call LWTRN7(Python,nwl,V1,V2,DV,
-     &  TXPy,VPy,ALAMPy,TRACEPy,UNIFPy, SUMAPy,
+     &  TXPy,VPy,ALAMPy,TRACEPy,UNIFPy, SUMAPy,irradpy,
      &  MODEL,ITYPE,IEMSCT,IM,
      &  ISEASN,ML,IRD1,
      &  ZMDL,P,T,WMOL,
      &  H1,H2,ANGLE,range)
+!--- friendly output
 
-        print *, 'for wavelengths [nm]:'
-        print *, 1e3*ALAMPy
-        print *, 'transmission:'
-        print *, TXPy(1:nwl,9)
+      print *,'wavelengths[nm]    transmission   TransIrradiance ETIrr'
+
+        do i = 1,nwl
+
+            print *, 1e3*ALAMPy(i), TXPy(i,9),IrradPy(i,1),irradpy(i,2)
+        enddo
 
         end program
 

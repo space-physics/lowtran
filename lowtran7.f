@@ -1,5 +1,5 @@
       SUBROUTINE LWTRN7(Python,nwl,V1Py,V2Py,DVPy,
-     & TXPy,VPy,ALAMPy,TRACEPy,UNIFPy, SUMAPy,
+     & TXPy,VPy,ALAMPy,TRACEPy,UNIFPy, SUMAPy,IrradPy,
      & MODELPy,ITYPEPy,IEMSCTPy,IMpy,
      & ISEASNPy,MLpy,IRD1py,
      & ZMDLpy, Ppy, Tpy,WMOLpy,
@@ -11,7 +11,7 @@
       real,intent(in) :: ZMDLpy(mlpy),Ppy(mlpy),Tpy(mlpy),WMOLpy(12)
       Real, Intent(in)  :: V1Py,V2Py,DVPy,H1Py,H2Py,ANGLEPy,RangePy
       Real, Intent(Out) :: TXPy(nwl,63), VPy(nwl), ALAMPy(nwl),
-     &      TRACEPy(nwl),UNIFPy(nwl), SUMAPy(nwl)
+     &      TRACEPy(nwl),UNIFPy(nwl), SUMAPy(nwl), IrradPy(nwl,2)
 
 !------------------------------
 c written to TAPE6:
@@ -1223,16 +1223,19 @@ C
       PSIPO =-99.
       ANGLEM=-99.
       G     =-99.
-C
-C*****CARD 3 GEOMETERY PARAMETERS
-C
-      IF(IEMSCT.EQ.3) GO TO 315
+
+!*****CARD 3 GEOMETERY PARAMETERS
       If (Python) Then
-        H1 = H1Py; H2=H2Py; ANGLE=AnglePy; Range=RangePy
+        H1 = H1Py; 
+        H2=H2Py; 
+        ANGLE=AnglePy; 
+!        print*,rangepy
+        Range=RangePy
         Beta=0.; Ro=0; Len=0
-      Else
-        READ(IRD,1312)H1,H2,ANGLE,RANGE,BETA,RO,LEN
-      EndIf
+      Endif
+
+      IF(IEMSCT.EQ.3) GO TO 315
+      if (.not.Python)  READ(IRD,1312)H1,H2,ANGLE,RANGE,BETA,RO,LEN
 1312  FORMAT(6F10.3,I5)
       WRITE(IPR,1313)H1,H2,ANGLE,RANGE,BETA,RO,LEN
 1313  FORMAT('0 CARD 3  *****',6F10.3,I5)
@@ -1611,8 +1614,8 @@ CCC    CALCULATE EQUIVALENT LIQUID WATER CONSTANTS
 CCC
       CALL EQULWC
 C
-      CALL TRANS (IPH,ISOURC,IDAY,ANGLEM,nwl,TXPy,VPy,ALAMPy,TRACEPy,
-     &      UNIFPy, SUMAPy)
+      CALL TRANS(IPH,ISOURC,IDAY,ANGLEM,nwl,TXPy,VPy,ALAMPy,TRACEPy,
+     &      UNIFPy, SUMAPy, IrradPy)
 C
 C*****WRITE END OF FILE ON TAPE 7
 630   IF(IERROR .GT. 0) THEN
@@ -2812,7 +2815,9 @@ C
       DATA C1/18.9766/,C2/-14.9595/,C3/-2.43882/
       DENSAT(ATEMP) = ATEMP*B*EXP(C1+C2*ATEMP+C3*ATEMP**2)*1.0E-6
 C*****
-      print *,'P',P,'T',T
+
+!      print *,'P',P,'T',T
+
       RHOAIR = ALOSMT*(P/PZERO)*(TZERO/T)
 C     NOPRNT = 0
 C     A = TZERO/T
@@ -5268,10 +5273,10 @@ C*****LINEAR INTERPOLATION
       END SUBROUTINE LAYER
 
       SUBROUTINE TRANS(IPH,ISOURC,IDAY,ANGLEM,nwl,TXPy,VPy,ALAMPy,
-     & TRACEPy,  UNIFPy, SUMAPy)
+     & TRACEPy,  UNIFPy, SUMAPy, IrradPy)
       Integer, Intent(IN)::nwl
       Real, Intent(Out) :: TXPy(nwl,63), VPy(*), ALAMPy(*), TRACEPy(*),
-     &      UNIFPy(*), SUMAPy(*)
+     &      UNIFPy(*), SUMAPy(*), IrradPy(nwl,2)
 C***********************************************************************
 C     CALCULATES TRANSMITTANCE AND RADIANCE VALUES BETWEEN V1 AND V2
 C        FOR A GIVEN ATMOSPHERIC SLANT PATH
@@ -6308,10 +6313,16 @@ C*****
       IF(SUMT.LE.RADMIN) RADMIN=SUMT
   710 CONTINUE
       IMULT=IMLT
+!! Python hook
+      ! Ipython is wavelength index, result for each wavelength as lowtran loops
         TXPy(IPython,:) = TX(9)
       VPy(IPython) = V; ALAMPy(IPython) = ALAM; TRACEPy(IPython)=TRACE
       UNIFPy(IPython) = UNIF; SUMAPy(IPython) = SUMA
+
+      IrradPy(IPython,1) = TSOLIL; IrradPy(Ipython,2) = SOLIL
+
       IPython = IPython+1
+!! End Python hook
       IF (IV.LT.IV2) GO TO 5
 C*****END OF FREQUENCY LOOP
       AB=1.0-SUMA/FLOAT(IV-IV1)
