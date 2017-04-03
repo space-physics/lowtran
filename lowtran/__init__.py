@@ -25,6 +25,17 @@ except ImportError as e:
     raise ImportError(f'you must compile the Fortran code first. f2py -m lowtran7 -c lowtran7.f  {e} ')
 
 def golowtran(obsalt_km,zenang_deg,wlnm,c1):# -> DataArray:
+#%% default parameters
+    defp = ('im','iseasn','ird1','range_km','zmdl','p','t')
+    for p in defp:
+        if p not in c1:
+            c1[p] =  0
+
+    if 'wmol' not in c1:
+        c1['wmol']=[0]*12
+        
+    assert len(c1['wmol']) == 12,'see Lowtran user manual for 12 values of WMOL'
+    
 #%% altitude
     obsalt_km = atleast_1d(obsalt_km)
     if obsalt_km.size>1:
