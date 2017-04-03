@@ -13,5 +13,7 @@ def plottrans(trans,log):
     if log:
         ax.set_yscale('log')
         ax.set_ylim(1e-5,1)
+    else:
+        ax.set_ylim(0,1)
     ax.invert_xaxis()
     ax.autoscale(True,axis='x',tight=True)
