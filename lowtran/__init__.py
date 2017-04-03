@@ -54,25 +54,29 @@ def golowtran(obsalt_km,zenang_deg,wlnm,c1):# -> DataArray:
     if not ((0<=wlcminv) & (wlcminv<=50000)).all():
        logging.error('specified model range 0 <= wlcminv <= 50000')
     #TX,V,ALAM,TRACE,UNIF,SUMA = lowtran7.lwtrn7(True,nwl)
-    T = DataArray(data=empty((nwl,zenang_deg.size)), dims=['wavelength_nm','zenith_angle'])
-    T['zenith_angle']=zenang_deg
+    T = DataArray(data=empty((nwl,)), dims=['wavelength_nm'])
 #%% invoke lowtran
     """
     Note we invoke case "3a" from table 14, only observer altitude and apparent
     angle are specified
     """
-    for za in zenang_deg:
-        Tx,V,Alam,trace,unif,suma,irrad = lowtran7.lwtrn7(
+    Tx,V,Alam,trace,unif,suma,irrad = lowtran7.lwtrn7(
                             True, nwl, wlcminv[1], wlcminv[0], wlcminvstep,
                             c1['model'], c1['itype'], c1['iemsct'], c1['im'],
                             c1['iseasn'], c1['ird1'],
                             c1['zmdl'], c1['p'], c1['t'], c1['wmol'],
-                            obsalt_km, 0, za, c1['range_km'])
-        T.loc[:,za] = Tx[:,9]
+                            obsalt_km, 0, zenang_deg, c1['range_km'])
+    T = DataArray(data=Tx[:,9], dims=['wavelength_nm'])
 #%% collect results
     T['wavelength_nm']=Alam*1e3
+    
+    if c1['iemsct'] != 3:
+        irrad=None
+        
+    Irrad = DataArray(data=irrad[:,0],dims=['wavelength_nm'])
+    Irrad['wavelength_nm']=T.wavelength_nm
 
-    return T
+    return T,Irrad
 
 def nm2lt7(wlnm):
     """converts wavelength in nm to cm^-1"""
