@@ -5,6 +5,7 @@
      & ZMDLpy, Ppy, Tpy,WMOLpy,
      & H1Py,H2Py,ANGLEPy,RangePy)
 
+! note MLpy is implicit, don't pass it in from Numpy
       Logical,Intent(in) :: Python
       Integer,Intent(in) :: nwl,MODELPy,ITYPEPy,IEMSCTPy,IMpy
       Integer,Intent(in) :: ISEASNpy,MLpy,IRD1py
