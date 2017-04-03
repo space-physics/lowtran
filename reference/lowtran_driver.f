@@ -15,6 +15,7 @@
       character(len=8) :: arg
       integer :: model,itype,iemsct,im
       integer :: iseasn,ird1
+      integer :: iday,ro,isourc
       real :: angle,h1,range,v1,v2,dv
 
 !     Python .true.:   Use common blocks (from f2py)
@@ -51,6 +52,7 @@
           model =5 ! 5: subarctic winter
           itype=3 ! 3: vertical or slant path to space
           iemsct=0! 0: transmittance model
+          im=0 !0: normal operation (no custom user conditions)
 
           iseasn=0 ! 0: default for this type redirects to 1: spring/summer
           IRD1=0 !0: not used
@@ -82,6 +84,28 @@
           P(1) = 949 ! millibar
           T(1) = 283.8 ! Kelvin
           WMOL = [93.96,0.,0.,0.,0.,0.,0.,0.,0.,0.,0.,0.]
+      elseif (imodel.eq.2) then
+!!! Solar irradiance !!!
+          v1=714.2857; v2=1250. ! frequency cm^-1 bounds
+          dv=13.  ! DV: frequency cm^1 step (lower limit 5. per Card 4 p.40)
+        
+          model = 2 ! 2: midlatitude summer, 3: mid latitude winter
+          itype = 3 ! 3: slant to space (required by iemsct=3)
+          iemsct = 3 !3: directly transmitted solar irradiance, 2: scattered radiance,...
+          im=0
+
+          iseasn=0
+          ird1=0
+
+          h1 = 0.05
+          angle = 0. ! arbitrary, zenith angle
+          range = h1
+          iday = 0 ! 0: use mean earth-sun distance
+          ro = 0 ! 0: use model earth radius
+          isourc = 0 ! 0: sun, 1: moon
+
+          ! Cards 3A, 3B not used for irradiance
+    
       else
          error stop 'unknown model selection'
       endif
