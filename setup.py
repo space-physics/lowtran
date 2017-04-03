@@ -1,10 +1,5 @@
 #!/usr/bin/env python
 import setuptools #enables develop
-
-#%% Monkey patch necessary since setup_requires is not adequate
-import pip
-pip.main(['install','numpy'])
-#%% install
 from numpy.distutils.core import setup,Extension
 
 req=['python-dateutil','pytz','nose','numpy','xarray','matplotlib','seaborn']
@@ -13,7 +8,7 @@ setup(name='lowtran',
       packages=['lowtran'],
       author='Michael Hirsch, Ph.D',
       description='Model of Earth atmosphere absorption and transmission vs. wavelength and location on Earth.',
-      version='0.5',
+      version='2.0.0',
       url = 'https://github.com/scivision/lowtran',
       classifiers=[
       'Intended Audience :: Science/Research',
