@@ -119,10 +119,9 @@
      &  H1,H2,ANGLE,range)
 !--- friendly output
 
-      print *,'wavelengths[nm]    transmission   TransIrradiance ETIrr'
+      print *,'wavelengths[nm]   transmission    TransIrradiance  ETIrr'
 
         do i = 1,nwl
-
             print *, 1e3*ALAMPy(i), TXPy(i,9),IrradPy(i,1),irradpy(i,2)
         enddo
 
