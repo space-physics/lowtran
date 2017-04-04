@@ -71,10 +71,10 @@ def golowtran(obsalt_km,zenang_deg,wlnm,c1):# -> DataArray:
     T['wavelength_nm']=Alam*1e3
     
     if c1['iemsct'] != 3:
-        irrad=None
-        
-    Irrad = DataArray(data=irrad[:,0],dims=['wavelength_nm'])
-    Irrad['wavelength_nm']=T.wavelength_nm
+        Irrad=None
+    else:
+        Irrad = DataArray(data=irrad[:,0],dims=['wavelength_nm'])
+        Irrad['wavelength_nm']=T.wavelength_nm
 
     return T,Irrad
 
