@@ -11,7 +11,7 @@
 
       implicit none
 
-      integer imodel,nargin,i
+      integer iimodel,imodel,nargin,i
       character(len=8) :: arg
       integer :: model,itype,iemsct,im
       integer :: iseasn,ird1
@@ -33,7 +33,7 @@
       real :: ZMDL(ml),P(ml),T(ml), WMOL(12)
 
       real :: TXPy(nwl,ncol), VPy(nwl), ALAMPy(nwl), TRACEPy(nwl),
-     &      UNIFPy(nwl), SUMAPy(nwl), IrradPy(nwl,2)
+     &      UNIFPy(nwl), SUMAPy(nwl), IrradPy(nwl,2),SumVVPy(nwl)
 
 ! Model configuration, see Lowtran manual p. 21(30) s. 3.2
 
@@ -43,6 +43,8 @@
       if (nargin.ge.1) then
         call GET_COMMAND_ARGUMENT(1,arg); read(arg,*) imodel
       endif
+
+      print*,imodel
  
       if (imodel.eq.0) then
           v1=8333.; v2=33333. ! frequency cm^-1 bounds
@@ -104,26 +106,60 @@
           isourc = 0 ! 0: sun, 1: moon
 
           ! Cards 3A, 3B not used for irradiance
+      elseif (imodel.eq.3) then
+!!! Solar radiance !!!
+          v1=714.2857; v2=1250. ! frequency cm^-1 bounds
+          dv=13.  ! DV: frequency cm^1 step (lower limit 5. per Card 4 p.40)
+
+          model=0 ! 0: Specify meterological data (horiz path)
+          itype=1 ! 1: Horizontal, constant pressure path
+          iemsct=1 ! 1: single radiance model
+          im=1 ! 1: horizontal path: p.42 of manual
+
+          iseasn=0 !0: default for this type redirects to 1: spring/summer
+          ird1=1 !1: use card 2C2 (where atmospheric measurments are input for Model=0
+
+! TODO M1-M6=0 to use JCHAR of card 2C.1 (p.22)
+          h1 = 0.05  !(kilometers altitude of horizontal path)
+          angle = 0. ! TODO truthfully it's 90. for horizontal path, have to check/test to see if Lowtran uses this value for model=0 horiz. path.
+          range=h1
+          zmdl(1) = h1
+          P(1) = 949 ! millibar
+          T(1) = 283.8 ! Kelvin
+          WMOL = [93.96,0.,0.,0.,0.,0.,0.,0.,0.,0.,0.,0.]
     
       else
          error stop 'unknown model selection'
       endif
 !-------- END model config -----------------
 !-------- END command line parse ------------
-
+      print *,imodel
+        iimodel = imodel
         call LWTRN7(Python,nwl,V1,V2,DV,
-     &  TXPy,VPy,ALAMPy,TRACEPy,UNIFPy, SUMAPy,irradpy,
+     &  TXPy,VPy,ALAMPy,TRACEPy,UNIFPy, SUMAPy,irradpy,sumVVPy,
      &  MODEL,ITYPE,IEMSCT,IM,
      &  ISEASN,ML,IRD1,
      &  ZMDL,P,T,WMOL,
      &  H1,H2,ANGLE,range)
 !--- friendly output
-
-      print *,'wavelengths[nm]   transmission    TransIrradiance  ETIrr'
-
+      print *,iimodel
+    
+      if (iimodel.lt.2) then
+          print *,'wavelength [nm]   transmission' 
+            do i = 1,nwl
+                print *, 1e3*ALAMPy(i), TXPy(i,9)
+            enddo
+      elseif (iimodel.eq.2) then
+       print *,'wavelength [nm]  transmission   TransIrradiance  ETIrr'
         do i = 1,nwl
             print *, 1e3*ALAMPy(i), TXPy(i,9),IrradPy(i,1),irradpy(i,2)
         enddo
+      elseif (iimodel.eq.3) then
+          print *,'wavelength [nm]   transmission    Radiance '
+            do i = 1,nwl
+                print *, 1e3*ALAMPy(i), TXPy(i,9),SumVVPy(i)
+            enddo
+      endif
 
         end program
 

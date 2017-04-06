@@ -1,5 +1,5 @@
       SUBROUTINE LWTRN7(Python,nwl,V1Py,V2Py,DVPy,
-     & TXPy,VPy,ALAMPy,TRACEPy,UNIFPy, SUMAPy,IrradPy,
+     & TXPy,VPy,ALAMPy,TRACEPy,UNIFPy, SUMAPy,IrradPy,SumVVPy,
      & MODELPy,ITYPEPy,IEMSCTPy,IMpy,
      & ISEASNPy,MLpy,IRD1py,
      & ZMDLpy, Ppy, Tpy,WMOLpy,
@@ -12,7 +12,8 @@
       real,intent(in) :: ZMDLpy(mlpy),Ppy(mlpy),Tpy(mlpy),WMOLpy(12)
       Real, Intent(in)  :: V1Py,V2Py,DVPy,H1Py,H2Py,ANGLEPy,RangePy
       Real, Intent(Out) :: TXPy(nwl,63), VPy(nwl), ALAMPy(nwl),
-     &      TRACEPy(nwl),UNIFPy(nwl), SUMAPy(nwl), IrradPy(nwl,2)
+     & TRACEPy(nwl),UNIFPy(nwl), SUMAPy(nwl), IrradPy(nwl,2), 
+     & SumVVPy(nwl)
 
 !------------------------------
 c written to TAPE6:
@@ -1121,7 +1122,7 @@ C
 !       print *,'IM ',IM
 !       print *,'MODEL',MODEL
 
-      IF(IM .EQ. 1) THEN
+      IF(IM.EQ.1) THEN
            IF((MODEL.EQ.7.AND.IM.EQ.1) .OR.(MODEL.EQ.0)) THEN
 C
 C*****CARD 2C  USER SUPPLIED ATMOSPHERIC PROFILE
@@ -1280,6 +1281,7 @@ C
 C*****CARD 3A1
 C
       If (.not.Python) READ(IRD,1320) IPARM,IPH,IDAY,ISOURC
+      if (Python) IPH=2 ! FIXME 2 is easiest case
 1320  FORMAT(4I5)
       WRITE(IPR,1321) IPARM,IPH,IDAY,ISOURC
 1321  FORMAT('0 CARD 3A1*****',4I5)
@@ -1619,7 +1621,7 @@ CCC
       CALL EQULWC
 C
       CALL TRANS(IPH,ISOURC,IDAY,ANGLEM,nwl,TXPy,VPy,ALAMPy,TRACEPy,
-     &      UNIFPy, SUMAPy, IrradPy)
+     &      UNIFPy, SUMAPy, IrradPy, SUMVVPy)
 C
 C*****WRITE END OF FILE ON TAPE 7
 630   IF(IERROR .GT. 0) THEN
@@ -5277,10 +5279,10 @@ C*****LINEAR INTERPOLATION
       END SUBROUTINE LAYER
 
       SUBROUTINE TRANS(IPH,ISOURC,IDAY,ANGLEM,nwl,TXPy,VPy,ALAMPy,
-     & TRACEPy,  UNIFPy, SUMAPy, IrradPy)
+     & TRACEPy,  UNIFPy, SUMAPy, IrradPy,SUMVVPy)
       Integer, Intent(IN)::nwl
       Real, Intent(Out) :: TXPy(nwl,63), VPy(*), ALAMPy(*), TRACEPy(*),
-     &      UNIFPy(*), SUMAPy(*), IrradPy(nwl,2)
+     &      UNIFPy(*), SUMAPy(*), IrradPy(nwl,2), SUMVVPy(*)
 C***********************************************************************
 C     CALCULATES TRANSMITTANCE AND RADIANCE VALUES BETWEEN V1 AND V2
 C        FOR A GIVEN ATMOSPHERIC SLANT PATH
@@ -6239,7 +6241,7 @@ C
   917 FORMAT(F7.0,F8.4,1PE9.2,T96,E10.3)
       SUMT=SUMV
       SUMTT=SUMVV
-      GO TO 700
+      GO TO 700 ! goto Ipython section
   500 CONTINUE
 C*****SOLAR SCATTERED RADIANCE
 C*****MULTIPLY SUMSSR BY THE EXTRATERRESTRIAL SOURCE STRENGTH SS
@@ -6323,6 +6325,8 @@ C*****
       VPy(IPython) = V; ALAMPy(IPython) = ALAM; TRACEPy(IPython)=TRACE
       UNIFPy(IPython) = UNIF; SUMAPy(IPython) = SUMA
 
+      SUMVVPy(IPython) = SUMVV
+
       IrradPy(IPython,1) = TSOLIL; IrradPy(Ipython,2) = SOLIL
 
       IPython = IPython+1
@@ -6334,7 +6338,7 @@ C*****END OF FREQUENCY LOOP
       IF(IEMSCT.EQ.0) GO TO 770
       IF(IEMSCT .EQ. 3) THEN
            WRITE(IPR,755) RADSUM,RADMIN,VRMIN,RADMAX,VRMAX
-      ELSE
+      ELSE ! IEMSCT = 1, 2 or 3
            WRITE(IPR,750) RADSUM,RADMIN,VRMIN,RADMAX,VRMAX
            WRITE(IPR,760) TBOUND,EMISS
       ENDIF

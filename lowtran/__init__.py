@@ -60,7 +60,7 @@ def golowtran(obsalt_km,zenang_deg,wlnm,c1):# -> DataArray:
     Note we invoke case "3a" from table 14, only observer altitude and apparent
     angle are specified
     """
-    Tx,V,Alam,trace,unif,suma,irrad = lowtran7.lwtrn7(
+    Tx,V,Alam,trace,unif,suma,irrad,sumvv = lowtran7.lwtrn7(
                             True, nwl, wlcminv[1], wlcminv[0], wlcminvstep,
                             c1['model'], c1['itype'], c1['iemsct'], c1['im'],
                             c1['iseasn'], c1['ird1'],
@@ -70,9 +70,12 @@ def golowtran(obsalt_km,zenang_deg,wlnm,c1):# -> DataArray:
 #%% collect results
     T['wavelength_nm']=Alam*1e3
     
-    if c1['iemsct'] != 3:
+    if c1['iemsct'] == 0:
         Irrad=None
-    else:
+    elif c1['iemsct'] == 1:
+        Irrad = DataArray(data=sumvv,dims=['wavelength_nm'])
+        Irrad['wavelength_nm']=T.wavelength_nm
+    elif c1['iemsct'] == 3:
         Irrad = DataArray(data=irrad[:,0],dims=['wavelength_nm'])
         Irrad['wavelength_nm']=T.wavelength_nm
 

@@ -24,6 +24,6 @@ if __name__=='__main__':
  
     plottrans(trans,p.zenang,False)
 
-    plotirrad(irrad,True)
+    plotirrad(irrad,True,c1['iemsct'])
 
     show()

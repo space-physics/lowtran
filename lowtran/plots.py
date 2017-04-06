@@ -19,14 +19,18 @@ def plottrans(trans,zenang_deg,log):
     ax.invert_xaxis()
     ax.autoscale(True,axis='x',tight=True)
     
-def plotirrad(irrad,log):
+def plotirrad(irrad,log,iemsct):
     ax = figure().gca()
     
     ax.plot(irrad.wavelength_nm,irrad)
         
     ax.set_xlabel('wavelength [nm]')
-    ax.set_ylabel('Solar Irradiance [W cm^-2 per micron]')
-    ax.set_title('Solar Irradiance')
+    if iemsct==3:
+        ax.set_ylabel('Solar Irradiance [W cm^-2 ster^-1 micron^-1]')
+        ax.set_title('Solar Irradiance')
+    elif iemsct==1:
+        ax.set_ylabel('Solar Up-Radiance [W cm^-2 ster^-1 micron^-1]')
+        ax.set_title('Solar Up-Radiance')
     ax.grid(True)
     
     if log:
