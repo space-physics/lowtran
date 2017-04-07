@@ -1,3 +1,6 @@
+*.h5
+
+data/
 dist/
 bin/
 

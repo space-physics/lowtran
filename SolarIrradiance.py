@@ -2,7 +2,7 @@
 from matplotlib.pyplot import show
 #
 import lowtran
-from lowtran.plots import plottrans,plotirrad
+from lowtran.plots import plotirrad
 
 if __name__=='__main__':
 
@@ -19,11 +19,8 @@ if __name__=='__main__':
         'iemsct':3 # 3: solar irradiance
         }
 
-    trans,irrad = lowtran.golowtran(p.obsalt,p.zenang,p.wavelen,c1)
+    TR = lowtran.golowtran(p.obsalt,p.zenang,p.wavelen,c1)
 
- 
-    plottrans(trans,p.zenang,False)
-
-    plotirrad(irrad,True,c1['iemsct'])
+    plotirrad(TR,True,c1)
 
     show()
