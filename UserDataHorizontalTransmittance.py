@@ -25,10 +25,10 @@ if __name__=='__main__':
         'wmol':[93.96,0.,0.,0.,0.,0.,0.,0.,0.,0.,0.,0.]
         }
 
-    trans,irrad = lowtran.golowtran(p.obsalt,p.zenang,p.wavelen,c1)
+    TR = lowtran.golowtran(p.obsalt,p.zenang,p.wavelen,c1)
 
  
-    plothoriz(trans,p.zenang,c1,False)
+    plothoriz(TR,p.zenang,c1,False)
 
 
     show()

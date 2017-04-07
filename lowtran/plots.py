@@ -1,10 +1,25 @@
-from matplotlib.pyplot import figure
+from datetime import datetime
+from xarray import DataArray
+from matplotlib.pyplot import figure,subplots
+
+def plotradtime(TR:DataArray, zenang_deg:float, c1:dict) -> None:
+    """
+    make one plot per time for now.
+    
+    TR: 3-D Panel: time, wavelength, [transmittance, radiance]
+    
+    radiance is currently single-scatter solar
+    """
+    assert isinstance(TR,DataArray)
+    
+    for tr in TR: # for each time
+        plotirrad(tr,False,c1)
 
 
-def plottrans(trans,zenang_deg,log):
+def plottrans(trans,zenang_deg,log) -> None:
     ax = figure().gca()
     
-    ax.plot(trans.wavelength_nm, trans, label=str(zenang_deg))
+    ax.plot(trans.wavelength_nm, trans.loc[:,'transmission'], label=str(zenang_deg))
     
     ax.set_xlabel('wavelength [nm]')
     ax.set_ylabel('transmission (unitless)')
@@ -19,26 +34,49 @@ def plottrans(trans,zenang_deg,log):
     ax.invert_xaxis()
     ax.autoscale(True,axis='x',tight=True)
     
-def plotirrad(irrad,log,iemsct):
-    ax = figure().gca()
+def plotirrad(irrad,log,c1):
     
-    ax.plot(irrad.wavelength_nm,irrad)
+    fg,ax = subplots(2,1,sharex=True)
+    
+    if c1['iemsct'] == 3:
+        key='irradiance'
+        transtxt = 'Transmittance Observer to Space'
+    elif c1['iemsct'] == 1:
+        key='radiance'
+        transtxt = 'Transmittance Observer to Observer'
+    
+
+    ax[0].plot(irrad.wavelength_nm,irrad.loc[:,'transmission'])
+    ax[1].plot(irrad.wavelength_nm,irrad.loc[:,key])
+
         
-    ax.set_xlabel('wavelength [nm]')
-    if iemsct==3:
-        ax.set_ylabel('Solar Irradiance [W cm^-2 ster^-1 micron^-1]')
-        ax.set_title('Solar Irradiance')
-    elif iemsct==1:
-        ax.set_ylabel('Solar Up-Radiance [W cm^-2 ster^-1 micron^-1]')
-        ax.set_title('Solar Up-Radiance')
-    ax.grid(True)
+    ax[1].set_xlabel('wavelength [nm]')
+    if c1['iemsct'] == 3:
+        ttxt= 'Solar Irradiance '
+        ax[1].set_ylabel('Solar Irradiance [W cm^-2 ster^-1 micron^-1]')
+        ax[1].set_title(ttxt)
+    elif c1['iemsct'] ==1:
+        ttxt = 'Single-scatter Solar Radiance '
+        ax[1].set_ylabel('Radiance [W cm^-2 ster^-1 micron^-1]')
+        ax[1].set_title(ttxt)
+        
+    ax[0].set_title(transtxt)
+    ax[0].set_ylabel('Transmission (unitless)')
+
+    ax[0].grid(True)
+    ax[1].grid(True)
     
     if log:
-        ax.set_yscale('log')
-        ax.set_ylim(1e-8,1)
+        ax[1].set_yscale('log')
+        ax[1].set_ylim(1e-8,1)
         
-    ax.invert_xaxis()
-    ax.autoscale(True,axis='x',tight=True)
+    ax[1].invert_xaxis()
+    ax[1].autoscale(True,axis='x',tight=True)
+    
+    try:
+        fg.suptitle(str(datetime.utcfromtimestamp(irrad.time.item()/1e9)))
+    except (AttributeError,TypeError):
+        pass
     
 def plothoriz(trans,zenang_deg,c1,log):
     ax = figure().gca()

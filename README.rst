@@ -11,10 +11,6 @@ Updated by Michael Hirsch to be platform independent and easily accessible from 
 
 The main LOWTRAN program has been made accessible from Python by using direct memory transfers instead of the cumbersome and error-prone process of writing/reading text files.
 
-The ``LOWFIL`` program in reference/lowtran7.10.f was not connected as I had previously implemented my own filter function directly in Python.
-
-The ``LOWSCAN`` spectral sampling (scanning) program in reference/lowtran7.13.f was not connected as I had no need for coarser spectral resolution.
-
 :Python API Author: Michael Hirsch, Ph.D.
 :License: MIT
 
@@ -33,11 +29,22 @@ Installation
 
 Examples
 ========
-::
+We present examples of:
 
-  python DemoLowtran.py -a 0 12.5 25
+* ground-to-space transmittance::
 
-should generate the plot shown above on your screen.
+        python TransmittanceGround2Space.py 
+* sun-to-observer irrandiace::
+
+        python SolarIrradiance.py
+* observer-to-observer transmittance with custom Pressure, Temperature and partial pressure for 12 species::
+
+        python UserDataHorizontalTransmittance.py
+* observer-to-observer solar single-scattering solar radiance (up-going) with custom Pressure, Temperature and partial pressure for 12 species::
+
+        python UserDataHorizontalRadiance.py
+
+In these examples, you can write to HDF5 with the ``-o`` option.
 
 Notes
 =====
@@ -48,6 +55,9 @@ Right now a lot of configuration features aren't implemented, please request tho
 Reference
 ~~~~~~~~~
 `Original 1994 Lowtran7 Code <http://www1.ncdc.noaa.gov/pub/data/software/lowtran/>`_
+
+* ``LOWFIL`` program in reference/lowtran7.10.f was not connected as I had previously implemented my own filter function directly in Python.
+* ``LOWSCAN`` spectral sampling (scanning) program in reference/lowtran7.13.f was not connected as I had no need for coarser spectral resolution.
 
 Fortran (optional)
 ~~~~~~~~~~~~~~~~~~

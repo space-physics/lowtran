@@ -17,14 +17,54 @@ www.dtic.mil/dtic/tr/fulltext/u2/a206773.pdf
 """
 import logging
 from xarray import DataArray
-from numpy import asarray,atleast_1d,ceil,isfinite,empty
+import numpy as np
 #
 try:
     import lowtran7   #don't use dot in front, it's linking to .dll, .pyd, or .so
 except ImportError as e:
     raise ImportError(f'you must compile the Fortran code first. f2py -m lowtran7 -c lowtran7.f  {e} ')
+    
+def looplowtran(obsalt_km,zenang_deg,wlnm,c1):
+    """
+    golowtran() is for scalar parameters only 
+    (besides vector of wavelength, which Lowtran internally loops over)
+    You are welcome to call golowtran() directly if you don't need looping.
+    
+    wmol, p, t must all be vector(s) of same length
+    """
+    
+    wmol = np.atleast_2d(c1['wmol'])
+    P = c1['p']
+    T = c1['t']
+    time = c1['time']
 
-def golowtran(obsalt_km,zenang_deg,wlnm,c1):# -> DataArray:
+    assert wmol.shape[0] == len(P) == len(T) == len(time),'WMOL, P, T,time must be vectors of equal length'
+    
+    N = len(P)
+#%% preassign wavelengths for indexing
+    wlcminv,wlcminvstep,nwl = nm2lt7(wlnm)
+    wl_nm = 1e7 / np.arange(wlcminv[1],wlcminv[0]+wlcminvstep,wlcminvstep)
+#%% Panel is a 3-D array indexed by metadata
+    TR = DataArray(data=np.empty((N,wl_nm.size,3)),
+                   coords={'time':time,
+                           'wavelength_nm':wl_nm,
+                           'sim':['transmission','radiance','irradiance']},
+                   dims=['time','wavelength_nm','sim'],
+                   name='LowtranSim')
+        
+    for i in range(N):
+        c1['wmol'] = wmol[i,:]
+        c1['p'] = P[i]
+        c1['t'] = T[i]
+        
+        tr = golowtran(obsalt_km, zenang_deg, wlnm, c1)
+        TR.loc[time[i],...] = tr
+    
+ #   TR = TR.sort_index(axis=0) # put times in order, sometimes CSV is not monotonic in time.
+    
+    return TR
+
+def golowtran(obsalt_km,zenang_deg, wlnm,c1):# -> DataArray:
 #%% default parameters
     defp = ('im','iseasn','ird1','range_km','zmdl','p','t')
     for p in defp:
@@ -37,24 +77,23 @@ def golowtran(obsalt_km,zenang_deg,wlnm,c1):# -> DataArray:
     assert len(c1['wmol']) == 12,'see Lowtran user manual for 12 values of WMOL'
     
 #%% altitude
-    obsalt_km = atleast_1d(obsalt_km)
+    obsalt_km = np.atleast_1d(obsalt_km)
     if obsalt_km.size>1:
         obsalt_km = obsalt_km[0]
         logging.error(f'for now I only handle single altitudes. Using first value of {obsalt_km} [km]')
 #%% zenith angle
-    zenang_deg=atleast_1d(zenang_deg)
+    zenang_deg = np.atleast_1d(zenang_deg)
 #%% input check
-    if not (isfinite(obsalt_km).all() and isfinite(zenang_deg).all() and isfinite(wlnm).all()):
+    if not (np.isfinite(obsalt_km).all() and np.isfinite(zenang_deg).all() and np.isfinite(wlnm).all()):
         logging.critical('NaN or Inf detected in input, skipping LOWTRAN')
         return
 #%% setup wavelength
-    wlcminv,wlcminvstep,nwl =nm2lt7(wlnm)
+    wlcminv,wlcminvstep,nwl = nm2lt7(wlnm)
     if wlcminvstep<5:
-        logging.error('minimum resolution 5 cm^-1, specified resolution 20 cm^-1')
+        logging.critical('minimum resolution 5 cm^-1, specified resolution 20 cm^-1')
     if not ((0<=wlcminv) & (wlcminv<=50000)).all():
-       logging.error('specified model range 0 <= wlcminv <= 50000')
-    #TX,V,ALAM,TRACE,UNIF,SUMA = lowtran7.lwtrn7(True,nwl)
-    T = DataArray(data=empty((nwl,)), dims=['wavelength_nm'])
+       logging.critical('specified model range 0 <= wlcminv <= 50000')
+
 #%% invoke lowtran
     """
     Note we invoke case "3a" from table 14, only observer altitude and apparent
@@ -66,25 +105,17 @@ def golowtran(obsalt_km,zenang_deg,wlnm,c1):# -> DataArray:
                             c1['iseasn'], c1['ird1'],
                             c1['zmdl'], c1['p'], c1['t'], c1['wmol'],
                             obsalt_km, 0, zenang_deg, c1['range_km'])
-    T = DataArray(data=Tx[:,9], dims=['wavelength_nm'])
+    TR = DataArray(np.column_stack((Tx[:,9],sumvv,irrad[:,0])),
+                   coords={'wavelength_nm':Alam*1e3,
+                           'sim':['transmission','radiance','irradiance']},
+                     dims = ['wavelength_nm','sim'])
 #%% collect results
-    T['wavelength_nm']=Alam*1e3
-    
-    if c1['iemsct'] == 0:
-        Irrad=None
-    elif c1['iemsct'] == 1:
-        Irrad = DataArray(data=sumvv,dims=['wavelength_nm'])
-        Irrad['wavelength_nm']=T.wavelength_nm
-    elif c1['iemsct'] == 3:
-        Irrad = DataArray(data=irrad[:,0],dims=['wavelength_nm'])
-        Irrad['wavelength_nm']=T.wavelength_nm
-
-    return T,Irrad
+    return TR
 
 def nm2lt7(wlnm):
     """converts wavelength in nm to cm^-1"""
     wlcminvstep = 5 # minimum meaningful step is 20, but 5 is minimum before crashing lowtran
-    wlnm= asarray(wlnm,dtype=float) #for proper division
+    wlnm= np.asarray(wlnm,dtype=float) #for proper division
     wlcminv = 1.e7/wlnm
-    nwl = int(ceil((wlcminv[0]-wlcminv[1])/wlcminvstep))+1 #yes, ceil
+    nwl = int(np.ceil((wlcminv[0]-wlcminv[1])/wlcminvstep))+1 #yes, ceil
     return wlcminv,wlcminvstep,nwl
