@@ -9,10 +9,10 @@ def test_atmosphere_transmission():
         'iseasn':0,'ird1':0,'range_km':0,'zmdl':0,'p':0,'t':0,
         'wmol':[0]*12}
 
-    T,irrad = lowtran.golowtran(0,0,[500,900],c1)
+    TR= lowtran.golowtran(0,0,[500,900],c1)
 
-    assert_array_almost_equal([900.090027,  500.],T.wavelength_nm.values[[0,-1]])
-    assert_array_almost_equal([0.87720001, 0.85709256],T.values[[0,-1]].squeeze())
+    assert_array_almost_equal([900.090027,  500.],TR.wavelength_nm[[0,-1]])
+    assert_array_almost_equal([0.87720001, 0.85709256],TR.loc[:,'transmission'][[0,-1]].squeeze())
 
 if __name__ == '__main__':
     run_module_suite()
