@@ -71,10 +71,10 @@ def loopangle(c1):
     wlcminv,wlcminvstep,nwl = nm2lt7(c1['wlnmlim'])
     wl_nm = 1e7 / np.arange(wlcminv[1],wlcminv[0]+wlcminvstep,wlcminvstep)
 # %% Panel is a 3-D array indexed by metadata
-    TR = DataArray(data=np.empty((len(angles),wl_nm.size,3)),
+    TR = DataArray(data=np.empty((len(angles),wl_nm.size,4)),
                    coords={'angle':angles,
                            'wavelength_nm':wl_nm,
-                           'sim':['transmission', 'radiance', 'irradiance']},
+                           'sim':['transmission', 'radiance', 'irradiance','pathscatter']},
                    dims=['angle', 'wavelength_nm', 'sim'])
 
     for a in angles:
@@ -116,9 +116,9 @@ def golowtran(c1:dict) -> DataArray:
                             c1['zmdl'], c1['p'], c1['t'], c1['wmol'],
                             c1['h1'], c1['h2'], c1['angle'], c1['range_km'])
 
-    TR = DataArray(np.column_stack((Tx[:,9],sumvv,irrad[:,0])),
+    TR = DataArray(np.column_stack((Tx[:,9], sumvv, irrad[:,0], irrad[:,2])),
                    coords={'wavelength_nm':Alam*1e3,
-                           'sim':['transmission','radiance','irradiance']},
+                           'sim':['transmission','radiance','irradiance','pathscatter']},
                      dims = ['wavelength_nm','sim'])
 
     return TR

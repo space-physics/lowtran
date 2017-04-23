@@ -12,7 +12,7 @@
       real,intent(in) :: ZMDLpy(mlpy),Ppy(mlpy),Tpy(mlpy),WMOLpy(12)
       Real, Intent(in)  :: V1Py,V2Py,DVPy,H1Py,H2Py,ANGLEPy,RangePy
       Real, Intent(Out) :: TXPy(nwl,63), VPy(nwl), ALAMPy(nwl),
-     & TRACEPy(nwl),UNIFPy(nwl), SUMAPy(nwl), IrradPy(nwl,2), 
+     & TRACEPy(nwl),UNIFPy(nwl), SUMAPy(nwl), IrradPy(nwl,3), 
      & SumVVPy(nwl)
 
 !------------------------------
@@ -5282,7 +5282,7 @@ C*****LINEAR INTERPOLATION
      & TRACEPy,  UNIFPy, SUMAPy, IrradPy,SUMVVPy)
       Integer, Intent(IN)::nwl
       Real, Intent(Out) :: TXPy(nwl,63), VPy(*), ALAMPy(*), TRACEPy(*),
-     &      UNIFPy(*), SUMAPy(*), IrradPy(nwl,2), SUMVVPy(*)
+     &      UNIFPy(*), SUMAPy(*), IrradPy(nwl,3), SUMVVPy(*)
 C***********************************************************************
 C     CALCULATES TRANSMITTANCE AND RADIANCE VALUES BETWEEN V1 AND V2
 C        FOR A GIVEN ATMOSPHERIC SLANT PATH
@@ -6255,8 +6255,8 @@ C
 C*****SUMSSR IS THE SCATTERED RADIANCE IN (W/CM2-STER-MICROMETER)
       SUMS = 0.
       SUMSS = 0.
-      IF(V. GT. 0.)SUMS=(1.0E4/V**2)*SUMSSR
-      IF(V. GT. 0.)SUMSSS=(1.0E4/V**2)*SUMSSS
+      IF(V. GT. 0.) SUMS=(1.0E4/V**2)*SUMSSR
+      IF(V. GT. 0.) SUMSSS=(1.0E4/V**2)*SUMSSS
 C*****RFLSOL IS GROUND-REFLECTED DIRECT SOURCE RADIANCE
       RFLSOL=0.
       RFLS=0.
@@ -6285,11 +6285,11 @@ C
       SUMTT=SUMVV+SUMSSR+RFLSOL
       RADSUM=RADSUM+DV*FACTOR*SUMT
       IF (IMLT .NE. 1) THEN
-      WRITE(IPR,926) V,ALAM,SUMV,SUMVV,SUMS,SUMSSR,RFLS,RFLSOL,
-     X    SUMT,SUMTT,RADSUM,TX(9)
+        WRITE(IPR,926) V,ALAM,SUMV,SUMVV,SUMS,SUMSSR,RFLS,RFLSOL,
+     &                 SUMT,SUMTT,RADSUM,TX(9)
       ELSE
-      WRITE(IPR,928) V,ALAM,SUMV,SUMVV,SUMS,SUMSSR,SUMSSS,RFLS,RFLSOL,
-     X    RFLSS,SUMT,SUMTT,RADSUM,TX(9)
+        WRITE(IPR,928) V,ALAM,SUMV,SUMVV,SUMS,SUMSSR,SUMSSS,RFLS,RFLSOL,
+     &                 RFLSS,SUMT,SUMTT,RADSUM,TX(9)
       ENDIF
       WRITE(IPU,927) V,TX(9),SUMV,SUMS,SUMSSS,RFLS,
      X    RFLSS,SUMT,TEB1,TEB2SV,ALTX9
@@ -6328,6 +6328,7 @@ C*****
       SUMVVPy(IPython) = SUMVV
 
       IrradPy(IPython,1) = TSOLIL; IrradPy(Ipython,2) = SOLIL
+      IrradPy(IPython,3) = SUMSSR
 
       IPython = IPython+1
 !! End Python hook
@@ -11213,10 +11214,12 @@ C     ARRAY H3 CONTAINS HNO3 ABS, COEF(CM-1ATM-1) FROM 1675 TO1735 CM-1
       RETURN
    15 I=(V-1670.)/5.
       HABS=H3(I)
+      
       END Subroutine HNO3
+      
 
       SUBROUTINE SSGEO(IERROR,IPH,IPARM,PARM1,PARM2,PARM3,PARM4,PSIPO,G,
-     X MAXGEO)
+     & MAXGEO)
 C
 C     THIS ROUTINE DRIVES THE LOWTRAN GEOMETRY ROUTINES REPEATEDLY
 C     TO OBTAIN THE ABSORBER AMOUNTS FROM THE SCATTERING POINTS ON
@@ -11472,6 +11475,7 @@ C
      1POLE, PROBLEM HAS BEEN REMAPPED TO THE EQUATOR')
 961   FORMAT(2X,'THETAO > 89.5, OBSERVER ASSUMED TO BE AT THE NORTH
      1POLE, PROBLEM HAS BEEN REMAPPED TO THE EQUATOR')
+     
       END Subroutine SSGEO
 
       SUBROUTINE PSIDEL(THETAS,PHIS,THETAO,PHIO,PSIPO2,PSIO,DELO,IARBO)
