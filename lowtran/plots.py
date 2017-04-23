@@ -5,14 +5,14 @@ from matplotlib.pyplot import figure,subplots
 h = 6.62607004e-34
 c = 299792458
 
-def plotradiance(irrad:DataArray, log:bool, c1:dict):
+def plotradiance(irrad:DataArray, c1:dict, log:bool=False):
 
-    fg,axs = subplots(2,1,sharex=True)
+    fg,axs = subplots(2, 1, sharex=True)
 
     transtxt = 'Transmittance Observer to Space'
 
     ax = axs[0]
-    ax.plot(irrad.wavelength_nm,irrad.loc[:,'transmission'])
+    ax.plot(irrad.wavelength_nm, irrad.loc[:,'transmission'])
     ax.set_title(transtxt)
     ax.set_ylabel('Transmission (unitless)')
     ax.grid(True)
@@ -35,11 +35,12 @@ def plotradiance(irrad:DataArray, log:bool, c1:dict):
 #        ax.set_ylim(1e-8,1)
 
     try:
-        fg.suptitle(str(datetime.utcfromtimestamp(irrad.time.item()/1e9)))
+        fg.suptitle(f'Obs. zenith angle: {c1["angle"]} deg., ')
+        #{datetime.utcfromtimestamp(irrad.time.item()/1e9)}
     except (AttributeError,TypeError):
         pass
 
-def plotradtime(TR:DataArray, zenang_deg:float, c1:dict) -> None:
+def plotradtime(TR:DataArray, c1:dict, log:bool=False):
     """
     make one plot per time for now.
 
@@ -53,14 +54,14 @@ def plotradtime(TR:DataArray, zenang_deg:float, c1:dict) -> None:
         plotirrad(tr,False,c1)
 
 
-def plottrans(trans,zenang_deg,log) -> None:
+def plottrans(trans:DataArray, c1:dict, log:bool=False):
     ax = figure().gca()
 
-    ax.plot(trans.wavelength_nm, trans.loc[:,'transmission'], label=str(zenang_deg))
+    ax.plot(trans.wavelength_nm, trans.loc[:,'transmission'], label=str(c1['angle']))
 
     ax.set_xlabel('wavelength [nm]')
     ax.set_ylabel('transmission (unitless)')
-    ax.set_title(f'Transmittance Ground-Space: zenith angle {zenang_deg} deg.')
+    ax.set_title(f'Transmittance Ground-Space: zenith angle {c1["angle"]} deg.')
     #ax.legend(loc='best')
     ax.grid(True)
     if log:
@@ -71,9 +72,25 @@ def plottrans(trans,zenang_deg,log) -> None:
     ax.invert_xaxis()
     ax.autoscale(True,axis='x',tight=True)
 
-def plotirrad(irrad,log,c1):
 
-    fg,ax = subplots(2,1,sharex=True)
+def plotirrad(irrad:DataArray, c1:dict, log:bool=False):
+
+    fg,axs = subplots(2,1,sharex=True)
+
+    if c1['isourc'] == 0:
+        stxt = "Sun's"
+    elif c1['isourc'] == 1:
+        stxt = "Moon's"
+    else:
+        raise ValueError(f'ISOURC={c1["isourc"]} not defined case')
+
+    stxt += f' zenith angle {c1["angle"]} deg., Obs. height {c1["h1"]} km'
+    try:
+        stxt += str(datetime.utcfromtimestamp(irrad.time.item()/1e9))
+    except (AttributeError,TypeError):
+        pass
+
+    fg.suptitle(stxt)
 
     if c1['iemsct'] == 3:
         key='irradiance'
@@ -82,40 +99,38 @@ def plotirrad(irrad,log,c1):
         key='radiance'
         transtxt = 'Transmittance Observer to Observer'
 
+    #irrad.loc[...,'transmission'].plot()
 
-    ax[0].plot(irrad.wavelength_nm,irrad.loc[:,'transmission'])
-    ax[1].plot(irrad.wavelength_nm,irrad.loc[:,key])
+    ax = axs[0]
+    h = ax.plot(irrad.wavelength_nm, irrad.loc[..., 'transmission'].T)
+    ax.set_title(transtxt)
+    ax.set_ylabel('Transmission (unitless)')
+    ax.grid(True)
+    ax.legend(h,irrad.angle.values.astype(str))
 
+    ax = axs[1]
+    ax.plot(irrad.wavelength_nm, irrad.loc[..., key].T)
+    ax.set_xlabel('wavelength [nm]')
+    ax.invert_xaxis()
+    ax.grid(True)
 
-    ax[1].set_xlabel('wavelength [nm]')
     if c1['iemsct'] == 3:
         ttxt= 'Solar Irradiance '
-        ax[1].set_ylabel('Solar Irradiance [W cm^-2 ster^-1 micron^-1]')
-        ax[1].set_title(ttxt)
+        ax.set_ylabel('Solar Irradiance [W cm^-2 ster^-1 micron^-1]')
+        ax.set_title(ttxt)
     elif c1['iemsct'] ==1:
         ttxt = 'Single-scatter Solar Radiance '
-        ax[1].set_ylabel('Radiance [W cm^-2 ster^-1 micron^-1]')
-        ax[1].set_title(ttxt)
-
-    ax[0].set_title(transtxt)
-    ax[0].set_ylabel('Transmission (unitless)')
-
-    ax[0].grid(True)
-    ax[1].grid(True)
+        ax.set_ylabel('Radiance [W cm^-2 ster^-1 micron^-1]')
+        ax.set_title(ttxt)
 
     if log:
-        ax[1].set_yscale('log')
-        ax[1].set_ylim(1e-8,1)
+        ax.set_yscale('log')
+        ax.set_ylim(1e-8,1)
 
-    ax[1].invert_xaxis()
-    ax[1].autoscale(True,axis='x',tight=True)
+    ax.autoscale(True,axis='x',tight=True)
 
-    try:
-        fg.suptitle(str(datetime.utcfromtimestamp(irrad.time.item()/1e9)))
-    except (AttributeError,TypeError):
-        pass
 
-def plothoriz(trans,zenang_deg,c1,log):
+def plothoriz(trans:DataArray, c1:dict, log:bool=False):
     ax = figure().gca()
 
     ax.plot(trans.wavelength_nm, trans)

@@ -32,7 +32,7 @@ def horizrad(infn,outfn,obsalt,zenang,wlnm,c1):
         c1['wmol'][:,0] = PTdata['RH']
         c1['time'] = [parse(t) for t in PTdata['time']]
 #%% TR is 3-D array with axes: time, wavelength, and [transmission,radiance]
-    TR = lowtran.looplowtran(obsalt, zenang, wlnm, c1)
+    TR = lowtran.loopuserdef(c1)
 #%% write to HDF5
     if p.outfn:
         outfn = Path(p.outfn).expanduser()

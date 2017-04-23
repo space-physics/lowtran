@@ -51,6 +51,6 @@ if __name__=='__main__':
 
     TR = radiance(c1, p.outfn)
 
-    plotradiance(TR, True, c1)
+    plotradiance(TR, c1, True)
 
     show()

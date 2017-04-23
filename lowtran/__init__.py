@@ -24,11 +24,10 @@ try:
 except ImportError as e:
     raise ImportError('you must compile the Fortran code first. f2py -m lowtran7 -c lowtran7.f {}'.format(e))
 
-def looplowtran(obsalt_km,zenang_deg,wlnm,c1):
+def loopuserdef(c1):
     """
     golowtran() is for scalar parameters only
     (besides vector of wavelength, which Lowtran internally loops over)
-    You are welcome to call golowtran() directly if you don't need looping.
 
     wmol, p, t must all be vector(s) of same length
     """
@@ -41,32 +40,55 @@ def looplowtran(obsalt_km,zenang_deg,wlnm,c1):
     assert wmol.shape[0] == len(P) == len(T) == len(time),'WMOL, P, T,time must be vectors of equal length'
 
     N = len(P)
-#%% preassign wavelengths for indexing
-    wlcminv,wlcminvstep,nwl = nm2lt7(wlnm)
+# %% preassign wavelengths for indexing
+    wlcminv,wlcminvstep,nwl = nm2lt7(c1['wlnmlim'])
     wl_nm = 1e7 / np.arange(wlcminv[1],wlcminv[0]+wlcminvstep,wlcminvstep)
-#%% Panel is a 3-D array indexed by metadata
+# %% Panel is a 3-D array indexed by metadata
     TR = DataArray(data=np.empty((N,wl_nm.size,3)),
                    coords={'time':time,
                            'wavelength_nm':wl_nm,
                            'sim':['transmission','radiance','irradiance']},
-                   dims=['time','wavelength_nm','sim'],
-                   name='LowtranSim')
+                   dims=['time','wavelength_nm','sim'])
 
     for i in range(N):
         c1['wmol'] = wmol[i,:]
         c1['p'] = P[i]
         c1['t'] = T[i]
 
-        tr = golowtran(obsalt_km, zenang_deg, wlnm, c1)
+        tr = golowtran(c1)
         TR.loc[time[i],...] = tr
 
  #   TR = TR.sort_index(axis=0) # put times in order, sometimes CSV is not monotonic in time.
 
     return TR
 
+def loopangle(c1):
+    """
+    loop over "ANGLE"
+    """
+    angles = c1['angle']
+# %% preassign wavelengths for indexing
+    wlcminv,wlcminvstep,nwl = nm2lt7(c1['wlnmlim'])
+    wl_nm = 1e7 / np.arange(wlcminv[1],wlcminv[0]+wlcminvstep,wlcminvstep)
+# %% Panel is a 3-D array indexed by metadata
+    TR = DataArray(data=np.empty((len(angles),wl_nm.size,3)),
+                   coords={'angle':angles,
+                           'wavelength_nm':wl_nm,
+                           'sim':['transmission', 'radiance', 'irradiance']},
+                   dims=['angle', 'wavelength_nm', 'sim'])
+
+    for a in angles:
+        c = c1.copy()
+        c['angle'] = a
+        T = golowtran(c)
+        TR.loc[a, ...] = T
+
+    return TR
+
+
 def golowtran(c1:dict) -> DataArray:
 # %% default parameters
-    defp = ('h1','h2','angle','im','iseasn','ird1','range_km','zmdl','p','t')
+    defp = ('h1','h2','angle','im','iseasn','isourc','ird1','range_km','zmdl','p','t')
     for p in defp:
         if p not in c1:
             c1[p] =  0
