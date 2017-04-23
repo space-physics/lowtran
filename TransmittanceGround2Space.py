@@ -15,13 +15,16 @@ if __name__=='__main__':
     p=p.parse_args()
 
     c1={'model':p.model,
-        'itype':3, # 3: observer to space
-        'iemsct':0 # 0: transmittance
+        'itype':3,   # 3: observer to space
+        'iemsct':0,  # 0: transmittance
+        'h1': p.obsalt,
+        'angle': p.zenang,
+        'wlnmlim': p.wavelen,
         }
 
-    TR = lowtran.golowtran(p.obsalt,p.zenang,p.wavelen,c1)
+    TR = lowtran.golowtran(c1)
 
- 
+
     plottrans(TR,p.zenang,False)
-    
+
     show()

@@ -20,15 +20,16 @@ if __name__=='__main__':
         'ird1': 1, # 1: use card 2C2
         'range_km':p.obsalt,
         'zmdl':p.obsalt,
+        'h1': p.obsalt,
         'p':949.,
         't':283.8,
         'wmol':[93.96,0.,0.,0.,0.,0.,0.,0.,0.,0.,0.,0.]
         }
 
-    TR = lowtran.golowtran(p.obsalt,p.zenang,p.wavelen,c1)
+    TR = lowtran.golowtran(c1)
 
- 
-    plothoriz(TR,p.zenang,c1,False)
+
+    plothoriz(TR, c1, False)
 
 
     show()
