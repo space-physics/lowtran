@@ -18,13 +18,13 @@ from matplotlib.pyplot import show
 import lowtran
 from lowtran.plots import plotradiance
 
-def radiance(outfn, obsalt, zenang, wlnm, c1:dict):
+def radiance(c1:dict, outfn:Path):
 #%% TR is 3-D array with axes: time, wavelength, and [transmission,radiance]
-    TR = lowtran.golowtran(obsalt, zenang, wlnm, c1)
+    TR = lowtran.golowtran(c1)
 #%% write to HDF5
     if p.outfn:
         outfn = Path(p.outfn).expanduser()
-        print('writing',outfn)
+        print('writing', outfn)
         TR.to_pandas().to_hdf(str(outfn), TR.name)
 
     return TR
@@ -32,7 +32,7 @@ def radiance(outfn, obsalt, zenang, wlnm, c1:dict):
 if __name__=='__main__':
     from argparse import ArgumentParser
     p = ArgumentParser(description='Lowtran 7 interface')
-    p.add_argument('-z','--obsalt',help='altitude of observer [km]',type=float,default=0.05)
+    p.add_argument('-z','--obsalt',help='altitude of observer [km]',type=float,default=0.)
     p.add_argument('-a','--zenang',help='zenith angle [deg]  can be single value or list of values',type=float,default=0.)
     p.add_argument('-w','--wavelen',help='wavelength range nm (start,stop)',type=float,nargs=2,default=(200,30000))
     p.add_argument('-o','--outfn',help='HDF5 file to write')
@@ -44,11 +44,12 @@ if __name__=='__main__':
     c1={'model':p.model,
         'itype':  3,  # 3: observer to space
         'iemsct': 2,  # 1: thermal radiance model  2: radiance model
-        'range_km':  p.obsalt,
-        'zmdl':      p.obsalt,
+        'h1': p.obsalt,
+        'angle': p.zenang,
+        'wlnmlim': p.wavelen,
         }
 
-    TR = radiance(p.outfn, p.obsalt, p.zenang, p.wavelen, c1)
+    TR = radiance(c1, p.outfn)
 
     plotradiance(TR, True, c1)
 
