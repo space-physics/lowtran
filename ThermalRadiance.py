@@ -33,7 +33,7 @@ if __name__=='__main__':
     from argparse import ArgumentParser
     p = ArgumentParser(description='Lowtran 7 interface')
     p.add_argument('-z','--obsalt',help='altitude of observer [km]',type=float,default=0.)
-    p.add_argument('-a','--zenang',help='zenith angle [deg]  can be single value or list of values',nargs='+',type=float,default=[0.,60,80])
+    p.add_argument('-a','--zenang',help='Observer zenith angle [deg] ',nargs='+',type=float,default=[0.,60,80])
     p.add_argument('-w','--wavelen',help='wavelength range nm (start,stop)',type=float,nargs=2,default=(200,30000))
     p.add_argument('-o','--outfn',help='HDF5 file to write')
     p.add_argument('--model',help='0-6, see Card1 "model" reference. 5=subarctic winter',type=int,default=5)
@@ -44,8 +44,8 @@ if __name__=='__main__':
     c1={'model':p.model,
         'itype':  3,  # 3: observer to space
         'iemsct': 1,  # 1: thermal radiance model  2: radiance model
-        'h1': p.obsalt,
-        'angle': p.zenang,
+        'h1': p.obsalt, # of observer
+        'angle': p.zenang, # of observer
         'wlnmlim': p.wavelen,
         }
 

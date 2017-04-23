@@ -8,7 +8,7 @@ from matplotlib.pyplot import show
 import lowtran
 from lowtran.plots import plotradtime
 
-def horizrad(infn,outfn,obsalt,zenang,wlnm,c1):
+def horizrad(infn,outfn,c1):
     """
     read CSV, simulate, write, plot
     """
@@ -47,7 +47,6 @@ if __name__=='__main__':
     p = ArgumentParser(description='Lowtran 7 interface')
     p.add_argument('ptfn',help='csv file with time,relative humidity [%],ambient temperature [K], total pressure (millibar)',nargs='?')
     p.add_argument('-z','--obsalt',help='altitude of observer [km]',type=float,default=0.05)
-    p.add_argument('-a','--zenang',help='zenith angle [deg]  can be single value or list of values',nargs='+',type=float,default=[0.])
     p.add_argument('-w','--wavelen',help='wavelength range nm (start,stop)',type=float,nargs=2,default=(200,30000))
     p.add_argument('-o','--outfn',help='HDF5 file to write')
     p=p.parse_args()
@@ -64,7 +63,7 @@ if __name__=='__main__':
         'wlnmlim': p.wavelen,
         }
 
-    TR = horizrad(p.ptfn,p.outfn,p.obsalt,p.zenang,p.wavelen,c1)
+    TR = horizrad(p.ptfn,p.outfn,c1)
 
     plotradtime(TR, c1)
 
