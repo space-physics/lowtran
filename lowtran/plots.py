@@ -11,7 +11,7 @@ def plotscatter(irrad:DataArray, c1:dict, log:bool=False):
 
     fg,axs = subplots(2, 1, sharex=True)
 
-    transtxt = 'Transmittance Observer to Space'
+    transtxt = 'Transmittance'
 
     ax = axs[0]
     ax.plot(irrad.wavelength_nm, irrad.loc[...,'transmission'].T)
@@ -39,7 +39,7 @@ def plotscatter(irrad:DataArray, c1:dict, log:bool=False):
 #        ax.set_ylim(1e-8,1)
 
     try:
-        fg.suptitle(f'Obs. zenith angle: {c1["angle"]} deg., ')
+        fg.suptitle(f'Obs. to Space: zenith angle: {c1["angle"]} deg., ')
         #{datetime.utcfromtimestamp(irrad.time.item()/1e9)}
     except (AttributeError,TypeError):
         pass
