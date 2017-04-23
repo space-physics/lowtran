@@ -36,7 +36,7 @@ def horizrad(infn,outfn,obsalt,zenang,wlnm,c1):
 #%% write to HDF5
     if p.outfn:
         outfn = Path(p.outfn).expanduser()
-        print('writing',outfn)
+        print('writing', outfn)
         TR.to_pandas().to_hdf(str(outfn), TR.name)
 
     return TR
@@ -47,7 +47,7 @@ if __name__=='__main__':
     p = ArgumentParser(description='Lowtran 7 interface')
     p.add_argument('ptfn',help='csv file with time,relative humidity [%],ambient temperature [K], total pressure (millibar)',nargs='?')
     p.add_argument('-z','--obsalt',help='altitude of observer [km]',type=float,default=0.05)
-    p.add_argument('-a','--zenang',help='zenith angle [deg]  can be single value or list of values',type=float,default=0.)
+    p.add_argument('-a','--zenang',help='zenith angle [deg]  can be single value or list of values',nargs='+',type=float,default=[0.])
     p.add_argument('-w','--wavelen',help='wavelength range nm (start,stop)',type=float,nargs=2,default=(200,30000))
     p.add_argument('-o','--outfn',help='HDF5 file to write')
     p=p.parse_args()
@@ -60,10 +60,12 @@ if __name__=='__main__':
         'ird1': 1,  # 1: use card 2C2
         'range_km':p.obsalt,
         'zmdl':p.obsalt,
+        'h1':p.obsalt,
+        'wlnmlim': p.wavelen,
         }
 
     TR = horizrad(p.ptfn,p.outfn,p.obsalt,p.zenang,p.wavelen,c1)
 
-    plotradtime(TR, p.zenang, c1)
+    plotradtime(TR, c1)
 
     show()

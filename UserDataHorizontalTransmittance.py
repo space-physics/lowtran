@@ -21,6 +21,7 @@ if __name__=='__main__':
         'range_km':p.obsalt,
         'zmdl':p.obsalt,
         'h1': p.obsalt,
+        'wlnmlim': p.wavelen,
         'p':949.,
         't':283.8,
         'wmol':[93.96,0.,0.,0.,0.,0.,0.,0.,0.,0.,0.,0.]
@@ -28,8 +29,6 @@ if __name__=='__main__':
 
     TR = lowtran.golowtran(c1)
 
-
     plothoriz(TR, c1, False)
-
 
     show()

@@ -12,17 +12,17 @@ def plotradiance(irrad:DataArray, c1:dict, log:bool=False):
     transtxt = 'Transmittance Observer to Space'
 
     ax = axs[0]
-    ax.plot(irrad.wavelength_nm, irrad.loc[:,'transmission'])
+    ax.plot(irrad.wavelength_nm, irrad.loc[...,'transmission'].T)
     ax.set_title(transtxt)
     ax.set_ylabel('Transmission (unitless)')
     ax.grid(True)
 
-    Np = (irrad.loc[:,'radiance']*10000) * (irrad.wavelength_nm*1e9)/(h*c)
+    Np = (irrad.loc[...,'radiance']*10000) * (irrad.wavelength_nm*1e9)/(h*c)
 
     ax = axs[1]
     #ax.plot(irrad.wavelength_nm, irrad.loc[:,'radiance'])
     #ax.set_ylabel('Radiance [W cm^-2 ster^-1 micron^-1]')
-    ax.plot(irrad.wavelength_nm, Np)
+    ax.plot(irrad.wavelength_nm, Np.T)
     ax.set_ylabel('Photons ster$^{-1}$ cm$^{-2}$ s$^{-1}$ micron$^{-1}$')
     ax.set_xlabel('wavelength [nm]')
     ax.set_title('Single-scatter Solar Radiance')
@@ -51,7 +51,7 @@ def plotradtime(TR:DataArray, c1:dict, log:bool=False):
     assert isinstance(TR,DataArray)
 
     for tr in TR: # for each time
-        plotirrad(tr,False,c1)
+        plotirrad(tr, c1, False)
 
 
 def plottrans(trans:DataArray, c1:dict, log:bool=False):
@@ -107,7 +107,10 @@ def plotirrad(irrad:DataArray, c1:dict, log:bool=False):
     ax.set_title(transtxt)
     ax.set_ylabel('Transmission (unitless)')
     ax.grid(True)
-    ax.legend(h, irrad.angle.values.astype(str))
+    try:
+        ax.legend(h, irrad.angle.values.astype(str))
+    except AttributeError:
+        pass
 
     ax = axs[1]
     ax.plot(irrad.wavelength_nm, irrad.loc[..., key].T)
