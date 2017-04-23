@@ -2,6 +2,9 @@
    :target: https://doi.org/10.5281/zenodo.213475
 .. image:: https://travis-ci.org/scivision/lowtran.svg?branch=master
     :target: https://travis-ci.org/scivision/lowtran
+.. image:: https://coveralls.io/repos/github/scivision/lowtran/badge.svg?branch=master
+    :target: https://coveralls.io/github/scivision/lowtran?branch=master
+
 
 =======
 Lowtran
