@@ -21,9 +21,9 @@ def plotradiance(irrad:DataArray, c1:dict, log:bool=False):
 
     ax = axs[1]
     #ax.plot(irrad.wavelength_nm, irrad.loc[:,'radiance'])
-    #ax.set_ylabel('Radiance [W cm^-2 ster^-1 micron^-1]')
+    #ax.set_ylabel('Radiance [W cm^-2 ster^-1]')
     ax.plot(irrad.wavelength_nm, Np.T)
-    ax.set_ylabel('Photons ster$^{-1}$ cm$^{-2}$ s$^{-1}$ micron$^{-1}$')
+    ax.set_ylabel('Photons ster$^{-1}$ cm$^{-2}$ s$^{-1}$')
     ax.set_xlabel('wavelength [nm]')
     ax.set_title('Single-scatter Solar Radiance')
     ax.invert_xaxis()
@@ -120,11 +120,11 @@ def plotirrad(irrad:DataArray, c1:dict, log:bool=False):
 
     if c1['iemsct'] == 3:
         ttxt= 'Irradiance '
-        ax.set_ylabel('Solar Irradiance [W cm^-2 ster^-1 micron^-1]')
+        ax.set_ylabel('Solar Irradiance [W cm^-2 ster^-1]')
         ax.set_title(ttxt)
     elif c1['iemsct'] ==1:
         ttxt = 'Single-scatter Radiance '
-        ax.set_ylabel('Radiance [W cm^-2 ster^-1 micron^-1]')
+        ax.set_ylabel('Radiance [W cm^-2 ster^-1]')
         ax.set_title(ttxt)
 
     if log:
