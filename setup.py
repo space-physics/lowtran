@@ -24,7 +24,6 @@ setup(name='lowtran',
       'Topic :: Scientific/Engineering :: Atmospheric Science',
       'Programming Language :: Python :: 3.6',
       ],
-      install_requires=req,
       ext_modules=[Extension(name='lowtran7',sources=['lowtran7.f'],
                     f2py_options=['--quiet'])]
 	  )
