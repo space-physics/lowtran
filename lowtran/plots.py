@@ -4,6 +4,45 @@ from matplotlib.pyplot import figure,subplots
 #
 h = 6.62607004e-34
 c = 299792458
+UNITS='ster$^{-1}$ cm$^{-2}$ $\mu$m$^{-1}$]'
+plotNp = False
+
+def plotscatter(irrad:DataArray, c1:dict, log:bool=False):
+
+    fg,axs = subplots(2, 1, sharex=True)
+
+    transtxt = 'Transmittance Observer to Space'
+
+    ax = axs[0]
+    ax.plot(irrad.wavelength_nm, irrad.loc[...,'transmission'].T)
+    ax.set_title(transtxt)
+    ax.set_ylabel('Transmission (unitless)')
+    ax.grid(True)
+
+    ax = axs[1]
+    if plotNp:
+        Np = (irrad.loc[...,'pathscatter']*10000) * (irrad.wavelength_nm*1e9)/(h*c)
+        ax.plot(irrad.wavelength_nm, Np.T)
+        ax.set_ylabel('Photons [s$^{-1}$ '+UNITS)
+    else:
+        ax.plot(irrad.wavelength_nm, irrad.loc[...,'pathscatter'].T)
+        ax.set_ylabel('Radiance [W '+UNITS)
+
+    ax.set_xlabel('wavelength [nm]')
+    ax.set_title('Single-scatter Path Radiance')
+    ax.invert_xaxis()
+    ax.autoscale(True,axis='x',tight=True)
+    ax.grid(True)
+
+    if log:
+        ax.set_yscale('log')
+#        ax.set_ylim(1e-8,1)
+
+    try:
+        fg.suptitle(f'Obs. zenith angle: {c1["angle"]} deg., ')
+        #{datetime.utcfromtimestamp(irrad.time.item()/1e9)}
+    except (AttributeError,TypeError):
+        pass
 
 def plotradiance(irrad:DataArray, c1:dict, log:bool=False):
 
@@ -17,15 +56,17 @@ def plotradiance(irrad:DataArray, c1:dict, log:bool=False):
     ax.set_ylabel('Transmission (unitless)')
     ax.grid(True)
 
-    Np = (irrad.loc[...,'radiance']*10000) * (irrad.wavelength_nm*1e9)/(h*c)
-
     ax = axs[1]
-    #ax.plot(irrad.wavelength_nm, irrad.loc[:,'radiance'])
-    #ax.set_ylabel('Radiance [W cm^-2 ster^-1]')
-    ax.plot(irrad.wavelength_nm, Np.T)
-    ax.set_ylabel('Photons ster$^{-1}$ cm$^{-2}$ s$^{-1}$')
+    if plotNp:
+        Np = (irrad.loc[...,'radiance']*10000) * (irrad.wavelength_nm*1e9)/(h*c)
+        ax.plot(irrad.wavelength_nm, Np.T)
+        ax.set_ylabel('Photons [s$^{-1}$ '+UNITS)
+    else:
+        ax.plot(irrad.wavelength_nm, irrad.loc[...,'radiance'].T)
+        ax.set_ylabel('Radiance [W '+UNITS)
+
     ax.set_xlabel('wavelength [nm]')
-    ax.set_title('Single-scatter Solar Radiance')
+    ax.set_title('Atmospheric Radiance')
     ax.invert_xaxis()
     ax.autoscale(True,axis='x',tight=True)
     ax.grid(True)
@@ -120,11 +161,11 @@ def plotirrad(irrad:DataArray, c1:dict, log:bool=False):
 
     if c1['iemsct'] == 3:
         ttxt= 'Irradiance '
-        ax.set_ylabel('Solar Irradiance [W cm^-2 ster^-1]')
+        ax.set_ylabel('Solar Irradiance [W '+UNITS)
         ax.set_title(ttxt)
     elif c1['iemsct'] ==1:
         ttxt = 'Single-scatter Radiance '
-        ax.set_ylabel('Radiance [W cm^-2 ster^-1]')
+        ax.set_ylabel('Radiance [W '+UNITS)
         ax.set_title(ttxt)
 
     if log:

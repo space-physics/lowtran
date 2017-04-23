@@ -33,7 +33,7 @@
       real :: ZMDL(ml),P(ml),T(ml), WMOL(12)
 
       real :: TXPy(nwl,ncol), VPy(nwl), ALAMPy(nwl), TRACEPy(nwl),
-     &      UNIFPy(nwl), SUMAPy(nwl), IrradPy(nwl,2),SumVVPy(nwl)
+     &      UNIFPy(nwl), SUMAPy(nwl), IrradPy(nwl,3),SumVVPy(nwl)
 
 ! Model configuration, see Lowtran manual p. 21(30) s. 3.2
 
