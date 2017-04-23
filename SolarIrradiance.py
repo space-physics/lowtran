@@ -22,7 +22,6 @@ if __name__=='__main__':
     c1={'model':p.model,
         'itype':3,   # 3: observer to space
         'iemsct':3,  # 3: solar irradiance
-        'isourc':0,  # 0: sun  1: moon
         'h1': p.obsalt,
         'angle': p.zenang, # zenith angle of sun or moon
         'wlnmlim': p.wavelen,

@@ -88,7 +88,7 @@ def loopangle(c1):
 
 def golowtran(c1:dict) -> DataArray:
 # %% default parameters
-    defp = ('h1','h2','angle','im','iseasn','isourc','ird1','range_km','zmdl','p','t')
+    defp = ('h1','h2','angle','im','iseasn','ird1','range_km','zmdl','p','t')
     for p in defp:
         if p not in c1:
             c1[p] =  0

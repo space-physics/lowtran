@@ -57,11 +57,11 @@ def plotradtime(TR:DataArray, c1:dict, log:bool=False):
 def plottrans(trans:DataArray, c1:dict, log:bool=False):
     ax = figure().gca()
 
-    ax.plot(trans.wavelength_nm, trans.loc[:,'transmission'], label=str(c1['angle']))
+    h = ax.plot(trans.wavelength_nm, trans.loc[...,'transmission'].T)
 
     ax.set_xlabel('wavelength [nm]')
     ax.set_ylabel('transmission (unitless)')
-    ax.set_title(f'Transmittance Ground-Space: zenith angle {c1["angle"]} deg.')
+    ax.set_title(f'Transmittance Ground-Space: Obs. zenith angle {c1["angle"]} deg.')
     #ax.legend(loc='best')
     ax.grid(True)
     if log:
@@ -71,18 +71,19 @@ def plottrans(trans:DataArray, c1:dict, log:bool=False):
         ax.set_ylim(0,1)
     ax.invert_xaxis()
     ax.autoscale(True,axis='x',tight=True)
+    ax.legend(h, trans.angle.values.astype(str))
 
 
 def plotirrad(irrad:DataArray, c1:dict, log:bool=False):
 
     fg,axs = subplots(2,1,sharex=True)
 
-    if c1['isourc'] == 0:
-        stxt = "Sun's"
-    elif c1['isourc'] == 1:
-        stxt = "Moon's"
-    else:
-        raise ValueError(f'ISOURC={c1["isourc"]} not defined case')
+#    if c1['isourc'] == 0:
+    stxt = "Sun's"
+#    elif c1['isourc'] == 1:
+#        stxt = "Moon's"
+#    else:
+#        raise ValueError(f'ISOURC={c1["isourc"]} not defined case')
 
     stxt += f' zenith angle {c1["angle"]} deg., Obs. height {c1["h1"]} km'
     try:
@@ -106,7 +107,7 @@ def plotirrad(irrad:DataArray, c1:dict, log:bool=False):
     ax.set_title(transtxt)
     ax.set_ylabel('Transmission (unitless)')
     ax.grid(True)
-    ax.legend(h,irrad.angle.values.astype(str))
+    ax.legend(h, irrad.angle.values.astype(str))
 
     ax = axs[1]
     ax.plot(irrad.wavelength_nm, irrad.loc[..., key].T)
@@ -115,11 +116,11 @@ def plotirrad(irrad:DataArray, c1:dict, log:bool=False):
     ax.grid(True)
 
     if c1['iemsct'] == 3:
-        ttxt= 'Solar Irradiance '
+        ttxt= 'Irradiance '
         ax.set_ylabel('Solar Irradiance [W cm^-2 ster^-1 micron^-1]')
         ax.set_title(ttxt)
     elif c1['iemsct'] ==1:
-        ttxt = 'Single-scatter Solar Radiance '
+        ttxt = 'Single-scatter Radiance '
         ax.set_ylabel('Radiance [W cm^-2 ster^-1 micron^-1]')
         ax.set_title(ttxt)
 
