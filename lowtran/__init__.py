@@ -23,23 +23,23 @@ try:
     import lowtran7   #don't use dot in front, it's linking to .dll, .pyd, or .so
 except ImportError as e:
     raise ImportError(f'you must compile the Fortran code first. f2py -m lowtran7 -c lowtran7.f  {e} ')
-    
+
 def looplowtran(obsalt_km,zenang_deg,wlnm,c1):
     """
-    golowtran() is for scalar parameters only 
+    golowtran() is for scalar parameters only
     (besides vector of wavelength, which Lowtran internally loops over)
     You are welcome to call golowtran() directly if you don't need looping.
-    
+
     wmol, p, t must all be vector(s) of same length
     """
-    
+
     wmol = np.atleast_2d(c1['wmol'])
     P = c1['p']
     T = c1['t']
     time = c1['time']
 
     assert wmol.shape[0] == len(P) == len(T) == len(time),'WMOL, P, T,time must be vectors of equal length'
-    
+
     N = len(P)
 #%% preassign wavelengths for indexing
     wlcminv,wlcminvstep,nwl = nm2lt7(wlnm)
@@ -51,21 +51,21 @@ def looplowtran(obsalt_km,zenang_deg,wlnm,c1):
                            'sim':['transmission','radiance','irradiance']},
                    dims=['time','wavelength_nm','sim'],
                    name='LowtranSim')
-        
+
     for i in range(N):
         c1['wmol'] = wmol[i,:]
         c1['p'] = P[i]
         c1['t'] = T[i]
-        
+
         tr = golowtran(obsalt_km, zenang_deg, wlnm, c1)
         TR.loc[time[i],...] = tr
-    
+
  #   TR = TR.sort_index(axis=0) # put times in order, sometimes CSV is not monotonic in time.
-    
+
     return TR
 
-def golowtran(obsalt_km,zenang_deg, wlnm,c1):# -> DataArray:
-#%% default parameters
+def golowtran(obsalt_km, zenang_deg, wlnm, c1:dict) -> DataArray:
+# %% default parameters
     defp = ('im','iseasn','ird1','range_km','zmdl','p','t')
     for p in defp:
         if p not in c1:
@@ -73,28 +73,26 @@ def golowtran(obsalt_km,zenang_deg, wlnm,c1):# -> DataArray:
 
     if 'wmol' not in c1:
         c1['wmol']=[0]*12
-        
+
     assert len(c1['wmol']) == 12,'see Lowtran user manual for 12 values of WMOL'
-    
-#%% altitude
+# %% altitude
     obsalt_km = np.atleast_1d(obsalt_km)
     if obsalt_km.size>1:
         obsalt_km = obsalt_km[0]
         logging.error(f'for now I only handle single altitudes. Using first value of {obsalt_km} [km]')
-#%% zenith angle
+# %% zenith angle
     zenang_deg = np.atleast_1d(zenang_deg)
-#%% input check
+# %% input check
     if not (np.isfinite(obsalt_km).all() and np.isfinite(zenang_deg).all() and np.isfinite(wlnm).all()):
         logging.critical('NaN or Inf detected in input, skipping LOWTRAN')
         return
-#%% setup wavelength
+# %% setup wavelength
     wlcminv,wlcminvstep,nwl = nm2lt7(wlnm)
     if wlcminvstep<5:
         logging.critical('minimum resolution 5 cm^-1, specified resolution 20 cm^-1')
     if not ((0<=wlcminv) & (wlcminv<=50000)).all():
        logging.critical('specified model range 0 <= wlcminv <= 50000')
-
-#%% invoke lowtran
+# %% invoke lowtran
     """
     Note we invoke case "3a" from table 14, only observer altitude and apparent
     angle are specified
@@ -109,7 +107,7 @@ def golowtran(obsalt_km,zenang_deg, wlnm,c1):# -> DataArray:
                    coords={'wavelength_nm':Alam*1e3,
                            'sim':['transmission','radiance','irradiance']},
                      dims = ['wavelength_nm','sim'])
-#%% collect results
+
     return TR
 
 def nm2lt7(wlnm):

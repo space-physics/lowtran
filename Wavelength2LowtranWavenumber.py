@@ -2,10 +2,11 @@
 """
 convert wavelength (nm) to wavenumber (cm^-1) with step size for input to Lowtran
 """
-
 from lowtran import nm2lt7
+#
+from argparse import ArgumentParser
+p = ArgumentParser()
+p.add_argument('wlnm',help='wavelength [nm]',nargs='+',type=float)
+p = p.parse_args()
 
-
-wlnm = [8000,14000]
-
-print(nm2lt7(wlnm))
+print(nm2lt7(p.wlnm)[0])
