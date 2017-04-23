@@ -22,7 +22,7 @@ import numpy as np
 try:
     import lowtran7   #don't use dot in front, it's linking to .dll, .pyd, or .so
 except ImportError as e:
-    raise ImportError(f'you must compile the Fortran code first. f2py -m lowtran7 -c lowtran7.f  {e} ')
+    raise ImportError('you must compile the Fortran code first. f2py -m lowtran7 -c lowtran7.f {}'.format(e))
 
 def looplowtran(obsalt_km,zenang_deg,wlnm,c1):
     """
@@ -64,30 +64,20 @@ def looplowtran(obsalt_km,zenang_deg,wlnm,c1):
 
     return TR
 
-def golowtran(obsalt_km, zenang_deg, wlnm, c1:dict) -> DataArray:
+def golowtran(c1:dict) -> DataArray:
 # %% default parameters
-    defp = ('im','iseasn','ird1','range_km','zmdl','p','t')
+    defp = ('h1','h2','angle','im','iseasn','ird1','range_km','zmdl','p','t')
     for p in defp:
         if p not in c1:
             c1[p] =  0
 
     if 'wmol' not in c1:
         c1['wmol']=[0]*12
-
-    assert len(c1['wmol']) == 12,'see Lowtran user manual for 12 values of WMOL'
-# %% altitude
-    obsalt_km = np.atleast_1d(obsalt_km)
-    if obsalt_km.size>1:
-        obsalt_km = obsalt_km[0]
-        logging.error(f'for now I only handle single altitudes. Using first value of {obsalt_km} [km]')
-# %% zenith angle
-    zenang_deg = np.atleast_1d(zenang_deg)
 # %% input check
-    if not (np.isfinite(obsalt_km).all() and np.isfinite(zenang_deg).all() and np.isfinite(wlnm).all()):
-        logging.critical('NaN or Inf detected in input, skipping LOWTRAN')
-        return
+    assert len(c1['wmol']) == 12,'see Lowtran user manual for 12 values of WMOL'
+    assert np.isfinite(c1['h1']),'per Lowtran user manual Table 14, H1 must always be defined'
 # %% setup wavelength
-    wlcminv,wlcminvstep,nwl = nm2lt7(wlnm)
+    wlcminv,wlcminvstep,nwl = nm2lt7(c1['wlnmlim'])
     if wlcminvstep<5:
         logging.critical('minimum resolution 5 cm^-1, specified resolution 20 cm^-1')
     if not ((0<=wlcminv) & (wlcminv<=50000)).all():
@@ -102,7 +92,8 @@ def golowtran(obsalt_km, zenang_deg, wlnm, c1:dict) -> DataArray:
                             c1['model'], c1['itype'], c1['iemsct'], c1['im'],
                             c1['iseasn'], c1['ird1'],
                             c1['zmdl'], c1['p'], c1['t'], c1['wmol'],
-                            obsalt_km, 0, zenang_deg, c1['range_km'])
+                            c1['h1'], c1['h2'], c1['angle'], c1['range_km'])
+
     TR = DataArray(np.column_stack((Tx[:,9],sumvv,irrad[:,0])),
                    coords={'wavelength_nm':Alam*1e3,
                            'sim':['transmission','radiance','irradiance']},
