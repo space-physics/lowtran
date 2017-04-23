@@ -34,7 +34,7 @@ if __name__=='__main__':
     p = ArgumentParser(description='Lowtran 7 interface')
     p.add_argument('-z','--obsalt',help='altitude of observer [km]',type=float,default=0.)
     p.add_argument('-a','--zenang',help='Observer zenith angle [deg] ',nargs='+',type=float,default=[0.,60,80])
-    p.add_argument('-w','--wavelen',help='wavelength range nm (start,stop)',type=float,nargs=2,default=(200,20000))
+    p.add_argument('-w','--wavelen',help='wavelength range nm (start,stop)',type=float,nargs=2,default=(300,1000))
     p.add_argument('-o','--outfn',help='HDF5 file to write')
     p.add_argument('--model',help='0-6, see Card1 "model" reference. 5=subarctic winter',type=int,default=5)
 
