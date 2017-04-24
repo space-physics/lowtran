@@ -86,7 +86,8 @@ def loopangle(c1):
     return TR
 
 
-def golowtran(c1:dict) -> DataArray:
+#def golowtran(c1:dict) -> DataArray:
+def golowtran(c1):
 # %% default parameters
     defp = ('h1','h2','angle','im','iseasn','ird1','range_km','zmdl','p','t')
     for p in defp:
