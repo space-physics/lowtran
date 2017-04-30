@@ -22,7 +22,7 @@ setup(name='lowtran',
       'Development Status :: 4 - Beta',
       'License :: OSI Approved :: MIT License',
       'Topic :: Scientific/Engineering :: Atmospheric Science',
-      'Programming Language :: Python'
+      'Programming Language :: Python',
       'Programming Language :: Python :: 3',
       ],
       ext_modules=[Extension(name='lowtran7',sources=['lowtran7.f'],
