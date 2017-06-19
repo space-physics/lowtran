@@ -18,6 +18,7 @@ def plotscatter(irrad:DataArray, c1:dict, log:bool=False):
     ax.set_title(transtxt)
     ax.set_ylabel('Transmission (unitless)')
     ax.grid(True)
+    ax.legend(irrad.angle.values.astype(str).tolist())
 
     ax = axs[1]
     if plotNp:
@@ -33,6 +34,7 @@ def plotscatter(irrad:DataArray, c1:dict, log:bool=False):
     ax.invert_xaxis()
     ax.autoscale(True,axis='x',tight=True)
     ax.grid(True)
+
 
     if log:
         ax.set_yscale('log')

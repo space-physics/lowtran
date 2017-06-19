@@ -14,6 +14,8 @@ Np = (Ilowtran*10000)*lambda_m/(h*c)
 """
 from pathlib import Path
 from matplotlib.pyplot import show
+import seaborn as sns
+sns.set_context('talk',font_scale=1.5)
 #
 import lowtran
 from lowtran.plots import plotscatter
