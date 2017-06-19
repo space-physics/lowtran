@@ -14,7 +14,7 @@ def plotscatter(irrad:DataArray, c1:dict, log:bool=False):
     transtxt = 'Transmittance'
 
     ax = axs[0]
-    ax.plot(irrad.wavelength_nm, irrad.loc[...,'transmission'].T)
+    ax.plot(irrad.wavelength_nm, irrad.loc[...,'transmission'].T.values)
     ax.set_title(transtxt)
     ax.set_ylabel('Transmission (unitless)')
     ax.grid(True)
@@ -25,7 +25,7 @@ def plotscatter(irrad:DataArray, c1:dict, log:bool=False):
         ax.plot(irrad.wavelength_nm, Np.T)
         ax.set_ylabel('Photons [s$^{-1}$ '+UNITS)
     else:
-        ax.plot(irrad.wavelength_nm, irrad.loc[...,'pathscatter'].T)
+        ax.plot(irrad.wavelength_nm, irrad.loc[...,'pathscatter'].T.values)
         ax.set_ylabel('Radiance [W '+UNITS)
 
     ax.set_xlabel('wavelength [nm]')
