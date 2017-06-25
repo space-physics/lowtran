@@ -26,5 +26,6 @@ setup(name='lowtran',
       'Programming Language :: Python :: 3',
       ],
       ext_modules=[Extension(name='lowtran7',sources=['lowtran7.f'],
-                    f2py_options=['--quiet'])]
+                    f2py_options=['--quiet'])],
+      install_requires=req,
 	  )
