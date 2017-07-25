@@ -87,7 +87,7 @@ def plotradtime(TR:DataArray, c1:dict, log:bool=False):
     """
     make one plot per time for now.
 
-    TR: 3-D Panel: time, wavelength, [transmittance, radiance]
+    TR: 3-D array: time, wavelength, [transmittance, radiance]
 
     radiance is currently single-scatter solar
     """

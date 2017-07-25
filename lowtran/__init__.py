@@ -43,7 +43,7 @@ def loopuserdef(c1):
 # %% preassign wavelengths for indexing
     wlcminv,wlcminvstep,nwl = nm2lt7(c1['wlnmlim'])
     wl_nm = 1e7 / np.arange(wlcminv[1],wlcminv[0]+wlcminvstep,wlcminvstep)
-# %% Panel is a 3-D array indexed by metadata
+# %% 3-D array indexed by metadata
     TR = DataArray(data=np.empty((N,wl_nm.size,3)),
                    coords={'time':time,
                            'wavelength_nm':wl_nm,
@@ -70,7 +70,7 @@ def loopangle(c1):
 # %% preassign wavelengths for indexing
     wlcminv,wlcminvstep,nwl = nm2lt7(c1['wlnmlim'])
     wl_nm = 1e7 / np.arange(wlcminv[1],wlcminv[0]+wlcminvstep,wlcminvstep)
-# %% Panel is a 3-D array indexed by metadata
+# %% 3-D array indexed by metadata
     TR = DataArray(data=np.empty((len(angles),wl_nm.size,4)),
                    coords={'angle':angles,
                            'wavelength_nm':wl_nm,
