@@ -1,4 +1,5 @@
 language: generic
+fast_finish: true
 
 os:
   - linux
@@ -7,7 +8,8 @@ os:
 dist: trusty
 group: edge
   
-env: TRAVIS_PYTHON_VERSION=3.6  FC=gfortran
+env: 
+  - FC=gfortran
 
 notifications:
   email: false
@@ -35,8 +37,8 @@ before_install:
 
     - conda config --set always_yes yes --set changeps1 no
     - conda update -q conda
-    - conda create -n test python=$TRAVIS_PYTHON_VERSION
-    - source activate test
+#    - conda create -n test python=$TRAVIS_PYTHON_VERSION
+#    - source activate test
     - pip -q install coveralls
 
 install:
