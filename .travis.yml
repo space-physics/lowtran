@@ -8,8 +8,7 @@ os:
 dist: trusty
 group: edge
   
-env: 
-  - FC=gfortran-6
+env: FC=gfortran-6
 
 notifications:
   email: false
@@ -20,8 +19,8 @@ git:
 # gfortran >= 6 required
 addons:
   apt:
-    sources: ['ubuntu-toolchain-r-test']
-    packages: ['gfortran-6']
+    sources: ubuntu-toolchain-r-test
+    packages: gfortran-6
 
 before_install:
     - if [[ $TRAVIS_OS_NAME == osx ]]; then
