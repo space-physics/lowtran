@@ -1,7 +1,9 @@
 .. image:: https://zenodo.org/badge/DOI/10.5281/zenodo.213475.svg
    :target: https://doi.org/10.5281/zenodo.213475
+   
 .. image:: https://travis-ci.org/scivision/lowtran.svg?branch=master
     :target: https://travis-ci.org/scivision/lowtran
+    
 .. image:: https://coveralls.io/repos/github/scivision/lowtran/badge.svg?branch=master
     :target: https://coveralls.io/github/scivision/lowtran?branch=master
 
@@ -28,7 +30,7 @@ Installation
 `See this page if you have errors on Fortran compilation. <https://www.scivision.co/f2py-running-fortran-code-in-python-on-windows>`_
 ::
 
-  python setup.py develop
+  pip install -e .
 
 Examples
 ========

@@ -1,12 +1,5 @@
 #!/usr/bin/env python
-req=['python-dateutil','pytz','nose','numpy','xarray','matplotlib','seaborn']
-# %%
-try:
-    import conda.cli
-    conda.cli.main('install',*req)
-except Exception as e:
-    import pip
-    pip.main(['install'] + req)
+req=['python-dateutil','pytz','nose','numpy','xarray', 'matplotlib','seaborn']
 # %%
 import setuptools #enables develop
 from numpy.distutils.core import setup,Extension
@@ -28,4 +21,5 @@ setup(name='lowtran',
       ext_modules=[Extension(name='lowtran7',sources=['lowtran7.f'],
                     f2py_options=['--quiet'])],
       install_requires=req,
+      python_requires='>=3.5',
 	  )
