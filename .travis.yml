@@ -3,7 +3,7 @@ fast_finish: true
 
 python:
   - 3.5
-  - 3.7
+  - 3.7dev
 
 os:
   - linux
@@ -30,7 +30,7 @@ before_install:
     # temp for pip < 9.1
     - pip -q install numpy
 
-install: pip -q install -e .
+install: pip  install -e .
 
 script: 
   - coverage run tests/test.py -v
