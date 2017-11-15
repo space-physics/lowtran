@@ -7,6 +7,9 @@
 .. image:: https://coveralls.io/repos/github/scivision/lowtran/badge.svg?branch=master
     :target: https://coveralls.io/github/scivision/lowtran?branch=master
 
+.. image:: https://api.codeclimate.com/v1/badges/fb6bf9d0351130bba583/maintainability
+   :target: https://codeclimate.com/github/scivision/lowtran/maintainability
+   :alt: Maintainability
 
 =======
 Lowtran
@@ -25,10 +28,15 @@ The main LOWTRAN program has been made accessible from Python by using direct me
     :alt: "Lowtran7 absorption"
     :scale: 25 %
 
-Installation
-============
+Install
+=======
 `See this page if you have errors on Fortran compilation. <https://www.scivision.co/f2py-running-fortran-code-in-python-on-windows>`_
-::
+
+* Linux: ``apt install gfortran``    
+* Mac: ``brew install gcc``
+* `Windows <https://www.scivision.co/windows-gcc-gfortran-cmake-make-install/>`_
+
+If you don't already have Numpy, ``pip install numpy`` and then::
 
   pip install -e .
 

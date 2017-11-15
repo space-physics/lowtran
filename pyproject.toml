@@ -1,0 +1,5 @@
+[build-system]
+requires = ["setuptools", "wheel",
+'python-dateutil','numpy','xarray'
+'matplotlib','seaborn'
+ "nose"] 

@@ -1,7 +1,6 @@
 #!/usr/bin/env python
-req=['python-dateutil','pytz','nose','numpy','xarray', 'matplotlib','seaborn']
+req=['nose','python-dateutil','numpy','xarray']
 # %%
-import setuptools #enables develop
 from numpy.distutils.core import setup,Extension
 
 setup(name='lowtran',
@@ -22,4 +21,5 @@ setup(name='lowtran',
                     f2py_options=['--quiet'])],
       install_requires=req,
       python_requires='>=3.5',
+      extras_require={'plot':['matplotlib','seaborn']},
 	  )

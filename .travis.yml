@@ -1,16 +1,17 @@
-language: generic
+language: python
 fast_finish: true
+
+python:
+  - 3.5
+  - 3.7
 
 os:
   - linux
-  - osx
 
 dist: trusty
 group: edge
   
-env: 
-  - FC=gfortran-6 TRAVIS_PYTHON_VERSION=3.5
-  = FC=gfortran-6 TRAVIS_PYTHON_VERSION=3
+env: FC=gfortran-6
 
 notifications:
   email: false
@@ -25,27 +26,11 @@ addons:
     packages: gfortran-6
 
 before_install:
-    - if [[ $TRAVIS_OS_NAME == osx ]]; then
-        wget https://repo.continuum.io/miniconda/Miniconda3-latest-MacOSX-x86_64.sh -O miniconda.sh;
-        brew update;
-        brew install gcc;
-        export FC=gfortran;
-      else
-        wget https://repo.continuum.io/miniconda/Miniconda3-latest-Linux-x86_64.sh -O miniconda.sh;
-      fi
-
-    - bash miniconda.sh -b -p $HOME/miniconda
-    - export PATH=$HOME/miniconda/bin:$PATH
-    - hash -r
-
-    - conda config --set always_yes yes --set changeps1 no
-    - conda update -q conda
-    - conda create -n test python=$TRAVIS_PYTHON_VERSION
-    - source activate test
     - pip -q install coveralls
+    # temp for pip < 9.1
+    - pip -q install numpy
 
-install:
-  - pip install -e .
+install: pip -q install -e .
 
 script: 
   - coverage run tests/test.py -v
