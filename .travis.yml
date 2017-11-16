@@ -3,15 +3,13 @@ fast_finish: true
 
 python:
   - 3.5
-  - 3.7dev
+  - 3.7-dev
 
 os:
   - linux
 
 dist: trusty
 group: edge
-  
-env: FC=gfortran-6
 
 notifications:
   email: false
@@ -26,11 +24,12 @@ addons:
     packages: gfortran-6
 
 before_install:
-    - pip -q install coveralls
-    # temp for pip < 9.1
-    - pip -q install numpy
+  - sudo update-alternatives /usr/bin/gfortran gfortran /usr/bin/gfortran-6 50
+  - pip -q install coveralls
+  # temp for pip < 9.1
+  - pip -q install numpy
 
-install: pip  install -e .
+install: pip install -e .
 
 script: 
   - coverage run tests/test.py -v
