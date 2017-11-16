@@ -1,10 +1,11 @@
 #!/usr/bin/env python
 req=['nose','python-dateutil','numpy','xarray']
 # %%
+from setuptools import find_packages
 from numpy.distutils.core import setup,Extension
 
 setup(name='lowtran',
-      packages=['lowtran'],
+      packages=find_packages(),
       author='Michael Hirsch, Ph.D',
       description='Model of Earth atmosphere absorption and transmission vs. wavelength and location on Earth.',
       version='2.2.1',

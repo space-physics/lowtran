@@ -3,7 +3,7 @@ fast_finish: true
 
 python:
   - 3.5
-  - 3.7dev
+  - 3.7-dev
 
 os:
   - linux
