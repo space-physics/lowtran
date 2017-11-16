@@ -4,6 +4,10 @@ req=['nose','python-dateutil','numpy','xarray']
 from setuptools import find_packages
 from numpy.distutils.core import setup,Extension
 
+ext = [Extension(name='lowtran7',
+                 sources=['lowtran7.f'],
+                 f2py_options=['--quiet'])]
+
 setup(name='lowtran',
       packages=find_packages(),
       author='Michael Hirsch, Ph.D',
@@ -18,8 +22,7 @@ setup(name='lowtran',
       'Programming Language :: Python',
       'Programming Language :: Python :: 3',
       ],
-      ext_modules=[Extension(name='lowtran7',sources=['lowtran7.f'],
-                    f2py_options=['--quiet'])],
+      ext_modules=ext,
       install_requires=req,
       python_requires='>=3.5',
       extras_require={'plot':['matplotlib','seaborn']},
