@@ -24,7 +24,7 @@ addons:
     packages: gfortran-6
 
 before_install:
-  - sudo update-alternatives /usr/bin/gfortran gfortran /usr/bin/gfortran-6 50
+  - sudo update-alternatives --install /usr/bin/gfortran gfortran /usr/bin/gfortran-6 50
   - pip -q install coveralls
   # temp for pip < 9.1
   - pip -q install numpy
