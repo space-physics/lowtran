@@ -32,8 +32,7 @@ before_install:
 
 install: pip install -e .
 
-script: 
-  - coverage run tests/test.py -v
+script: coverage run tests/test.py -v
 
 after_success: coveralls
 
