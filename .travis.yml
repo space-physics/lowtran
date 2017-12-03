@@ -13,7 +13,7 @@ dist: trusty
 group: edge
 
 notifications:
-  email: false
+    email: false
 
 git:
   depth: 3
@@ -26,11 +26,10 @@ addons:
 
 before_install:
   - sudo update-alternatives --install /usr/bin/gfortran gfortran /usr/bin/gfortran-6 50
-  - pip -q install coveralls
   # temp for pip < 9.1
   - pip -q install numpy
 
-install: pip install -e .
+install: pip install -e .[tests]
 
 script: coverage run tests/test.py -v
 
