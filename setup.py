@@ -1,5 +1,6 @@
 #!/usr/bin/env python
-req=['nose','python-dateutil','numpy','xarray']
+install_requires=['python-dateutil','numpy','xarray']
+tests_require=['nose','coveralls']
 # %%
 from setuptools import find_packages
 from numpy.distutils.core import setup,Extension
@@ -23,7 +24,9 @@ setup(name='lowtran',
       'Programming Language :: Python :: 3',
       ],
       ext_modules=ext,
-      install_requires=req,
+      install_requires=install_requires,
       python_requires='>=3.5',
-      extras_require={'plot':['matplotlib','seaborn']},
+      extras_require={'plot':['matplotlib','seaborn'],
+                      'tests':tests_require},
+      tests_require=tests_require,
 	  )
