@@ -36,9 +36,9 @@ Install
 * Mac: ``brew install gcc``
 * `Windows <https://www.scivision.co/windows-gcc-gfortran-cmake-make-install/>`_
 
-If you don't already have Numpy, ``pip install numpy`` and then::
+If you don't already have Numpy, ``python -m pip install numpy`` and then::
 
-  pip install -e .
+  python -m pip install -e .
 
 Examples
 ========

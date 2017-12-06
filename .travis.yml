@@ -27,9 +27,9 @@ addons:
 before_install:
   - sudo update-alternatives --install /usr/bin/gfortran gfortran /usr/bin/gfortran-6 50
   # temp for pip < 9.1
-  - pip -q install numpy
+  - python -m pip -q install numpy
 
-install: pip install -e .[tests]
+install: python -m pip install -e .[tests]
 
 script: coverage run tests/test.py -v
 
