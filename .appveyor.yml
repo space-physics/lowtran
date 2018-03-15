@@ -1,0 +1,39 @@
+image:
+- Visual Studio 2017
+
+stack: python 3
+
+environment:
+  APPVEYOR: True
+  MINGW_DIR: C:\mingw-w64\x86_64-7.2.0-posix-seh-rt_v5-rev1\mingw64\bin
+  PY_DIR: C:\Python36-x64
+
+clone_depth: 3
+
+before_build:
+- cmd: set PATH=%MINGW_DIR%;%PY_DIR%;%PY_DIR%\Scripts;%PATH%
+# fix CMake sh.exe issue, by removing Git path.
+- cmd: set PATH=%PATH:C:\Program Files\Git\usr\bin;=%
+- cmd: set FC=%MINGW_DIR%\gfortran 
+- cmd: set CXX=%MINGW_DIR%\g++ 
+- cmd: set CC=%MINGW_DIR%\gcc
+- cmd: mklink bin\make.exe %MINGW_DIR%\mingw32-make.exe
+
+- sh: sudo apt-get -yq update > /dev/null
+- sh: sudo apt-get install -yq --no-install-suggests --no-install-recommends gfortran cmake make > /dev/null
+
+build_script:
+- pip -q install pandas numpy
+#- pip install -e .[tests]   # FIXME: need to figure out f2py on AppVeyor
+
+- cd bin
+- cmd: cmake -G "MinGW Makefiles" ..
+- sh: cmake ..
+- make
+  
+after_build:
+- make test
+
+on_failure:
+- ctest -V
+
