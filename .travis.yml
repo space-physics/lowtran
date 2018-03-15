@@ -7,13 +7,11 @@ python:
 
 os:
   - linux
+  
+group: travis_latest
 
-sudo: required
-dist: trusty
-group: edge
+env: FC=gfortran-6
 
-notifications:
-    email: false
 
 git:
   depth: 3
@@ -25,13 +23,19 @@ addons:
     packages: gfortran-6
 
 before_install:
-  - sudo update-alternatives --install /usr/bin/gfortran gfortran /usr/bin/gfortran-6 50
   # temp for pip < 9.1
-  - python -m pip -q install numpy
+  - pip -q install numpy
 
-install: python -m pip install -e .[tests]
+install: 
+  - pip -q install -e .[tests]
+  - cd bin
+  - cmake ..
+  - make
 
-script: coverage run tests/test.py -v
+script:
+  - make test
 
-after_success: coveralls
+after_success: 
+  -  coverage run tests/test_all.py
+  - coveralls
 
