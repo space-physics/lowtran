@@ -2,7 +2,6 @@ language: python
 fast_finish: true
 
 python:
-  - 3.5
   - 3.6
 
 os:
@@ -23,11 +22,14 @@ addons:
     packages: gfortran-6
 
 before_install:
+  - mkdir -p ~/.local/bin
+  - ln -s /usr/bin/gfortran-6 ~/.local/bin/gfortran
+  - export PATH="$HOME/.local/bin/:$PATH"
   # temp for pip < 9.1
   - pip -q install numpy
 
 install: 
-  - pip -q install -e .[tests]
+  - pip install -e .[tests]
   - cd bin
   - cmake ..
   - make
