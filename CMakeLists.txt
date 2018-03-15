@@ -11,12 +11,11 @@ enable_testing()
 add_test(NAME Fortran COMMAND testlowtran)
 
 find_package(PythonInterp)
-if(DEFINED ENV{APPVEYOR})
-  message(INFO TODO:check plain Fortran output)
-else()
-  if(PYTHON_VERSION_MAJOR GREATER_EQUAL 3)
-#if(PYTHONINTERP_FOUND)
-  add_test(NAME Python COMMAND pytest -v
+if(PYTHON_VERSION_MAJOR GREATER_EQUAL 3)
+  if(DEFINED ENV{APPVEYOR})
+    message(INFO TODO:check plain Fortran output)
+  else()
+    add_test(NAME Python COMMAND pytest -v
          WORKING_DIRECTORY ${PROJECT_SOURCE_DIR})
   endif()
 endif()
