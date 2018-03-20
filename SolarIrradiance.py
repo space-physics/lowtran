@@ -20,14 +20,12 @@ if __name__=='__main__':
     p=p.parse_args()
 
     c1={'model':p.model,
-        'itype':3,   # 3: observer to space
-        'iemsct':3,  # 3: solar irradiance
         'h1': p.obsalt,
         'angle': p.zenang, # zenith angle of sun or moon
         'wlnmlim': p.wavelen,
         }
 
-    I = lowtran.loopangle(c1)
+    I = lowtran.irradiance(c1)
 
     plotirrad(I, c1, True)
 

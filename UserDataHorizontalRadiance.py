@@ -1,4 +1,8 @@
 #!/usr/bin/env python
+"""
+Horizontal cases are for special use by advanced users.
+
+"""
 from pathlib import Path
 from numpy import zeros
 from dateutil.parser import parse
