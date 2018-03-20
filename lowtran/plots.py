@@ -1,6 +1,6 @@
 from datetime import datetime
 from xarray import DataArray
-from matplotlib.pyplot import figure,subplots
+from matplotlib.pyplot import figure
 #
 h = 6.62607004e-34
 c = 299792458
@@ -9,7 +9,8 @@ plotNp = False
 
 def plotscatter(irrad:DataArray, c1:dict, log:bool=False):
 
-    fg,axs = subplots(2, 1, sharex=True)
+    fg = figure()
+    axs = fg.subplots(2, 1, sharex=True)
 
     transtxt = 'Transmittance'
 
@@ -26,7 +27,7 @@ def plotscatter(irrad:DataArray, c1:dict, log:bool=False):
         ax.plot(irrad.wavelength_nm, Np.T)
         ax.set_ylabel('Photons [s$^{-1}$ '+UNITS)
     else:
-        ax.plot(irrad.wavelength_nm, irrad.loc[...,'pathscatter'].T.values)
+        ax.plot(irrad.wavelength_nm, irrad.loc[...,'pathscatter'].T)
         ax.set_ylabel('Radiance [W '+UNITS)
 
     ax.set_xlabel('wavelength [nm]')
@@ -47,8 +48,8 @@ def plotscatter(irrad:DataArray, c1:dict, log:bool=False):
         pass
 
 def plotradiance(irrad:DataArray, c1:dict, log:bool=False):
-
-    fg,axs = subplots(2, 1, sharex=True)
+    fg = figure()
+    axs = fg.subplots(2, 1, sharex=True)
 
     transtxt = 'Transmittance Observer to Space'
 
@@ -118,8 +119,8 @@ def plottrans(trans:DataArray, c1:dict, log:bool=False):
 
 
 def plotirrad(irrad:DataArray, c1:dict, log:bool=False):
-
-    fg,axs = subplots(2,1,sharex=True)
+    fg = figure()
+    axs = fg.subplots(2,1,sharex=True)
 
 #    if c1['isourc'] == 0:
     stxt = "Sun's"

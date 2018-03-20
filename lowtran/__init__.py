@@ -16,7 +16,7 @@ www.dtic.mil/dtic/tr/fulltext/u2/a206773.pdf
 
 """
 import logging
-from xarray import DataArray
+import xarray
 import numpy as np
 #
 try:
@@ -24,7 +24,8 @@ try:
 except ImportError as e:
     raise ImportError('you must compile the Fortran code first. f2py -m lowtran7 -c lowtran7.f {}'.format(e))
 
-def loopuserdef(c1):
+
+def loopuserdef(c1:dict) -> xarray.DataArray:
     """
     golowtran() is for scalar parameters only
     (besides vector of wavelength, which Lowtran internally loops over)
@@ -32,6 +33,7 @@ def loopuserdef(c1):
     wmol, p, t must all be vector(s) of same length
     """
 
+    SIMOUT = ['transmission','radiance','irradiance']
     wmol = np.atleast_2d(c1['wmol'])
     P = c1['p']
     T = c1['t']
@@ -44,10 +46,10 @@ def loopuserdef(c1):
     wlcminv,wlcminvstep,nwl = nm2lt7(c1['wlnmlim'])
     wl_nm = 1e7 / np.arange(wlcminv[1],wlcminv[0]+wlcminvstep,wlcminvstep)
 # %% 3-D array indexed by metadata
-    TR = DataArray(data=np.empty((N,wl_nm.size,3)),
+    TR = xarray.DataArray(np.empty((N, wl_nm.size, len(SIMOUT))),
                    coords={'time':time,
                            'wavelength_nm':wl_nm,
-                           'sim':['transmission','radiance','irradiance']},
+                           'sim':SIMOUT},
                    dims=['time','wavelength_nm','sim'])
 
     for i in range(N):
@@ -62,19 +64,21 @@ def loopuserdef(c1):
 
     return TR
 
-def loopangle(c1):
+
+def loopangle(c1:dict) -> xarray.DataArray:
     """
     loop over "ANGLE"
     """
-    angles = c1['angle']
+    SIMOUT = ['transmission', 'radiance', 'irradiance','pathscatter']
+    angles = np.atleast_1d(c1['angle'])
 # %% preassign wavelengths for indexing
     wlcminv,wlcminvstep,nwl = nm2lt7(c1['wlnmlim'])
-    wl_nm = 1e7 / np.arange(wlcminv[1],wlcminv[0]+wlcminvstep,wlcminvstep)
+    wl_nm = 1e7 / np.arange(wlcminv[1], wlcminv[0]+wlcminvstep, wlcminvstep)
 # %% 3-D array indexed by metadata
-    TR = DataArray(data=np.empty((len(angles),wl_nm.size,4)),
+    TR = xarray.DataArray(np.empty((len(angles), wl_nm.size, len(SIMOUT))),
                    coords={'angle':angles,
                            'wavelength_nm':wl_nm,
-                           'sim':['transmission', 'radiance', 'irradiance','pathscatter']},
+                           'sim':SIMOUT},
                    dims=['angle', 'wavelength_nm', 'sim'])
 
     for a in angles:
@@ -86,8 +90,7 @@ def loopangle(c1):
     return TR
 
 
-#def golowtran(c1:dict) -> DataArray:
-def golowtran(c1):
+def golowtran(c1:dict) -> xarray.DataArray:
 # %% default parameters
     defp = ('h1','h2','angle','im','iseasn','ird1','range_km','zmdl','p','t')
     for p in defp:
@@ -117,12 +120,13 @@ def golowtran(c1):
                             c1['zmdl'], c1['p'], c1['t'], c1['wmol'],
                             c1['h1'], c1['h2'], c1['angle'], c1['range_km'])
 
-    TR = DataArray(np.column_stack((Tx[:,9], sumvv, irrad[:,0], irrad[:,2])),
+    TR = xarray.DataArray(np.column_stack((Tx[:,9], sumvv, irrad[:,0], irrad[:,2])),
                    coords={'wavelength_nm':Alam*1e3,
                            'sim':['transmission','radiance','irradiance','pathscatter']},
                      dims = ['wavelength_nm','sim'])
 
     return TR
+
 
 def nm2lt7(wlnm):
     """converts wavelength in nm to cm^-1"""
@@ -130,4 +134,15 @@ def nm2lt7(wlnm):
     wlnm= np.asarray(wlnm,dtype=float) #for proper division
     wlcminv = 1.e7/wlnm
     nwl = int(np.ceil((wlcminv[0]-wlcminv[1])/wlcminvstep))+1 #yes, ceil
+
     return wlcminv,wlcminvstep,nwl
+
+
+def scatter(c1:dict) -> xarray.DataArray:
+# %% low-level Lowtran configuration for this scenario, don't change
+    c1.update({
+        'itype':  3,  # 3: observer to space
+        'iemsct': 2,  #  2: radiance model
+        })
+# %% TR is 3-D array with axes: time, wavelength, and [transmission,radiance]
+    return loopangle(c1)

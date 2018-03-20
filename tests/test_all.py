@@ -12,7 +12,25 @@ def test_atmosphere_transmission():
     TR = lowtran.golowtran(c1)
 
     assert_array_almost_equal([900.090027,  500.],TR.wavelength_nm[[0,-1]])
-    assert_array_almost_equal([0.87720001, 0.85709256],TR.loc[:,'transmission'][[0,-1]].squeeze())
+    assert_array_almost_equal([0.87720001, 0.85709256],TR.loc[:,'transmission'][[0,-1]])
+
+def test_scatter():
+    vlim = (400,700)
+    angles = 60
+
+    c1={'model':5,
+        'h1': 0, # of observer
+        'angle': angles, # of observer
+        'wlnmlim': vlim,
+        }
+# %%
+    TR = lowtran.scatter(c1)
+
+    assert_array_almost_equal((700,399.988572),TR.wavelength_nm[[0,-1]])
+    assert_array_almost_equal([0.876713, 0.4884],
+                              TR.loc[angles,:,'transmission'][[0,-1]])
+    assert_array_almost_equal([0.005259, 0.005171],
+                              TR.loc[angles,:,'pathscatter'][[-10,-1]])
 
 if __name__ == '__main__':
     run_module_suite()
