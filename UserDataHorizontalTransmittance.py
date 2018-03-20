@@ -1,4 +1,8 @@
 #!/usr/bin/env python
+"""
+Horizontal cases are for special use by advanced users.
+
+"""
 from matplotlib.pyplot import show
 #
 import lowtran
