@@ -34,4 +34,5 @@ setup(name='lowtran',
                'TransmittanceGround2Space.py','UserDataHorizontalRadiance.py',
                'UserDataHorizontalTransmittance.py','Wavelength2LowtranWavenumber.py',
                ]
+      include_package_data=True,
 	  )
