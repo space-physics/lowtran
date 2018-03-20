@@ -57,7 +57,7 @@ def loopuserdef(c1:dict) -> xarray.DataArray:
         c1['p'] = P[i]
         c1['t'] = T[i]
 
-        tr = golowtran(c1)
+        tr = _golowtran(c1)
         TR.loc[time[i],...] = tr
 
  #   TR = TR.sort_index(axis=0) # put times in order, sometimes CSV is not monotonic in time.
@@ -84,13 +84,14 @@ def loopangle(c1:dict) -> xarray.DataArray:
     for a in angles:
         c = c1.copy()
         c['angle'] = a
-        T = golowtran(c)
+        T = _golowtran(c)
         TR.loc[a, ...] = T
 
     return TR
 
 
-def golowtran(c1:dict) -> xarray.DataArray:
+def _golowtran(c1:dict) -> xarray.DataArray:
+    """directly run Fortran code"""
 # %% default parameters
     defp = ('h1','h2','angle','im','iseasn','ird1','range_km','zmdl','p','t')
     for p in defp:
@@ -164,4 +165,14 @@ def radiance(c1:dict) -> xarray.DataArray:
         'iemsct': 1,  # 1: thermal radiance model  2: radiance model
         })
 #%% TR is 3-D array with axes: time, wavelength, and [transmission,radiance]
+    return loopangle(c1)
+
+
+def transmittance(c1:dict) -> xarray.DataArray:
+
+    c1.update({
+        'itype':3,   # 3: observer to space
+        'iemsct':0,  # 0: transmittance
+        })
+
     return loopangle(c1)

@@ -15,15 +15,13 @@ if __name__=='__main__':
     p=p.parse_args()
 
     c1={'model':p.model,
-        'itype':3,   # 3: observer to space
-        'iemsct':0,  # 0: transmittance
         'h1': p.obsalt,
         'angle': p.zenang,
         'wlnmlim': p.wavelen,
         }
 
-    TR = lowtran.loopangle(c1)
+    TR = lowtran.transmittance(c1)
 
-    plottrans(TR, c1, False)
+    plottrans(TR, c1)
 
     show()

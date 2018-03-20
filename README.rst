@@ -47,6 +47,10 @@ See below for how to make these examples.
 .. image:: gfx/irradiance.png
     :alt: "Lowtran7 Solar Irradiance"
     :scale: 25 %
+    
+.. image:: gfx/thermalradiance.png
+    :alt: "Lowtran7 Solar Radiance"
+    :scale: 25 %
 
 Install
 =======

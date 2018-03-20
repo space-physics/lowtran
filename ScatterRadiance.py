@@ -47,6 +47,6 @@ if __name__=='__main__':
         print('writing', outfn)
         TR.to_netcdf(outfn)
 # %%
-    plotscatter(TR, c1, False)
+    plotscatter(TR, c1)
 
     show()
