@@ -30,6 +30,10 @@ The main LOWTRAN program has been made accessible from Python by using direct me
 .. image:: gfx/lowtran.png
     :alt: "Lowtran7 absorption"
     :scale: 25 %
+    
+.. image:: gfx/txgnd2space.png
+    :alt: "Lowtran7 absorption"
+    :scale: 25 %
 
 Install
 =======

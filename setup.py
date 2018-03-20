@@ -1,6 +1,6 @@
 #!/usr/bin/env python
 install_requires=['python-dateutil','numpy','xarray']
-tests_require=['nose','coveralls']
+tests_require=['pytest','nose','coveralls']
 # %%
 from setuptools import find_packages
 from numpy.distutils.core import setup,Extension
@@ -29,4 +29,8 @@ setup(name='lowtran',
       extras_require={'plot':['matplotlib','seaborn'],
                       'tests':tests_require},
       tests_require=tests_require,
+      scripts=['ScatterRadiance.py','SolarIrradiance.py','ThermalRadiance.py',
+               'TransmittanceGround2Space.py','UserDataHorizontalRadiance.py',
+               'UserDataHorizontalTransmittance.py','Wavelength2LowtranWavenumber.py',
+               ]
 	  )
