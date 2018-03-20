@@ -32,5 +32,23 @@ def test_scatter():
     assert_array_almost_equal([0.005259, 0.005171],
                               TR.loc[angles,:,'pathscatter'][[-10,-1]])
 
+def test_irradiance():
+    vlim = (200,25000)
+    angles = 60
+
+    c1={'model':5,
+        'h1': 0, # of observer
+        'angle': angles, # of observer
+        'wlnmlim': vlim,
+        }
+# %%
+    TR = lowtran.irradiance(c1)
+
+    assert_array_almost_equal(vlim[::-1],TR.wavelength_nm[[0,-1]])
+    assert_array_almost_equal([1.675140e-04, 0.9388928],
+                              TR.loc[angles,:,'transmission'][[0,100]])
+    assert_array_almost_equal([1.489084e-05, 3.904406e-05],
+                              TR.loc[angles,:,'irradiance'][[100,1000]])
+
 if __name__ == '__main__':
     run_module_suite()

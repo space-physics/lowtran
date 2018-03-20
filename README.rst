@@ -27,12 +27,25 @@ The main LOWTRAN program has been made accessible from Python by using direct me
 
 .. contents::
 
+
+Gallery
+=======
+See below for how to make these examples.
+
 .. image:: gfx/lowtran.png
     :alt: "Lowtran7 absorption"
     :scale: 25 %
     
 .. image:: gfx/txgnd2space.png
-    :alt: "Lowtran7 absorption"
+    :alt: "Lowtran7 transmission"
+    :scale: 25 %
+    
+.. image:: gfx/whyskyisblue.png
+    :alt: "Lowtran7 Scatter Radiance"
+    :scale: 25 %
+        
+.. image:: gfx/irradiance.png
+    :alt: "Lowtran7 Solar Irradiance"
     :scale: 25 %
 
 Install

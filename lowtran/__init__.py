@@ -146,3 +146,12 @@ def scatter(c1:dict) -> xarray.DataArray:
         })
 # %% TR is 3-D array with axes: time, wavelength, and [transmission,radiance]
     return loopangle(c1)
+
+
+def irradiance(c1:dict) -> xarray.DataArray:
+    c1.update({
+        'itype':3,   # 3: observer to space
+        'iemsct':3,  # 3: solar irradiance
+         })
+
+    return loopangle(c1)

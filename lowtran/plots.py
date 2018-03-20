@@ -47,6 +47,7 @@ def plotscatter(irrad:DataArray, c1:dict, log:bool=False):
     except (AttributeError,TypeError):
         pass
 
+
 def plotradiance(irrad:DataArray, c1:dict, log:bool=False):
     fg = figure()
     axs = fg.subplots(2, 1, sharex=True)
