@@ -18,16 +18,6 @@ from matplotlib.pyplot import show
 import lowtran
 from lowtran.plots import plotradiance
 
-def radiance(c1:dict, outfn:Path):
-#%% TR is 3-D array with axes: time, wavelength, and [transmission,radiance]
-    TR = lowtran.loopangle(c1)
-#%% write to HDF5
-    if p.outfn:
-        outfn = Path(p.outfn).expanduser()
-        print('writing', outfn)
-        TR.to_pandas().to_hdf(str(outfn), TR.name)
-
-    return TR
 
 if __name__=='__main__':
     from argparse import ArgumentParser
@@ -40,16 +30,18 @@ if __name__=='__main__':
 
     p=p.parse_args()
 
-    #%% low-level Lowtran configuration for this scenario, don't change
     c1={'model':p.model,
-        'itype':  3,  # 3: observer to space
-        'iemsct': 1,  # 1: thermal radiance model  2: radiance model
         'h1': p.obsalt, # of observer
         'angle': p.zenang, # of observer
         'wlnmlim': p.wavelen,
         }
 
-    TR = radiance(c1, p.outfn)
+    TR = lowtran.radiance(c1)
+# %%
+    if p.outfn:
+        outfn = Path(p.outfn).expanduser()
+        print('writing', outfn)
+        TR.to_netcdf(outfn)
 
     plotradiance(TR, c1, True)
 

@@ -155,3 +155,13 @@ def irradiance(c1:dict) -> xarray.DataArray:
          })
 
     return loopangle(c1)
+
+
+def radiance(c1:dict) -> xarray.DataArray:
+
+    c1.update({
+        'itype':  3,  # 3: observer to space
+        'iemsct': 1,  # 1: thermal radiance model  2: radiance model
+        })
+#%% TR is 3-D array with axes: time, wavelength, and [transmission,radiance]
+    return loopangle(c1)
