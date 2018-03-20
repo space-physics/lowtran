@@ -33,6 +33,6 @@ setup(name='lowtran',
       scripts=['ScatterRadiance.py','SolarIrradiance.py','ThermalRadiance.py',
                'TransmittanceGround2Space.py','UserDataHorizontalRadiance.py',
                'UserDataHorizontalTransmittance.py','Wavelength2LowtranWavenumber.py',
-               ]
+               ],
       include_package_data=True,
 	  )
