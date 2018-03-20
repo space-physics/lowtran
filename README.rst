@@ -107,7 +107,7 @@ should generate `this text output <https://gist.github.com/scienceopen/89ef2060d
 
 Windows f2py
 ~~~~~~~~~~~~
-(this is handled automatically by ``setup.py`, noted here for debugging)
+(this is handled automatically by ``setup.py``, noted here for debugging)
 
 Yes, even though you're `using a 64-bit compiler <https://scivision.co/f2py-running-fortran-code-in-python-on-windows/>`_::
 
