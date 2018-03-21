@@ -15,19 +15,19 @@ def plotscatter(irrad:xarray.Dataset, c1:dict, log:bool=False):
     transtxt = 'Transmittance'
 
     ax = axs[0]
-    ax.plot(irrad.wavelength_nm, irrad.loc[...,'transmission'].T.values)
+    ax.plot(irrad.wavelength_nm, irrad['transmission'])
     ax.set_title(transtxt)
     ax.set_ylabel('Transmission (unitless)')
     ax.grid(True)
-    ax.legend(irrad.angle.values.astype(str).tolist())
+    ax.legend(irrad.angle_deg.values)
 
     ax = axs[1]
     if plotNp:
-        Np = (irrad.loc[...,'pathscatter']*10000) * (irrad.wavelength_nm*1e9)/(h*c)
-        ax.plot(irrad.wavelength_nm, Np.T)
+        Np = (irrad['pathscatter']*10000) * (irrad.wavelength_nm*1e9)/(h*c)
+        ax.plot(irrad.wavelength_nm, Np)
         ax.set_ylabel('Photons [s$^{-1}$ '+UNITS)
     else:
-        ax.plot(irrad.wavelength_nm, irrad.loc[...,'pathscatter'].T)
+        ax.plot(irrad.wavelength_nm, irrad['pathscatter'])
         ax.set_ylabel('Radiance [W '+UNITS)
 
     ax.set_xlabel('wavelength [nm]')
@@ -55,18 +55,18 @@ def plotradiance(irrad:xarray.Dataset, c1:dict, log:bool=False):
     transtxt = 'Transmittance Observer to Space'
 
     ax = axs[0]
-    ax.plot(irrad.wavelength_nm, irrad.loc[...,'transmission'].T)
+    ax.plot(irrad.wavelength_nm, irrad['transmission'])
     ax.set_title(transtxt)
     ax.set_ylabel('Transmission (unitless)')
     ax.grid(True)
 
     ax = axs[1]
     if plotNp:
-        Np = (irrad.loc[...,'radiance']*10000) * (irrad.wavelength_nm*1e9)/(h*c)
-        ax.plot(irrad.wavelength_nm, Np.T)
+        Np = (irrad['radiance']*10000) * (irrad.wavelength_nm*1e9)/(h*c)
+        ax.plot(irrad.wavelength_nm, Np)
         ax.set_ylabel('Photons [s$^{-1}$ '+UNITS)
     else:
-        ax.plot(irrad.wavelength_nm, irrad.loc[...,'radiance'].T)
+        ax.plot(irrad.wavelength_nm, irrad['radiance'])
         ax.set_ylabel('Radiance [W '+UNITS)
 
     ax.set_xlabel('wavelength [nm]')
@@ -77,7 +77,7 @@ def plotradiance(irrad:xarray.Dataset, c1:dict, log:bool=False):
 
     if log:
         ax.set_yscale('log')
-#        ax.set_ylim(1e-8,1)
+        ax.set_ylim(1e-8,1)
 
     try:
         fg.suptitle(f'Obs. zenith angle: {c1["angle"]} deg., ')
@@ -144,20 +144,20 @@ def plotirrad(irrad:xarray.Dataset, c1:dict, log:bool=False):
         key='radiance'
         transtxt = 'Transmittance Observer to Observer'
 
-    #irrad.loc[...,'transmission'].plot()
+    #irrad.['transmission'].plot()
 
     ax = axs[0]
-    h = ax.plot(irrad.wavelength_nm, irrad.loc[..., 'transmission'].T)
+    h = ax.plot(irrad.wavelength_nm, irrad['transmission'])
     ax.set_title(transtxt)
     ax.set_ylabel('Transmission (unitless)')
     ax.grid(True)
     try:
-        ax.legend(h, irrad.angle.values.astype(str))
+        ax.legend(h, irrad.angle_deg.values)
     except AttributeError:
         pass
 
     ax = axs[1]
-    ax.plot(irrad.wavelength_nm, irrad.loc[..., key].T)
+    ax.plot(irrad.wavelength_nm, irrad[key])
     ax.set_xlabel('wavelength [nm]')
     ax.invert_xaxis()
     ax.grid(True)
