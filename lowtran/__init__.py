@@ -65,32 +65,22 @@ def loopuserdef(c1:dict) -> xarray.DataArray:
     return TR
 
 
-def loopangle(c1:dict) -> xarray.DataArray:
+def loopangle(c1:dict) -> xarray.Dataset:
     """
     loop over "ANGLE"
     """
-    SIMOUT = ['transmission', 'radiance', 'irradiance','pathscatter']
     angles = np.atleast_1d(c1['angle'])
-# %% preassign wavelengths for indexing
-    wlcminv,wlcminvstep,nwl = nm2lt7(c1['wlnmlim'])
-    wl_nm = 1e7 / np.arange(wlcminv[1], wlcminv[0]+wlcminvstep, wlcminvstep)
-# %% 3-D array indexed by metadata
-    TR = xarray.DataArray(np.empty((len(angles), wl_nm.size, len(SIMOUT))),
-                   coords={'angle':angles,
-                           'wavelength_nm':wl_nm,
-                           'sim':SIMOUT},
-                   dims=['angle', 'wavelength_nm', 'sim'])
+    TR = xarray.Dataset(coords={'wavelength_nm':None,'angle_deg':angles})
 
     for a in angles:
         c = c1.copy()
         c['angle'] = a
-        T = _golowtran(c)
-        TR.loc[a, ...] = T
+        TR = TR.merge(_golowtran(c))
 
     return TR
 
 
-def _golowtran(c1:dict) -> xarray.DataArray:
+def _golowtran(c1:dict) -> xarray.Dataset:
     """directly run Fortran code"""
 # %% default parameters
     defp = ('h1','h2','angle','im','iseasn','ird1','range_km','zmdl','p','t')
@@ -121,10 +111,13 @@ def _golowtran(c1:dict) -> xarray.DataArray:
                             c1['zmdl'], c1['p'], c1['t'], c1['wmol'],
                             c1['h1'], c1['h2'], c1['angle'], c1['range_km'])
 
-    TR = xarray.DataArray(np.column_stack((Tx[:,9], sumvv, irrad[:,0], irrad[:,2])),
-                   coords={'wavelength_nm':Alam*1e3,
-                           'sim':['transmission','radiance','irradiance','pathscatter']},
-                     dims = ['wavelength_nm','sim'])
+    dims = ('wavelength_nm','angle_deg')
+    TR = xarray.Dataset({'transmission':(dims,Tx[:,9][:,None]),
+                         'radiance':(dims,sumvv[:,None]),
+                         'irradiance':(dims,irrad[:,0][:,None]),
+                         'pathscatter':(dims,irrad[:,2][:,None]) },
+                        coords={'wavelength_nm':Alam*1e3,
+                                'angle_deg':[c1['angle']]})
 
     return TR
 

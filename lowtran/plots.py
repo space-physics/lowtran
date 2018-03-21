@@ -1,5 +1,5 @@
 from datetime import datetime
-from xarray import DataArray
+import xarray
 from matplotlib.pyplot import figure
 #
 h = 6.62607004e-34
@@ -7,7 +7,7 @@ c = 299792458
 UNITS='ster$^{-1}$ cm$^{-2}$ $\mu$m$^{-1}$]'
 plotNp = False
 
-def plotscatter(irrad:DataArray, c1:dict, log:bool=False):
+def plotscatter(irrad:xarray.Dataset, c1:dict, log:bool=False):
 
     fg = figure()
     axs = fg.subplots(2, 1, sharex=True)
@@ -48,7 +48,7 @@ def plotscatter(irrad:DataArray, c1:dict, log:bool=False):
         pass
 
 
-def plotradiance(irrad:DataArray, c1:dict, log:bool=False):
+def plotradiance(irrad:xarray.Dataset, c1:dict, log:bool=False):
     fg = figure()
     axs = fg.subplots(2, 1, sharex=True)
 
@@ -85,7 +85,7 @@ def plotradiance(irrad:DataArray, c1:dict, log:bool=False):
     except (AttributeError,TypeError):
         pass
 
-def plotradtime(TR:DataArray, c1:dict, log:bool=False):
+def plotradtime(TR:xarray.Dataset, c1:dict, log:bool=False):
     """
     make one plot per time for now.
 
@@ -93,16 +93,15 @@ def plotradtime(TR:DataArray, c1:dict, log:bool=False):
 
     radiance is currently single-scatter solar
     """
-    assert isinstance(TR,DataArray)
 
     for tr in TR: # for each time
         plotirrad(tr, c1, False)
 
 
-def plottrans(trans:DataArray, c1:dict, log:bool=False):
+def plottrans(T:xarray.Dataset, c1:dict, log:bool=False):
     ax = figure().gca()
 
-    h = ax.plot(trans.wavelength_nm, trans.loc[...,'transmission'].T)
+    h = ax.plot(T.wavelength_nm, T['transmission'])
 
     ax.set_xlabel('wavelength [nm]')
     ax.set_ylabel('transmission (unitless)')
@@ -116,10 +115,10 @@ def plottrans(trans:DataArray, c1:dict, log:bool=False):
         ax.set_ylim(0,1)
     ax.invert_xaxis()
     ax.autoscale(True,axis='x',tight=True)
-    ax.legend(h, trans.angle.values.astype(str))
+    ax.legend(h, T.angle_deg.values)
 
 
-def plotirrad(irrad:DataArray, c1:dict, log:bool=False):
+def plotirrad(irrad:xarray.Dataset, c1:dict, log:bool=False):
     fg = figure()
     axs = fg.subplots(2,1,sharex=True)
 
@@ -179,7 +178,7 @@ def plotirrad(irrad:DataArray, c1:dict, log:bool=False):
     ax.autoscale(True,axis='x',tight=True)
 
 
-def plothoriz(trans:DataArray, c1:dict, log:bool=False):
+def plothoriz(trans:xarray.Dataset, c1:dict, log:bool=False):
     ax = figure().gca()
 
     ax.plot(trans.wavelength_nm, trans)

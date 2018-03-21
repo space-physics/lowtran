@@ -1,5 +1,5 @@
 #!/usr/bin/env python
-from numpy.testing import assert_array_almost_equal,run_module_suite
+from numpy.testing import assert_allclose,run_module_suite
 #
 import lowtran
 
@@ -11,8 +11,10 @@ def test_fortran():
 
     TR = lowtran._golowtran(c1)
 
-    assert_array_almost_equal([900.090027,  500.],TR.wavelength_nm[[0,-1]])
-    assert_array_almost_equal([0.87720001, 0.85709256],TR.loc[:,'transmission'][[0,-1]])
+    assert_allclose(TR.wavelength_nm[[0,-1]],
+                    [900.090027,  500.])
+    assert_allclose(TR['transmission'][[0,-1]].squeeze(),
+                    [0.87720001, 0.85709256])
 
 def test_scatter():
     vlim = (400,700)
@@ -26,11 +28,11 @@ def test_scatter():
 # %%
     TR = lowtran.scatter(c1)
 
-    assert_array_almost_equal((700,399.988572),TR.wavelength_nm[[0,-1]])
-    assert_array_almost_equal([0.876713, 0.4884],
-                              TR.loc[angles,:,'transmission'][[0,-1]])
-    assert_array_almost_equal([0.005259, 0.005171],
-                              TR.loc[angles,:,'pathscatter'][[-10,-1]])
+    assert_allclose(TR.wavelength_nm[[0,-1]], (700.035, 400.), rtol=1e-6)
+    assert_allclose(TR['transmission'][[0,-1],0],
+                    [0.876713, 0.4884], rtol=1e-6)
+    assert_allclose(TR['pathscatter'][[-10,-1],0],
+                    [0.005259, 0.005171], rtol=1e-4)
 
 def test_irradiance():
     vlim = (200,25000)
@@ -44,11 +46,11 @@ def test_irradiance():
 # %%
     TR = lowtran.irradiance(c1)
 
-    assert_array_almost_equal(vlim[::-1],TR.wavelength_nm[[0,-1]])
-    assert_array_almost_equal([1.675140e-04, 0.9388928],
-                              TR.loc[angles,:,'transmission'][[0,100]])
-    assert_array_almost_equal([1.489084e-05, 3.904406e-05],
-                              TR.loc[angles,:,'irradiance'][[100,1000]])
+    assert_allclose(vlim[::-1],TR.wavelength_nm[[0,-1]])
+    assert_allclose(TR['transmission'][[0,100],0],
+                    [1.675140e-04, 0.9388928], rtol=1e-6)
+    assert_allclose(TR['irradiance'][[100,1000],0],
+                    [1.489084e-05, 3.904406e-05])
 
 
 def test_radiance():
@@ -63,13 +65,13 @@ def test_radiance():
 # %%
     TR = lowtran.radiance(c1)
 
-    assert_array_almost_equal(vlim[::-1],TR.wavelength_nm[[0,-1]])
-    assert_array_almost_equal([1.675140e-04, 0.9388928],
-                              TR.loc[angles,:,'transmission'][[0,100]])
-    assert_array_almost_equal([0.000191, 0.000261],
-                              TR.loc[angles,:,'radiance'][[10,200]])
+    assert_allclose(vlim[::-1],TR.wavelength_nm[[0,-1]])
+    assert_allclose(TR['transmission'][[0,100],0],
+                    [1.675140e-04, 0.9388928], rtol=1e-6)
+    assert_allclose(TR['radiance'][[10,200],0],
+                    [0.000191, 0.000261], rtol=0.01)
 
-def test_tansmittance():
+def test_transmittance():
     vlim = (200,30000)
     angles = 60
 
@@ -81,9 +83,10 @@ def test_tansmittance():
 # %%
     TR = lowtran.transmittance(c1)
 
-    assert_array_almost_equal((30000,199.986668),TR.wavelength_nm[[0,-1]])
-    assert_array_almost_equal([0.002074, 0.924557],
-                              TR.loc[angles,:,'transmission'][[1000,1200]])
+    assert_allclose(TR.wavelength_nm[[0,-1]],
+                    (30303.03,200),rtol=1e-6)
+    assert_allclose(TR['transmission'][[1000,1200],0],
+                    [0.002074, 0.924557], rtol=0.001)
 
 if __name__ == '__main__':
     run_module_suite()
