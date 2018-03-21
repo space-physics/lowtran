@@ -4,14 +4,17 @@
 
 Program LowtranDemo
 
+use, intrinsic:: iso_fortran_env, only: stderr=>error_unit
+
 implicit none
 
-integer :: imodel=0,argc,i
-character(8) :: argv
+integer :: argc,i
+character(80) :: argv, cmodel = 'obs2space'
 integer :: model,itype,iemsct,im
 integer :: iseasn,ird1
 integer :: iday,ro,isourc
 real :: angle,h1,range,v1,v2,dv
+logical :: verbose = .false.
 
 !     Python .true.:   Use common blocks (from f2py)
 !     Python .false.: Read the Tape5 file (like it's the 1960s again)
@@ -34,19 +37,15 @@ real :: TXPy(nwl,ncol), VPy(nwl), ALAMPy(nwl), TRACEPy(nwl), UNIFPy(nwl), SUMAPy
 ! Command line selection
 
 argc = command_argument_count()
-do i=1,argc
-  select case (i)
-   case(1)
-    call GET_COMMAND_ARGUMENT(i,argv); read(argv,'(I1)') imodel
-   case default
-    error stop 'more arguments than expected'
-  end select
-enddo
+if (argc > 0) then
+  call GET_COMMAND_ARGUMENT(1,argv); read(argv,'(A)') cmodel
+endif
+if (argc > 1) then
+  call GET_COMMAND_ARGUMENT(2,argv); if (argv=='-v') verbose=.true.
+endif
 
-!      print*,imodel
- 
-select case (imodel)
- case(0)
+select case (cmodel)
+ case('obs2space')
   v1=8333.; v2=33333. ! frequency cm^-1 bounds
   dv=500. ! DV: frequency cm^1 step (lower limit 5. per Card 4 p.40)
 
@@ -65,7 +64,7 @@ select case (imodel)
   h1=0. ! our cameras are at ground level (kilometers)
 ! in lowtran7.f, I set M1-M6, MDEF all =0 per p.21
   range=0. ! not used
- case(1)
+ case('userhoriz')
 !!! Horizontal model (only way to use meterological data) !!!
   v1=714.2857; v2=1250. ! frequency cm^-1 bounds
   dv=13.  ! DV: frequency cm^1 step (lower limit 5. per Card 4 p.40)
@@ -86,9 +85,9 @@ select case (imodel)
   P(1) = 949 ! millibar
   T(1) = 283.8 ! Kelvin
   WMOL = [93.96,0.,0.,0.,0.,0.,0.,0.,0.,0.,0.,0.]
- case(2)
+ case('solarirrad')
 !!! Solar irradiance !!!
-  v1=714.2857; v2=1250. ! frequency cm^-1 bounds
+  v1=749.5; v2=1250. ! frequency cm^-1 bounds
   dv=13.  ! DV: frequency cm^1 step (lower limit 5. per Card 4 p.40)
 
   model = 2 ! 2: midlatitude summer, 3: mid latitude winter
@@ -106,9 +105,9 @@ select case (imodel)
   isourc = 0 ! 0: sun, 1: moon
 
   ! Cards 3A, 3B not used for irradiance
- case(3)
+ case('solarrad')
 !!! Solar radiance !!!
-  v1=714.2857; v2=1250. ! frequency cm^-1 bounds
+  v1=749.5; v2=1250. ! frequency cm^-1 bounds
   dv=13.  ! DV: frequency cm^1 step (lower limit 5. per Card 4 p.40)
 
   model=0 ! 0: Specify meterological data (horiz path)
@@ -128,7 +127,7 @@ select case (imodel)
   T(1) = 283.8 ! Kelvin
   WMOL = [93.96,0.,0.,0.,0.,0.,0.,0.,0.,0.,0.,0.]
  case default
-  error stop 'unknown model selection'
+  stop 'unknown model selection ' //cmodel
 end select
 !-------- END model config -----------------
 !-------- END command line parse ------------
@@ -136,31 +135,82 @@ end select
 call LWTRN7(Python,nwl,V1,V2,DV,TXPy,VPy,ALAMPy,TRACEPy,UNIFPy, SUMAPy,irradpy,sumVVPy, &
   MODEL,ITYPE,IEMSCT,IM, ISEASN,ML,IRD1, ZMDL,P,T,WMOL, H1,H2,ANGLE,range)
 !--- friendly output
-  
-select case (imodel)
- case (0,1)
-  print *,'wavelength [nm]   transmission' 
+
+call testself()
+
+if (verbose) call printout()
+
+contains
+
+subroutine printout()
+
+select case (cmodel)
+ case ('obs2space','userhoriz')
+  print *,'wavelength [nm]   transmission'
   do i = 1,nwl
     print '(F7.1,F20.5)', 1e3*ALAMPy(i), TXPy(i,9)
   enddo
- case(2)
+ case('solarirrad')
   print *,'wavelength [nm]  transmission   TransIrradiance  ETIrr'
   do i = 1,nwl
-    print '(F7.1,F19.5,ES18.5,ES15.3)', 1e3*ALAMPy(i), TXPy(i,9),IrradPy(i,1),irradpy(i,2)
+    print '(F9.1,F19.5,ES18.5,ES15.3)', 1e3*ALAMPy(i), TXPy(i,9),IrradPy(i,1),irradpy(i,2)
   enddo
- case(3)
+ case('solarrad')
   print *,'wavelength [nm]   transmission    Radiance'
   do i = 1,nwl
-    print '(F7.1,F20.5,ES18.3)', 1e3*ALAMPy(i), TXPy(i,9),SumVVPy(i)
+    print '(F9.1,F20.5,ES18.3)', 1e3*ALAMPy(i), TXPy(i,9),SumVVPy(i)
   enddo
  case default
-  print *,'imodel',imodel
-  error stop 'unknown imodel'
+  stop 'unknown model selection '//cmodel
 end select
+
+end subroutine printout
+
+
+subroutine testself()
+
+use assert, only: assert_isclose
+
+real, allocatable ::  dat(:,:)
+integer :: u, nline, i
+
+select case (cmodel)
+ case ('obs2space')
+  open(newunit=u, file='../tests/testfort_trans.asc',form='formatted',status='old',action='read')
+  read(u,*) nline
+  read(u,*) ! discard header line
+  allocate(dat(nline,2))
+  do i = 1,nline
+      read(u,*) dat(i,1), dat(i,2)
+  end do
+
+  call assert_isclose(TXPy(:,9), dat(:,2),rtol=1e-4, err_msg='obs2space: transmittance error too large')
+
+  print *,'OK: Lowtran obs2pace'
+ case ('solarrad')
+  open(newunit=u, file='../tests/testfort_solarrad.asc',form='formatted',status='old',action='read')
+  read(u,*) nline
+  read(u,*) ! discard header line
+  allocate(dat(nline,3))
+  do i = 1,nline
+      read(u,*) dat(i,1), dat(i,2), dat(i,3)
+  end do
+
+  call assert_isclose(SumVVPy, dat(:,3), rtol=1e-3, err_msg='solar radiance error too large')
+
+  print *,'OK: Lowtran solar radiance'
+
+ case default
+  write(stderr,*) 'sorry, this case is not yet tested: '//cmodel
+ end select
+
+
+
+end subroutine testself
 
 end program
 
-! 
+!
 !------------ obsolete ------------
 !        Block Data setcards
 !        Integer   MODEL,ITYPE,IEMSCT,M1,M2,M3,IM,NOPRT,M4,M5,M6,MDEF

@@ -1,8 +1,11 @@
 #!/usr/bin/env python
 """
-Horizontal case.
+Horizontal cases are for special use by advanced users.
 
 lowtran manual p.36 specify height H1 and RANGE
+
+Pressure [millibar]
+temperature [Kelvin]
 """
 from matplotlib.pyplot import show
 #
@@ -25,7 +28,12 @@ if __name__=='__main__':
         'wlnmlim': p.wavelen,
         }
 
-    TR = lowtran.horiztrans(c1).squeeze()
+
+    atmos = {'p':949., 't':283.8, 'wmol':[93.96,0.,0.,0.,0.,0.,0.,0.,0.,0.,0.,0.]}
+
+    c1.update(atmos)
+
+    TR = lowtran.userhoriztrans(c1).squeeze()
 
     plothoriz(TR, c1)
 

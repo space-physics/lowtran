@@ -179,13 +179,22 @@ def plotirrad(irrad:xarray.Dataset, c1:dict, log:bool=False):
 
 
 def plothoriz(trans:xarray.Dataset, c1:dict, log:bool=False):
+
+    ttxt = f'Transmittance Horizontal \n {c1["range_km"]} km path @ {c1["h1"]} km altitude\n'
+
+    if c1['model']==0:
+        ttxt += f'User defined atmosphere: pressure: {c1["p"]} mbar, temperature {c1["t"]} K'
+    elif c1['model']==5:
+        ttxt += f'Subarctic winter atmosphere'
+
+
     ax = figure().gca()
 
     ax.plot(trans.wavelength_nm, trans['transmission'].squeeze())
 
     ax.set_xlabel('wavelength [nm]')
     ax.set_ylabel('transmission (unitless)')
-    ax.set_title(f'Transmittance Horizontal \n {c1["range_km"]} km path @ {c1["h1"]} km altitude')
+    ax.set_title(ttxt)
     #ax.legend(loc='best')
     ax.grid(True)
     if log:

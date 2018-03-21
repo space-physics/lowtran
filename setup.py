@@ -14,7 +14,7 @@ setup(name='lowtran',
       author='Michael Hirsch, Ph.D',
       description='Model of Earth atmosphere absorption and transmission vs. wavelength and location on Earth.',
       long_description=open('README.rst').read(),
-      version='2.3.1',
+      version='2.3.2',
       url='https://github.com/scivision/lowtran',
       classifiers=[
       'Development Status :: 4 - Beta',
@@ -34,6 +34,7 @@ setup(name='lowtran',
       scripts=['ScatterRadiance.py','SolarIrradiance.py','ThermalRadiance.py',
                'TransmittanceGround2Space.py','UserDataHorizontalRadiance.py',
                'HorizontalTransmittance.py','Wavelength2LowtranWavenumber.py',
+               'UserHorizontalTransmittance.py'
                ],
       include_package_data=True,
 	  )

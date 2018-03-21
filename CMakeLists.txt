@@ -4,11 +4,13 @@ project(lowtran Fortran)
 add_compile_options(-ffpe-trap=invalid,zero,overflow -g -fbacktrace)
 # -fdefault-real-8 -fno-align-commons)
 
-add_executable(testlowtran reference/lowtran_driver.f90 lowtran7.f)
+add_executable(testlowtran reference/lowtran_driver.f90 lowtran7.f assert.f90)
 
 enable_testing()
 
-add_test(NAME Fortran COMMAND testlowtran)
+add_test(NAME FortranObs2space COMMAND testlowtran obs2space)
+add_test(NAME FortranSolarRadiance COMMAND testlowtran solarrad)
+
 
 find_package(PythonInterp)
 if(PYTHON_VERSION_MAJOR GREATER_EQUAL 3)
@@ -19,3 +21,6 @@ if(PYTHON_VERSION_MAJOR GREATER_EQUAL 3)
          WORKING_DIRECTORY ${PROJECT_SOURCE_DIR})
   endif()
 endif()
+
+
+
