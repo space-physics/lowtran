@@ -54,6 +54,10 @@ If you don't already have Numpy, ``python -m pip install numpy`` and then::
 
 Examples
 ========
+
+In these examples, you can write to HDF5 with the ``-o`` option.
+If you have unused (singleton) dimensions, use `.squeeze()` on the output array.
+
 We present examples of:
 
 * ground-to-space transmittance: ``TransmittanceGround2Space.py``
@@ -88,12 +92,6 @@ We present examples of:
     :alt: "Lowtran7 Horizontal Path transmittance"
     :scale: 25 %
     
-
-In these examples, you can write to HDF5 with the ``-o`` option.
-
-
-As usual, if you have unused dimesions, use `.squeeze()` on the output array.
-
 Notes
 =====
 `LOWTRAN7 User manual <http://www.dtic.mil/dtic/tr/fulltext/u2/a206773.pdf>`_ -- you may refer to this to understand what parameters I've set to default. Currently I don't have any aerosols enabled for example, though it's trivial to add.
