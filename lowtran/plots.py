@@ -1,4 +1,4 @@
-from datetime import datetime
+import numpy as np
 import xarray
 from matplotlib.pyplot import figure
 #
@@ -15,7 +15,7 @@ def plotscatter(irrad:xarray.Dataset, c1:dict, log:bool=False):
     transtxt = 'Transmittance'
 
     ax = axs[0]
-    ax.plot(irrad.wavelength_nm, irrad['transmission'])
+    ax.plot(irrad.wavelength_nm, irrad['transmission'].squeeze())
     ax.set_title(transtxt)
     ax.set_ylabel('Transmission (unitless)')
     ax.grid(True)
@@ -27,7 +27,7 @@ def plotscatter(irrad:xarray.Dataset, c1:dict, log:bool=False):
         ax.plot(irrad.wavelength_nm, Np)
         ax.set_ylabel('Photons [s$^{-1}$ '+UNITS)
     else:
-        ax.plot(irrad.wavelength_nm, irrad['pathscatter'])
+        ax.plot(irrad.wavelength_nm, irrad['pathscatter'].squeeze())
         ax.set_ylabel('Radiance [W '+UNITS)
 
     ax.set_xlabel('wavelength [nm]')
@@ -55,7 +55,7 @@ def plotradiance(irrad:xarray.Dataset, c1:dict, log:bool=False):
     transtxt = 'Transmittance Observer to Space'
 
     ax = axs[0]
-    ax.plot(irrad.wavelength_nm, irrad['transmission'])
+    ax.plot(irrad.wavelength_nm, irrad['transmission'].squeeze())
     ax.set_title(transtxt)
     ax.set_ylabel('Transmission (unitless)')
     ax.grid(True)
@@ -66,7 +66,7 @@ def plotradiance(irrad:xarray.Dataset, c1:dict, log:bool=False):
         ax.plot(irrad.wavelength_nm, Np)
         ax.set_ylabel('Photons [s$^{-1}$ '+UNITS)
     else:
-        ax.plot(irrad.wavelength_nm, irrad['radiance'])
+        ax.plot(irrad.wavelength_nm, irrad['radiance'].squeeze())
         ax.set_ylabel('Radiance [W '+UNITS)
 
     ax.set_xlabel('wavelength [nm]')
@@ -94,14 +94,14 @@ def plotradtime(TR:xarray.Dataset, c1:dict, log:bool=False):
     radiance is currently single-scatter solar
     """
 
-    for tr in TR: # for each time
-        plotirrad(tr, c1, False)
+    for t in TR.time: # for each time
+        plotirrad(TR.sel(time=t), c1, log)
 
 
 def plottrans(T:xarray.Dataset, c1:dict, log:bool=False):
     ax = figure().gca()
 
-    h = ax.plot(T.wavelength_nm, T['transmission'])
+    h = ax.plot(T.wavelength_nm, T['transmission'].squeeze())
 
     ax.set_xlabel('wavelength [nm]')
     ax.set_ylabel('transmission (unitless)')
@@ -129,9 +129,9 @@ def plotirrad(irrad:xarray.Dataset, c1:dict, log:bool=False):
 #    else:
 #        raise ValueError(f'ISOURC={c1["isourc"]} not defined case')
 
-    stxt += f' zenith angle {c1["angle"]} deg., Obs. height {c1["h1"]} km'
+    stxt += f' zenith angle {irrad.angle_deg.values} deg., Obs. height {c1["h1"]} km. '
     try:
-        stxt += str(datetime.utcfromtimestamp(irrad.time.item()/1e9))
+        stxt += np.datetime_as_string(irrad.time)[:-10]
     except (AttributeError,TypeError):
         pass
 
@@ -147,7 +147,7 @@ def plotirrad(irrad:xarray.Dataset, c1:dict, log:bool=False):
     #irrad.['transmission'].plot()
 
     ax = axs[0]
-    h = ax.plot(irrad.wavelength_nm, irrad['transmission'])
+    h = ax.plot(irrad.wavelength_nm, irrad['transmission'].squeeze())
     ax.set_title(transtxt)
     ax.set_ylabel('Transmission (unitless)')
     ax.grid(True)
@@ -157,7 +157,7 @@ def plotirrad(irrad:xarray.Dataset, c1:dict, log:bool=False):
         pass
 
     ax = axs[1]
-    ax.plot(irrad.wavelength_nm, irrad[key])
+    ax.plot(irrad.wavelength_nm, irrad[key].squeeze())
     ax.set_xlabel('wavelength [nm]')
     ax.invert_xaxis()
     ax.grid(True)
@@ -181,7 +181,7 @@ def plotirrad(irrad:xarray.Dataset, c1:dict, log:bool=False):
 def plothoriz(trans:xarray.Dataset, c1:dict, log:bool=False):
     ax = figure().gca()
 
-    ax.plot(trans.wavelength_nm, trans)
+    ax.plot(trans.wavelength_nm, trans['transmission'].squeeze())
 
     ax.set_xlabel('wavelength [nm]')
     ax.set_ylabel('transmission (unitless)')

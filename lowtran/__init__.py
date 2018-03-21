@@ -15,6 +15,9 @@ user manual:
 www.dtic.mil/dtic/tr/fulltext/u2/a206773.pdf
 
 """
+from pathlib import Path
+from pandas import read_csv
+from dateutil.parser import parse
 import logging
 import xarray
 import numpy as np
@@ -51,8 +54,7 @@ def loopuserdef(c1:dict) -> xarray.DataArray:
         c['t'] = T[i]
         c['time'] = time[i]
 
-        tr = _golowtran(c)
-        TR = TR.merge(tr)
+        TR = TR.merge(_golowtran(c))
 
  #   TR = TR.sort_index(axis=0) # put times in order, sometimes CSV is not monotonic in time.
 
@@ -130,7 +132,7 @@ def nm2lt7(wlnm):
     return wlcminv,wlcminvstep,nwl
 
 
-def scatter(c1:dict) -> xarray.DataArray:
+def scatter(c1:dict) -> xarray.Dataset:
 # %% low-level Lowtran configuration for this scenario, don't change
     c1.update({
         'itype':  3,  # 3: observer to space
@@ -140,7 +142,7 @@ def scatter(c1:dict) -> xarray.DataArray:
     return loopangle(c1)
 
 
-def irradiance(c1:dict) -> xarray.DataArray:
+def irradiance(c1:dict) -> xarray.Dataset:
     c1.update({
         'itype':3,   # 3: observer to space
         'iemsct':3,  # 3: solar irradiance
@@ -149,7 +151,7 @@ def irradiance(c1:dict) -> xarray.DataArray:
     return loopangle(c1)
 
 
-def radiance(c1:dict) -> xarray.DataArray:
+def radiance(c1:dict) -> xarray.Dataset:
 
     c1.update({
         'itype':  3,  # 3: observer to space
@@ -159,7 +161,7 @@ def radiance(c1:dict) -> xarray.DataArray:
     return loopangle(c1)
 
 
-def transmittance(c1:dict) -> xarray.DataArray:
+def transmittance(c1:dict) -> xarray.Dataset:
 
     c1.update({
         'itype':3,   # 3: observer to space
@@ -167,3 +169,57 @@ def transmittance(c1:dict) -> xarray.DataArray:
         })
 
     return loopangle(c1)
+
+
+def horizrad(infn:Path, outfn:Path, c1:dict) -> xarray.Dataset:
+    """
+    read CSV, simulate, write, plot
+    """
+    if infn is not None:
+        infn = Path(infn).expanduser()
+
+        if infn.suffix=='.h5':
+            TR = xarray.open_dataset(infn)
+            return TR
+
+    c1.update({'model':0,  # 0: user meterological data
+        'itype':1,  # 1: horizontal path
+        'iemsct':1, # 1: radiance model
+        'im': 1,    # 1: for horizontal path (see Lowtran manual p.42)
+        'ird1': 1,  # 1: use card 2C2)
+        })
+#%% read csv file
+    if not infn: # demo mode
+        c1['p']=[949., 959.]
+        c1['t']=[283.8, 285.]
+        c1['wmol']=[[93.96,0.,0.,0.,0.,0.,0.,0.,0.,0.,0.,0.],
+                    [93.96,0.,0.,0.,0.,0.,0.,0.,0.,0.,0.,0.]]
+        c1['time']=[parse('2017-04-05T12'),
+                    parse('2017-04-05T18')]
+    else: # read csv, normal case
+        PTdata = read_csv(infn)
+        c1['p'] = PTdata['p']
+        c1['t'] = PTdata['Ta']
+        c1['wmol'] = np.zeros((PTdata.shape[0], 12))
+        c1['wmol'][:,0] = PTdata['RH']
+        c1['time'] = [parse(t) for t in PTdata['time']]
+#%% TR is 3-D array with axes: time, wavelength, and [transmission,radiance]
+    TR = loopuserdef(c1)
+
+    return TR
+
+
+def horiztrans(c1:dict) -> xarray.Dataset:
+
+    c1.update({'model':0, # 0: user meterological data
+        'itype':1, # 1: horizontal path
+        'iemsct':0, # 0: transmittance model
+        'im': 1, # 1: for horizontal path (see Lowtran manual p.42)
+        'ird1': 1, # 1: use card 2C2
+        'p':949.,
+        't':283.8,
+        'wmol':[93.96,0.,0.,0.,0.,0.,0.,0.,0.,0.,0.,0.]
+        })
+
+
+    return _golowtran(c1)
