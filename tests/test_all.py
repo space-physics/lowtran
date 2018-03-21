@@ -13,7 +13,7 @@ def test_fortran():
 
     assert_allclose(TR.wavelength_nm[[0,-1]],
                     [900.090027,  500.])
-    assert_allclose(TR['transmission'][[0,-1]].squeeze(),
+    assert_allclose(TR['transmission'][0,[0,-1],0],
                     [0.87720001, 0.85709256])
 
 def test_scatter():
@@ -29,9 +29,9 @@ def test_scatter():
     TR = lowtran.scatter(c1)
 
     assert_allclose(TR.wavelength_nm[[0,-1]], (700.035, 400.), rtol=1e-6)
-    assert_allclose(TR['transmission'][[0,-1],0],
+    assert_allclose(TR['transmission'][0,[0,-1],0],
                     [0.876713, 0.4884], rtol=1e-6)
-    assert_allclose(TR['pathscatter'][[-10,-1],0],
+    assert_allclose(TR['pathscatter'][0,[-10,-1],0],
                     [0.005259, 0.005171], rtol=1e-4)
 
 def test_irradiance():
@@ -47,9 +47,9 @@ def test_irradiance():
     TR = lowtran.irradiance(c1)
 
     assert_allclose(vlim[::-1],TR.wavelength_nm[[0,-1]])
-    assert_allclose(TR['transmission'][[0,100],0],
+    assert_allclose(TR['transmission'][0,[0,100],0],
                     [1.675140e-04, 0.9388928], rtol=1e-6)
-    assert_allclose(TR['irradiance'][[100,1000],0],
+    assert_allclose(TR['irradiance'][0,[100,1000],0],
                     [1.489084e-05, 3.904406e-05])
 
 
@@ -66,9 +66,9 @@ def test_radiance():
     TR = lowtran.radiance(c1)
 
     assert_allclose(vlim[::-1],TR.wavelength_nm[[0,-1]])
-    assert_allclose(TR['transmission'][[0,100],0],
+    assert_allclose(TR['transmission'][0,[0,100],0],
                     [1.675140e-04, 0.9388928], rtol=1e-6)
-    assert_allclose(TR['radiance'][[10,200],0],
+    assert_allclose(TR['radiance'][0,[10,200],0],
                     [0.000191, 0.000261], rtol=0.01)
 
 def test_transmittance():
@@ -85,7 +85,7 @@ def test_transmittance():
 
     assert_allclose(TR.wavelength_nm[[0,-1]],
                     (30303.03,200),rtol=1e-6)
-    assert_allclose(TR['transmission'][[1000,1200],0],
+    assert_allclose(TR['transmission'][0,[1000,1200],0],
                     [0.002074, 0.924557], rtol=0.001)
 
 if __name__ == '__main__':

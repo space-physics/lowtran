@@ -24,10 +24,12 @@ def horizrad(infn,outfn,c1):
             return TR
 #%% read csv file
     if not infn: # demo mode
-        c1['p']=[949.]
-        c1['t']=[283.8]
-        c1['wmol']=[93.96,0.,0.,0.,0.,0.,0.,0.,0.,0.,0.,0.]
-        c1['time']=['2017-04-05T12']
+        c1['p']=[949., 959.]
+        c1['t']=[283.8, 285.]
+        c1['wmol']=[[93.96,0.,0.,0.,0.,0.,0.,0.,0.,0.,0.,0.],
+                    [93.96,0.,0.,0.,0.,0.,0.,0.,0.,0.,0.,0.]]
+        c1['time']=['2017-04-05T12',
+                    '2017-04-05T18']
     else: # read csv, normal case
         PTdata = read_csv(infn)
         c1['p'] = PTdata['p']
@@ -44,6 +46,7 @@ def horizrad(infn,outfn,c1):
         TR.to_pandas().to_hdf(str(outfn), TR.name)
 
     return TR
+
 
 if __name__=='__main__':
 

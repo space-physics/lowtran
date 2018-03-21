@@ -33,32 +33,26 @@ def loopuserdef(c1:dict) -> xarray.DataArray:
     wmol, p, t must all be vector(s) of same length
     """
 
-    SIMOUT = ['transmission','radiance','irradiance']
     wmol = np.atleast_2d(c1['wmol'])
-    P = c1['p']
-    T = c1['t']
-    time = c1['time']
+    P = np.atleast_1d(c1['p'])
+    T = np.atleast_1d(c1['t'])
+    time = np.atleast_1d(c1['time'])
 
     assert wmol.shape[0] == len(P) == len(T) == len(time),'WMOL, P, T,time must be vectors of equal length'
 
     N = len(P)
-# %% preassign wavelengths for indexing
-    wlcminv,wlcminvstep,nwl = nm2lt7(c1['wlnmlim'])
-    wl_nm = 1e7 / np.arange(wlcminv[1],wlcminv[0]+wlcminvstep,wlcminvstep)
 # %% 3-D array indexed by metadata
-    TR = xarray.DataArray(np.empty((N, wl_nm.size, len(SIMOUT))),
-                   coords={'time':time,
-                           'wavelength_nm':wl_nm,
-                           'sim':SIMOUT},
-                   dims=['time','wavelength_nm','sim'])
+    TR = xarray.Dataset(coords={'time':time, 'wavelength_nm':None, 'angle_deg':None})
 
     for i in range(N):
-        c1['wmol'] = wmol[i,:]
-        c1['p'] = P[i]
-        c1['t'] = T[i]
+        c = c1.copy()
+        c['wmol'] = wmol[i,:]
+        c['p'] = P[i]
+        c['t'] = T[i]
+        c['time'] = time[i]
 
-        tr = _golowtran(c1)
-        TR.loc[time[i],...] = tr
+        tr = _golowtran(c)
+        TR = TR.merge(tr)
 
  #   TR = TR.sort_index(axis=0) # put times in order, sometimes CSV is not monotonic in time.
 
@@ -83,6 +77,9 @@ def loopangle(c1:dict) -> xarray.Dataset:
 def _golowtran(c1:dict) -> xarray.Dataset:
     """directly run Fortran code"""
 # %% default parameters
+    if 'time' not in c1:
+        c1['time'] = None
+
     defp = ('h1','h2','angle','im','iseasn','ird1','range_km','zmdl','p','t')
     for p in defp:
         if p not in c1:
@@ -111,12 +108,13 @@ def _golowtran(c1:dict) -> xarray.Dataset:
                             c1['zmdl'], c1['p'], c1['t'], c1['wmol'],
                             c1['h1'], c1['h2'], c1['angle'], c1['range_km'])
 
-    dims = ('wavelength_nm','angle_deg')
-    TR = xarray.Dataset({'transmission':(dims,Tx[:,9][:,None]),
-                         'radiance':(dims,sumvv[:,None]),
-                         'irradiance':(dims,irrad[:,0][:,None]),
-                         'pathscatter':(dims,irrad[:,2][:,None]) },
-                        coords={'wavelength_nm':Alam*1e3,
+    dims = ('time','wavelength_nm','angle_deg')
+    TR = xarray.Dataset({'transmission':(dims,Tx[:,9][None,:,None]),
+                         'radiance':(dims,sumvv[None,:,None]),
+                         'irradiance':(dims,irrad[:,0][None,:,None]),
+                         'pathscatter':(dims,irrad[:,2][None,:,None]) },
+                        coords={'time':[c1['time']],
+                                'wavelength_nm':Alam*1e3,
                                 'angle_deg':[c1['angle']]})
 
     return TR

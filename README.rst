@@ -21,6 +21,7 @@ LOWTRAN7 atmospheric absportion extinction model.
 Updated by Michael Hirsch to be platform independent and easily accessible from Python.
 
 The main LOWTRAN program has been made accessible from Python by using direct memory transfers instead of the cumbersome and error-prone process of writing/reading text files.
+`xarray.Dataset` high-performance N-D array data is passed out, with all approprirate metadata.
 
 :Python API Author: Michael Hirsch, Ph.D.
 :License: MIT
