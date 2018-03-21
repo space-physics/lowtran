@@ -185,7 +185,7 @@ def plothoriz(trans:xarray.Dataset, c1:dict, log:bool=False):
 
     ax.set_xlabel('wavelength [nm]')
     ax.set_ylabel('transmission (unitless)')
-    ax.set_title(f'Transmittance Horizontal: {c1["range_km"]} km path')
+    ax.set_title(f'Transmittance Horizontal \n {c1["range_km"]} km path @ {c1["h1"]} km altitude')
     #ax.legend(loc='best')
     ax.grid(True)
     if log:

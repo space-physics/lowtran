@@ -12,7 +12,7 @@
       real,intent(in) :: ZMDLpy(mlpy),Ppy(mlpy),Tpy(mlpy),WMOLpy(12)
       Real, Intent(in)  :: V1Py,V2Py,DVPy,H1Py,H2Py,ANGLEPy,RangePy
       Real, Intent(Out) :: TXPy(nwl,63), VPy(nwl), ALAMPy(nwl),
-     & TRACEPy(nwl),UNIFPy(nwl), SUMAPy(nwl), IrradPy(nwl,3), 
+     & TRACEPy(nwl),UNIFPy(nwl), SUMAPy(nwl), IrradPy(nwl,3),
      & SumVVPy(nwl)
 
 !------------------------------
@@ -886,8 +886,8 @@ C***********************************************************************
       COMMON /CARD1/ MODEL,ITYPE,IEMSCT,M1,M2,M3,IM,NOPRT,TBOUND,SALB
       COMMON /CARD1A/ M4,M5,M6,MDEF,IRD1,IRD2
 
-! added M. Hirsch 
-      COMMON /CARD1B/ JUNIT(15),WMOL(12),WAIR1,JLOW 
+! added M. Hirsch
+      COMMON /CARD1B/ JUNIT(15),WMOL(12),WAIR1,JLOW
 
       COMMON /CARD2/ IHAZE,ISEASN,IVULCN,ICSTL,ICLD,IVSA,VIS,WSS,WHH,
      1    RAINRT
@@ -1127,12 +1127,13 @@ C
 C
 C*****CARD 2C  USER SUPPLIED ATMOSPHERIC PROFILE
               If (Python) then
+              ! ML is number of atmoshperic levels (manual p.42)
                 ML=MLpy; IRD1=IRD1py; IRD2=0
                 ! for common blocks instead of reading in AERNSM
                 do ipy2 = 1,ml
                     ZM(ipy2) = ZMDLPy(ipy2) ! ZM = ZMDL
-                    P(ipy2)    = Ppy(ipy2) 
-                    T(ipy2)    = Tpy(ipy2) 
+                    P(ipy2)    = Ppy(ipy2)
+                    T(ipy2)    = Tpy(ipy2)
                 enddo
 
                 junit(1)=10  !10: units of total pressure: millibar
@@ -1143,14 +1144,14 @@ C*****CARD 2C  USER SUPPLIED ATMOSPHERIC PROFILE
                 do ipy2 = 4,15
                    junit(ipy2) = 14   !FIXME hard set to PARTIAL PRESSURE for Local Meterological experiments. Can be upgraded.
                 enddo
-                
+
                 do ipy2 = 1,12
                    WMOL(ipy2) = WMOLpy(ipy2)
                 enddo
 
             ! NOTE didn't assign HMODEL because it's just text labels (?)
 
-                
+
               else
                 READ (IRD,1250) ML,IRD1,IRD2,(HMODEL(I,7),I=1,5)
               endif
@@ -1231,9 +1232,9 @@ C
 
 !*****CARD 3 GEOMETERY PARAMETERS
       If (Python) Then
-        H1 = H1Py; 
-        H2=H2Py; 
-        ANGLE=AnglePy; 
+        H1 = H1Py;
+        H2=H2Py;
+        ANGLE=AnglePy;
 !        print*,rangepy
         Range=RangePy
         Beta=0.; Ro=0; Len=0
@@ -1844,7 +1845,7 @@ C
       WHNO3(K)= 0
       DO 10 KM = 1,15
       JCHAR(KM) = ' '
-      IF(KM. GT. 12) GO TO 10 
+      IF(KM. GT. 12) GO TO 10
       if (.not.Python) WMOL(KM) = 0. ! if python keep WMOL from common populated in Main subroutine
 10    CONTINUE
 C
@@ -1904,7 +1905,7 @@ C
 C
       IF(IRD0 .EQ. 1) THEN
         !NOTE if Python, then we plug in these values into COMMON blocks in main subroutine.
-        ! common block will give: 
+        ! common block will give:
         ! ZMDL, P, T,
       If (.not.Python)  READ(IRD,80)ZMDL(K),P(K),T(K),
      &     WMOL(1),WMOL(2),WMOL(3),
@@ -3349,7 +3350,7 @@ C100  CONTINUE
 C     RETURN
       END Subroutine LAYCLD
 
-      SUBROUTINE LAYVSA(K,RH,AHAZE,IHA1) 
+      SUBROUTINE LAYVSA(K,RH,AHAZE,IHA1)
 !,ZNEW)
 C
 C     RETURNS HAZE FOR VSA OPTION
@@ -11214,9 +11215,9 @@ C     ARRAY H3 CONTAINS HNO3 ABS, COEF(CM-1ATM-1) FROM 1675 TO1735 CM-1
       RETURN
    15 I=(V-1670.)/5.
       HABS=H3(I)
-      
+
       END Subroutine HNO3
-      
+
 
       SUBROUTINE SSGEO(IERROR,IPH,IPARM,PARM1,PARM2,PARM3,PARM4,PSIPO,G,
      & MAXGEO)
@@ -11475,7 +11476,7 @@ C
      1POLE, PROBLEM HAS BEEN REMAPPED TO THE EQUATOR')
 961   FORMAT(2X,'THETAO > 89.5, OBSERVER ASSUMED TO BE AT THE NORTH
      1POLE, PROBLEM HAS BEEN REMAPPED TO THE EQUATOR')
-     
+
       END Subroutine SSGEO
 
       SUBROUTINE PSIDEL(THETAS,PHIS,THETAO,PHIO,PSIPO2,PSIO,DELO,IARBO)

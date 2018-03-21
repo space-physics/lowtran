@@ -211,15 +211,22 @@ def horizrad(infn:Path, outfn:Path, c1:dict) -> xarray.Dataset:
 
 def horiztrans(c1:dict) -> xarray.Dataset:
 
-    c1.update({'model':0, # 0: user meterological data
+    c1.update({'model':5, # 5: subartic winter
         'itype':1, # 1: horizontal path
         'iemsct':0, # 0: transmittance model
-        'im': 1, # 1: for horizontal path (see Lowtran manual p.42)
-        'ird1': 1, # 1: use card 2C2
-        'p':949.,
-        't':283.8,
-        'wmol':[93.96,0.,0.,0.,0.,0.,0.,0.,0.,0.,0.,0.]
+        'im': 0, # 1: for user-defined atmosphere on horizontal path (see Lowtran manual p.42)
+        'ird1': 0, # 1: use card 2C2
         })
+
+#    c1.update({'model':0, # 0: user meterological data
+#        'itype':1, # 1: horizontal path
+#        'iemsct':0, # 0: transmittance model
+#        'im': 1, # 1: for user-defined atmosphere on horizontal path (see Lowtran manual p.42)
+#        'ird1': 1, # 1: use card 2C2
+#        'p':949.,
+#        't':283.8,
+#        'wmol':[93.96,0.,0.,0.,0.,0.,0.,0.,0.,0.,0.,0.]
+#        })
 
 
     return _golowtran(c1)
