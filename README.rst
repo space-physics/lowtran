@@ -37,21 +37,8 @@ See below for how to make these examples.
     :alt: "Lowtran7 absorption"
     :scale: 25 %
     
-.. image:: gfx/txgnd2space.png
-    :alt: "Lowtran7 transmission"
-    :scale: 25 %
-    
-.. image:: gfx/whyskyisblue.png
-    :alt: "Lowtran7 Scatter Radiance"
-    :scale: 25 %
-        
-.. image:: gfx/irradiance.png
-    :alt: "Lowtran7 Solar Irradiance"
-    :scale: 25 %
-    
-.. image:: gfx/thermalradiance.png
-    :alt: "Lowtran7 Solar Radiance"
-    :scale: 25 %
+   
+   
 
 Install
 =======
@@ -69,14 +56,38 @@ Examples
 ========
 We present examples of:
 
-* ground-to-space transmittance: ``python TransmittanceGround2Space.py``
-* sun-to-observer irrandiace: ``python SolarIrradiance.py``
-* observer-to-observer transmittance with custom Pressure, Temperature and partial pressure for 12 species::
+* ground-to-space transmittance: ``TransmittanceGround2Space.py``
 
-        python UserDataHorizontalTransmittance.py
-* observer-to-observer solar single-scattering solar radiance (up-going) with custom Pressure, Temperature and partial pressure for 12 species::
+  .. image:: gfx/txgnd2space.png
+    :alt: "Lowtran7 transmission"
+    :scale: 25 %
+    
+* sun-to-observer scattered radiance (why the sky is blue): ``ScatterRadiance.py``
 
-        python UserDataHorizontalRadiance.py
+  .. image:: gfx/whyskyisblue.png
+    :alt: "Lowtran7 Scatter Radiance"
+    :scale: 25 %
+
+* sun-to-observer irradiance: ``SolarIrradiance.py``
+
+  .. image:: gfx/irradiance.png
+    :alt: "Lowtran7 Solar Irradiance"
+    :scale: 25 %
+
+* observer-to-observer solar single-scattering solar radiance (up-going) with custom Pressure, Temperature and partial pressure for 12 species ``UserDataHorizontalRadiance.py``
+
+  .. image:: gfx/thermalradiance.png
+    :alt: "Lowtran7 Solar Radiance"
+    :scale: 25 %
+    
+    
+* observer-to-observer transmittance with custom Pressure, Temperature and partial pressure for 12 species ``UserDataHorizontalTransmittance.py``
+* observer-to-observer transmittance ``HorizontalTransmittance.py``
+
+  .. image:: gfx/horizcompare.png
+    :alt: "Lowtran7 Horizontal Path transmittance"
+    :scale: 25 %
+    
 
 In these examples, you can write to HDF5 with the ``-o`` option.
 
