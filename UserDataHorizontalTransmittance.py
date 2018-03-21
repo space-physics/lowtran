@@ -17,22 +17,14 @@ if __name__=='__main__':
     p.add_argument('-w','--wavelen',help='wavelength range nm (start,stop)',type=float,nargs=2,default=(200,30000))
     p=p.parse_args()
 
-    c1={'model':0, # 0: user meterological data
-        'itype':1, # 1: horizontal path
-        'iemsct':0, # 0: transmittance model
-        'im': 1, # 1: for horizontal path (see Lowtran manual p.42)
-        'ird1': 1, # 1: use card 2C2
-        'range_km':p.obsalt,
+    c1={'range_km':p.obsalt,
         'zmdl':p.obsalt,
         'h1': p.obsalt,
         'wlnmlim': p.wavelen,
-        'p':949.,
-        't':283.8,
-        'wmol':[93.96,0.,0.,0.,0.,0.,0.,0.,0.,0.,0.,0.]
         }
 
-    TR = lowtran.golowtran(c1)
+    TR = lowtran.horiztrans(c1)
 
-    plothoriz(TR, c1, False)
+    plothoriz(TR, c1)
 
     show()

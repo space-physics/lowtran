@@ -1,5 +1,5 @@
-from datetime import datetime
-from xarray import DataArray
+import numpy as np
+import xarray
 from matplotlib.pyplot import figure
 #
 h = 6.62607004e-34
@@ -7,7 +7,7 @@ c = 299792458
 UNITS='ster$^{-1}$ cm$^{-2}$ $\mu$m$^{-1}$]'
 plotNp = False
 
-def plotscatter(irrad:DataArray, c1:dict, log:bool=False):
+def plotscatter(irrad:xarray.Dataset, c1:dict, log:bool=False):
 
     fg = figure()
     axs = fg.subplots(2, 1, sharex=True)
@@ -15,19 +15,19 @@ def plotscatter(irrad:DataArray, c1:dict, log:bool=False):
     transtxt = 'Transmittance'
 
     ax = axs[0]
-    ax.plot(irrad.wavelength_nm, irrad.loc[...,'transmission'].T.values)
+    ax.plot(irrad.wavelength_nm, irrad['transmission'].squeeze())
     ax.set_title(transtxt)
     ax.set_ylabel('Transmission (unitless)')
     ax.grid(True)
-    ax.legend(irrad.angle.values.astype(str).tolist())
+    ax.legend(irrad.angle_deg.values)
 
     ax = axs[1]
     if plotNp:
-        Np = (irrad.loc[...,'pathscatter']*10000) * (irrad.wavelength_nm*1e9)/(h*c)
-        ax.plot(irrad.wavelength_nm, Np.T)
+        Np = (irrad['pathscatter']*10000) * (irrad.wavelength_nm*1e9)/(h*c)
+        ax.plot(irrad.wavelength_nm, Np)
         ax.set_ylabel('Photons [s$^{-1}$ '+UNITS)
     else:
-        ax.plot(irrad.wavelength_nm, irrad.loc[...,'pathscatter'].T)
+        ax.plot(irrad.wavelength_nm, irrad['pathscatter'].squeeze())
         ax.set_ylabel('Radiance [W '+UNITS)
 
     ax.set_xlabel('wavelength [nm]')
@@ -48,25 +48,25 @@ def plotscatter(irrad:DataArray, c1:dict, log:bool=False):
         pass
 
 
-def plotradiance(irrad:DataArray, c1:dict, log:bool=False):
+def plotradiance(irrad:xarray.Dataset, c1:dict, log:bool=False):
     fg = figure()
     axs = fg.subplots(2, 1, sharex=True)
 
     transtxt = 'Transmittance Observer to Space'
 
     ax = axs[0]
-    ax.plot(irrad.wavelength_nm, irrad.loc[...,'transmission'].T)
+    ax.plot(irrad.wavelength_nm, irrad['transmission'].squeeze())
     ax.set_title(transtxt)
     ax.set_ylabel('Transmission (unitless)')
     ax.grid(True)
 
     ax = axs[1]
     if plotNp:
-        Np = (irrad.loc[...,'radiance']*10000) * (irrad.wavelength_nm*1e9)/(h*c)
-        ax.plot(irrad.wavelength_nm, Np.T)
+        Np = (irrad['radiance']*10000) * (irrad.wavelength_nm*1e9)/(h*c)
+        ax.plot(irrad.wavelength_nm, Np)
         ax.set_ylabel('Photons [s$^{-1}$ '+UNITS)
     else:
-        ax.plot(irrad.wavelength_nm, irrad.loc[...,'radiance'].T)
+        ax.plot(irrad.wavelength_nm, irrad['radiance'].squeeze())
         ax.set_ylabel('Radiance [W '+UNITS)
 
     ax.set_xlabel('wavelength [nm]')
@@ -77,7 +77,7 @@ def plotradiance(irrad:DataArray, c1:dict, log:bool=False):
 
     if log:
         ax.set_yscale('log')
-#        ax.set_ylim(1e-8,1)
+        ax.set_ylim(1e-8,1)
 
     try:
         fg.suptitle(f'Obs. zenith angle: {c1["angle"]} deg., ')
@@ -85,7 +85,7 @@ def plotradiance(irrad:DataArray, c1:dict, log:bool=False):
     except (AttributeError,TypeError):
         pass
 
-def plotradtime(TR:DataArray, c1:dict, log:bool=False):
+def plotradtime(TR:xarray.Dataset, c1:dict, log:bool=False):
     """
     make one plot per time for now.
 
@@ -93,16 +93,15 @@ def plotradtime(TR:DataArray, c1:dict, log:bool=False):
 
     radiance is currently single-scatter solar
     """
-    assert isinstance(TR,DataArray)
 
-    for tr in TR: # for each time
-        plotirrad(tr, c1, False)
+    for t in TR.time: # for each time
+        plotirrad(TR.sel(time=t), c1, log)
 
 
-def plottrans(trans:DataArray, c1:dict, log:bool=False):
+def plottrans(T:xarray.Dataset, c1:dict, log:bool=False):
     ax = figure().gca()
 
-    h = ax.plot(trans.wavelength_nm, trans.loc[...,'transmission'].T)
+    h = ax.plot(T.wavelength_nm, T['transmission'].squeeze())
 
     ax.set_xlabel('wavelength [nm]')
     ax.set_ylabel('transmission (unitless)')
@@ -116,10 +115,10 @@ def plottrans(trans:DataArray, c1:dict, log:bool=False):
         ax.set_ylim(0,1)
     ax.invert_xaxis()
     ax.autoscale(True,axis='x',tight=True)
-    ax.legend(h, trans.angle.values.astype(str))
+    ax.legend(h, T.angle_deg.values)
 
 
-def plotirrad(irrad:DataArray, c1:dict, log:bool=False):
+def plotirrad(irrad:xarray.Dataset, c1:dict, log:bool=False):
     fg = figure()
     axs = fg.subplots(2,1,sharex=True)
 
@@ -130,9 +129,9 @@ def plotirrad(irrad:DataArray, c1:dict, log:bool=False):
 #    else:
 #        raise ValueError(f'ISOURC={c1["isourc"]} not defined case')
 
-    stxt += f' zenith angle {c1["angle"]} deg., Obs. height {c1["h1"]} km'
+    stxt += f' zenith angle {irrad.angle_deg.values} deg., Obs. height {c1["h1"]} km. '
     try:
-        stxt += str(datetime.utcfromtimestamp(irrad.time.item()/1e9))
+        stxt += np.datetime_as_string(irrad.time)[:-10]
     except (AttributeError,TypeError):
         pass
 
@@ -145,20 +144,20 @@ def plotirrad(irrad:DataArray, c1:dict, log:bool=False):
         key='radiance'
         transtxt = 'Transmittance Observer to Observer'
 
-    #irrad.loc[...,'transmission'].plot()
+    #irrad.['transmission'].plot()
 
     ax = axs[0]
-    h = ax.plot(irrad.wavelength_nm, irrad.loc[..., 'transmission'].T)
+    h = ax.plot(irrad.wavelength_nm, irrad['transmission'].squeeze())
     ax.set_title(transtxt)
     ax.set_ylabel('Transmission (unitless)')
     ax.grid(True)
     try:
-        ax.legend(h, irrad.angle.values.astype(str))
+        ax.legend(h, irrad.angle_deg.values)
     except AttributeError:
         pass
 
     ax = axs[1]
-    ax.plot(irrad.wavelength_nm, irrad.loc[..., key].T)
+    ax.plot(irrad.wavelength_nm, irrad[key].squeeze())
     ax.set_xlabel('wavelength [nm]')
     ax.invert_xaxis()
     ax.grid(True)
@@ -179,10 +178,10 @@ def plotirrad(irrad:DataArray, c1:dict, log:bool=False):
     ax.autoscale(True,axis='x',tight=True)
 
 
-def plothoriz(trans:DataArray, c1:dict, log:bool=False):
+def plothoriz(trans:xarray.Dataset, c1:dict, log:bool=False):
     ax = figure().gca()
 
-    ax.plot(trans.wavelength_nm, trans)
+    ax.plot(trans.wavelength_nm, trans['transmission'].squeeze())
 
     ax.set_xlabel('wavelength [nm]')
     ax.set_ylabel('transmission (unitless)')
