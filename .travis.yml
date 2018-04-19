@@ -25,8 +25,7 @@ before_install:
   - mkdir -p ~/.local/bin
   - ln -s /usr/bin/gfortran-6 ~/.local/bin/gfortran
   - export PATH="$HOME/.local/bin/:$PATH"
-  # temp for pip < 9.1
-  - pip -q install numpy
+  - pip -q install --upgrade pip
 
 install: 
   - pip install -e .[tests]
