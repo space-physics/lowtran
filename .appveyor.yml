@@ -23,7 +23,6 @@ before_build:
 - sh: sudo apt-get install -yq --no-install-suggests --no-install-recommends gfortran cmake make > /dev/null
 
 build_script:
-- pip -q install --upgrade pip
 #- pip install -e .[tests]   # FIXME: need to figure out f2py on AppVeyor
 
 - cd bin

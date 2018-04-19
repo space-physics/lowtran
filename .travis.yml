@@ -25,10 +25,10 @@ before_install:
   - mkdir -p ~/.local/bin
   - ln -s /usr/bin/gfortran-6 ~/.local/bin/gfortran
   - export PATH="$HOME/.local/bin/:$PATH"
-  - pip -q install --upgrade pip
+  - pip -q install numpy
 
 install: 
-  - pip install -e .[tests]
+  - pip -q install -e .[tests]
   - cd bin
   - cmake ..
   - make
