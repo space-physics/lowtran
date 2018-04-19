@@ -48,9 +48,12 @@ Install
 * Mac: ``brew install gcc``
 * `Windows <https://www.scivision.co/windows-gcc-gfortran-cmake-make-install/>`_
 
-If you don't already have Numpy, ``python -m pip install numpy`` and then::
+::
 
   python -m pip install -e .
+  
+  
+As a technical note, that command seamlessly uses `pyproject.toml` to first install Numpy before running `setup.py` so that f2py can build the Fortran extension module.
 
 Examples
 ========
