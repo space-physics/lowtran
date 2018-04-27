@@ -2,13 +2,15 @@ cmake_minimum_required(VERSION 3.7)
 project(lowtran Fortran)
 enable_testing()
 
-add_compile_options(-mtune=native -g -O3)
+add_compile_options(-g -O3)
 
 if(${CMAKE_Fortran_COMPILER_ID} STREQUAL GNU)
-  add_compile_options(-ffpe-trap=invalid,zero,overflow -fbacktrace)
+  add_compile_options(-mtune=native -ffpe-trap=invalid,zero,overflow -fbacktrace)
   # -fdefault-real-8 -fno-align-commons)
 elseif(${CMAKE_Fortran_COMPILER_ID} STREQUAL Intel)
 
+elseif(${CMAKE_Fortran_COMPILER_ID} STREQUAL PGI)
+  add_compile_options(-Mallocatable=03)
 elseif(${CMAKE_Fortran_COMPILER_ID} STREQUAL Flang)
   add_compile_options(-Mallocatable=03)
   link_libraries(-static-flang-libs)
