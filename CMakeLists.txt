@@ -1,13 +1,24 @@
 cmake_minimum_required(VERSION 3.7)
 project(lowtran Fortran)
+enable_testing()
 
-add_compile_options(-ffpe-trap=invalid,zero,overflow -g -fbacktrace)
-# -fdefault-real-8 -fno-align-commons)
+add_compile_options(-g -O3)
+
+if(${CMAKE_Fortran_COMPILER_ID} STREQUAL GNU)
+  add_compile_options(-mtune=native -ffpe-trap=invalid,zero,overflow -fbacktrace)
+  # -fdefault-real-8 -fno-align-commons)
+elseif(${CMAKE_Fortran_COMPILER_ID} STREQUAL Intel)
+
+elseif(${CMAKE_Fortran_COMPILER_ID} STREQUAL PGI)
+  add_compile_options(-Mallocatable=03)
+elseif(${CMAKE_Fortran_COMPILER_ID} STREQUAL Flang)
+  add_compile_options(-Mallocatable=03)
+  link_libraries(-static-flang-libs)
+endif()
 
 add_executable(testlowtran reference/lowtran_driver.f90 lowtran7.f assert.f90)
 
-enable_testing()
-
+# ----- tests
 add_test(NAME FortranObs2space COMMAND testlowtran obs2space)
 add_test(NAME FortranSolarRadiance COMMAND testlowtran solarrad)
 
