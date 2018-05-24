@@ -1639,7 +1639,8 @@ C
       IF (IRPT.EQ.0) GO TO 900
       IF (IRPT.EQ.4) GO TO 400
       IF (IRPT.GT.1 .AND. IEMSCT.GE.2) THEN
-          error stop '/!! ERROR IN INPUT IEMSCT GE 2 IRPT GT 1!'
+          print *,'/!! ERROR IN INPUT IEMSCT GE 2 IRPT GT 1!'
+          stop -1
       ENDIF
       IF (IRPT.GT.4) GO TO 900
       GO TO (100,900,300,400), IRPT
@@ -2872,7 +2873,7 @@ CC    WMOL1(K)= ALOSMT*(WMOL/PZERO)*(TZERO/T)
 299   CONTINUE
       WRITE(IPR,951)JUNIT
   951 FORMAT(/,'   **** ERROR IN CONVERT ****, JUNIT = ',I5)
-      Error STOP
+      stop -1
       END Subroutine CONVRT
 
       SUBROUTINE WATVAP(P,T)
@@ -2981,7 +2982,8 @@ CC    WMOL1(1) = DENSAT(A)*(WMOL/100.0)
       GO TO 200
  199   WRITE(IPR,951)JUNIT
  951  FORMAT(/,'  **** ERROR IN WATVAP ****, JUNIT = ',I5)
-       error STOP'JUNIT'
+       print *,'JUNIT'
+        stop -1
   200 CONTINUE
       WMOL1(1)=2.989E-23 *WMOL1(1) *WAIR
       DENST = DENSAT(A)
@@ -3402,7 +3404,8 @@ C
 110   IF (INDX .EQ. 0) THEN
         WRITE(IPR,910) CHAR
 910     FORMAT('0 INVALID PARAMETER :',2X,A1)
-        error STOP ' JOU: BAD PARAM '
+        print *, ' JOU: BAD PARAM '
+        stop -1
       ENDIF
 920   FORMAT(5X,A1,I5)
       JOU=INDX
