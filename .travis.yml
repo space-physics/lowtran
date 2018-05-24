@@ -37,8 +37,10 @@ script:
   - make test
 
 after_success: 
-  - coverage run ../tests/test_all.py
-  - coveralls
+  - if [[ $TRAVIS_PYTHON_VERSION == 3.6* ]]; then
+    coverage run ../tests/test_all.py;
+    coveralls;
+    fi
 
 after_failure:
   - ctest -V
