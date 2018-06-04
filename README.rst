@@ -13,6 +13,10 @@
 .. image:: https://api.codeclimate.com/v1/badges/fb6bf9d0351130bba583/maintainability
    :target: https://codeclimate.com/github/scivision/lowtran/maintainability
    :alt: Maintainability
+   
+.. image:: http://pepy.tech/badge/lowtran
+   :target: http://pepy.tech/project/lowtran
+   :alt: PyPi Download stats
 
 =======
 Lowtran
