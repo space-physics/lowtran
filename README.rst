@@ -9,6 +9,14 @@
     
 .. image:: https://ci.appveyor.com/api/projects/status/85epbcxvbgxnkp62?svg=true
     :target: https://ci.appveyor.com/project/scivision/lowtran
+    
+.. image:: https://img.shields.io/pypi/pyversions/lowtran.svg
+  :target: https://pypi.python.org/pypi/lowtran
+  :alt: Python versions (PyPi)
+
+.. image::  https://img.shields.io/pypi/format/lowtran.svg
+  :target: https://pypi.python.org/pypi/lowtran
+  :alt: Distribution format (PyPi)
 
 .. image:: https://api.codeclimate.com/v1/badges/fb6bf9d0351130bba583/maintainability
    :target: https://codeclimate.com/github/scivision/lowtran/maintainability
