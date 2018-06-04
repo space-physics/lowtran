@@ -6,7 +6,7 @@ from lowtran import nm2lt7
 #
 from argparse import ArgumentParser
 p = ArgumentParser()
-p.add_argument('wlnm',help='wavelength [nm]',nargs='+',type=float)
-p = p.parse_args()
+p.add_argument('wlnm', help='wavelength [nm]', nargs='+', type=float)
+P = p.parse_args()
 
-print(nm2lt7(p.wlnm)[0])
+print(nm2lt7(P.wlnm)[0])

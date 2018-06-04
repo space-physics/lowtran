@@ -15,7 +15,7 @@ from pathlib import Path
 from matplotlib.pyplot import show
 try:
     import seaborn as sns
-    sns.set_context('talk',font_scale=1.5)
+    sns.set_context('talk', font_scale=1.5)
 except ImportError:
     pass
 #
@@ -23,27 +23,27 @@ import lowtran
 from lowtran.plots import plotscatter
 
 
-if __name__=='__main__':
+if __name__ == '__main__':
     from argparse import ArgumentParser
     p = ArgumentParser(description='Lowtran 7 interface')
-    p.add_argument('-z','--obsalt',help='altitude of observer [km]',type=float,default=0.)
-    p.add_argument('-a','--zenang',help='Observer zenith angle [deg] ',nargs='+',type=float,default=[0.,60,80])
-    p.add_argument('-w','--wavelen',help='wavelength range nm (start,stop)',type=float,nargs=2,default=(300,1000))
-    p.add_argument('-o','--outfn',help='NetCDF4 file to write')
-    p.add_argument('--model',help='0-6, see Card1 "model" reference. 5=subarctic winter',type=int,default=5)
+    p.add_argument('-z', '--obsalt', help='altitude of observer [km]', type=float, default=0.)
+    p.add_argument('-a', '--zenang', help='Observer zenith angle [deg] ', nargs='+', type=float, default=[0., 60, 80])
+    p.add_argument('-w', '--wavelen', help='wavelength range nm (start,stop)', type=float, nargs=2, default=(300, 1000))
+    p.add_argument('-o', '--outfn', help='NetCDF4 file to write')
+    p.add_argument('--model', help='0-6, see Card1 "model" reference. 5=subarctic winter', type=int, default=5)
 
-    p=p.parse_args()
+    P = p.parse_args()
 
-    c1={'model':p.model,
-        'h1': p.obsalt, # of observer
-        'angle': p.zenang, # of observer
-        'wlnmlim': p.wavelen,
-        }
+    c1 = {'model': P.model,
+          'h1': P.obsalt,  # of observer
+          'angle': P.zenang,  # of observer
+          'wlnmlim': P.wavelen,
+          }
 # %%
     TR = lowtran.scatter(c1)
 # %%
-    if p.outfn:
-        outfn = Path(p.outfn).expanduser()
+    if P.outfn:
+        outfn = Path(P.outfn).expanduser()
         print('writing', outfn)
         TR.to_netcdf(outfn)
 # %%
