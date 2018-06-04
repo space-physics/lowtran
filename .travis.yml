@@ -35,6 +35,9 @@ install:
 
 script:
   - make test
+  - cd ..
+  - mypy . --ignore-missing-imports
+  - flake8
 
 after_success: 
   - if [[ $TRAVIS_PYTHON_VERSION == 3.6* ]]; then
