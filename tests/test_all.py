@@ -1,6 +1,7 @@
 #!/usr/bin/env python
 import numpy as np
-from numpy.testing import assert_allclose, run_module_suite
+from numpy.testing import assert_allclose
+import pytest
 #
 import lowtran
 
@@ -145,4 +146,4 @@ def test_userhoriz():
 
 
 if __name__ == '__main__':
-    run_module_suite()
+    pytest.main()

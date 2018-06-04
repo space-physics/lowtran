@@ -3,7 +3,7 @@ from setuptools import find_packages
 from numpy.distutils.core import setup, Extension
 
 install_requires = ['python-dateutil', 'numpy', 'xarray']
-tests_require = ['pytest', 'nose', 'coveralls']
+tests_require = ['pytest', 'nose', 'coveralls', 'flake8', 'mypy']
 
 ext = [Extension(name='lowtran7',
                  sources=['lowtran7.f'],
