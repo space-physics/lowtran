@@ -1,20 +1,23 @@
 #!/usr/bin/env python
+from pathlib import Path
 from setuptools import find_packages
 from numpy.distutils.core import setup, Extension
 
 install_requires = ['python-dateutil', 'numpy', 'xarray']
-tests_require = ['pytest', 'nose', 'coveralls', 'flake8', 'mypy']
+tests_require = ['pytest', 'coveralls', 'flake8', 'mypy']
 
 ext = [Extension(name='lowtran7',
                  sources=['lowtran7.f'],
                  f2py_options=['--quiet'])]
 
+scripts = [s.name for s in Path(__file__).parent.glob('*.py') if not s.name == 'setup.py']
+
 setup(name='lowtran',
       packages=find_packages(),
       author='Michael Hirsch, Ph.D',
       description='Model of Earth atmosphere absorption and transmission vs. wavelength and location.',
-      long_description=open('README.rst').read(),
-      version='2.3.2',
+      long_description=open('README.md').read(),
+      version='2.3.3',
       url='https://github.com/scivision/lowtran',
       classifiers=[
           'Development Status :: 4 - Beta',
@@ -33,10 +36,6 @@ setup(name='lowtran',
       extras_require={'plot': ['matplotlib', 'seaborn'],
                       'tests': tests_require},
       tests_require=tests_require,
-      scripts=['ScatterRadiance.py', 'SolarIrradiance.py', 'ThermalRadiance.py',
-               'TransmittanceGround2Space.py', 'UserDataHorizontalRadiance.py',
-               'HorizontalTransmittance.py', 'Wavelength2LowtranWavenumber.py',
-               'UserHorizontalTransmittance.py'
-               ],
+      scripts=scripts,
       include_package_data=True,
       )

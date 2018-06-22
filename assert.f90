@@ -1,13 +1,17 @@
 module assert
 ! Gfortran >= 6 needed for ieee_arithmetic: ieee_is_nan
 
-  use, intrinsic:: iso_fortran_env,   wp=>real32, stderr=>error_unit
+  use, intrinsic:: iso_c_binding, only: sp=>c_float, dp=>c_double
+  use, intrinsic:: iso_fortran_env, only: stderr=>error_unit
   use, intrinsic:: ieee_arithmetic
+  use error
   implicit none
+  
   private
 
-
-  public :: wp,isclose, assert_isclose, err
+  integer,parameter :: wp = sp
+  
+  public :: wp,isclose, assert_isclose, errorstop
 
 contains
 
@@ -42,10 +46,10 @@ elemental logical function isclose(actual, desired, rtol, atol, equal_nan)
   !print*,r,a,n,actual,desired
 
 !--- sanity check
-  if ((r < 0._wp).or.(a < 0._wp)) error stop 'tolerances must be non-negative'
-!--- simplest case
-  isclose = (actual == desired)
-  if (isclose) return
+  if ((r < 0._wp).or.(a < 0._wp)) call errorstop
+!--- simplest case -- too unlikely, especially for arrays?
+  !isclose = (actual == desired)
+  !if (isclose) return
 !--- equal nan
   isclose = n.and.(ieee_is_nan(actual).and.ieee_is_nan(desired))
   if (isclose) return
@@ -58,6 +62,8 @@ end function isclose
 
 
 impure elemental subroutine assert_isclose(actual, desired, rtol, atol, equal_nan, err_msg)
+! NOTE: with Fortran 2018 this can be Pure
+!
 ! inputs
 ! ------
 ! actual: value "measured"
@@ -73,18 +79,13 @@ impure elemental subroutine assert_isclose(actual, desired, rtol, atol, equal_na
   real(wp), intent(in), optional :: rtol, atol
   logical, intent(in), optional :: equal_nan
   character(*), intent(in), optional :: err_msg
-
+  
   if (.not.isclose(actual,desired,rtol,atol,equal_nan)) then
     write(stderr,*) merge(err_msg,'',present(err_msg)),': actual',actual,'desired',desired
-    error stop
+    call errorstop
   endif
 
 end subroutine assert_isclose
 
-
-pure subroutine err(msg)
-  character, intent(in) :: msg
-  error stop msg
-end subroutine err
-
 end module assert
+

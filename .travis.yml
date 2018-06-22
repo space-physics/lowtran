@@ -25,10 +25,9 @@ before_install:
   - mkdir -p ~/.local/bin
   - ln -s /usr/bin/gfortran-6 ~/.local/bin/gfortran
   - export PATH="$HOME/.local/bin/:$PATH"
-  - pip -q install numpy
 
 install: 
-  - pip -q install -e .[tests]
+  - pip install -e .[tests]
   - cd bin
   - cmake ..
   - make
@@ -41,7 +40,7 @@ script:
 
 after_success: 
   - if [[ $TRAVIS_PYTHON_VERSION == 3.6* ]]; then
-    coverage run ../tests/test_all.py;
+    coverage run tests/test_all.py;
     coveralls;
     fi
 

@@ -20,14 +20,18 @@ elseif(${CMAKE_Fortran_COMPILER_ID} STREQUAL Flang)
   link_libraries(-static-flang-libs)
 endif()
 
-set(okcomp GNU Intel)
-if(CMAKE_Fortran_COMPILER_ID IN_LIST okcomp)
-  add_library(assert assert.f90)
-else()
-  add_library(assert assert_legacy.f90)
-endif()
+
+# --- assert lib
+add_library(assert assert.f90)
 target_compile_options(assert PRIVATE ${FFLAGS})
 
+set(okcomp GNU Intel)
+if(CMAKE_Fortran_COMPILER_ID IN_LIST okcomp)
+ target_sources(assert PRIVATE error2008.f90)
+else()  # non-Fortran 2008 compilers
+  target_sources(assert PRIVATE error2003.f90)
+endif()
+# ---
 add_executable(testlowtran reference/lowtran_driver.f90 lowtran7.f)
 target_link_libraries(testlowtran PRIVATE assert)
 target_compile_options(testlowtran PRIVATE ${FFLAGS})
