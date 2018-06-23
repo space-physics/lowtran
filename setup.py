@@ -18,7 +18,7 @@ setup(name='lowtran',
       description='Model of Earth atmosphere absorption and transmission vs. wavelength and location.',
       long_description=open('README.md').read(),
       long_description_content_type="text/markdown",
-      version='2.3.3a',
+      version='2.3.4',
       url='https://github.com/scivision/lowtran',
       classifiers=[
           'Development Status :: 4 - Beta',
