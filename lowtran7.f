@@ -13421,11 +13421,10 @@ C  NOTE - THIS ROUTINE USES A UNIFORM RANDOM NUMBER GENERATOR
 C  FUNCTION (RANF) WHICH RETURNS A NUMBER BETWEEN 0 AND 1.
 C  THIS FEATURE IS MACHINE DEPENDENT!!
 C
-   15 CALL RANSET(ISEED)
-      URN = RANFUN()
-      DO 20 I = 1, 10
+   15 URN = RANFUN()
+      DO I = 1, 10
          IF (URN .GE. TSTAT(I) .AND. URN .LT. TSTAT(I+1)) CTHIK = I-1
-   20 CONTINUE
+      enddo
       CTHIK = CTHIK / 2.0  +  RANFUN() / 2.0
 C
 C  DENCIR IS CIRRUS DENSITY IN KM-1
@@ -13494,8 +13493,8 @@ C
    70 CONTINUE
       END Subroutine CIRRUS
 
-      Real FUNCTION   RANFUN()
-      RANFUN=RANF()
+      real FUNCTION   RANFUN()
+        call random_number(ranfun)
       END Function RANFUN
 
       FUNCTION   ABSLIM(TK,AWLWC)
@@ -16568,18 +16567,6 @@ C     COMMON/MNMPHS/ MNUM(27,26),PHSFNC(34,70)
      C      .00359,      .00360,      .00361,      .00363,      .00365,
      C      .00366,      .00367,      .00367,      .00369/
       END BLOCKDATA PHSDTA
-
-      SUBROUTINE RANSET(I)
-        COMMON/RST/ II
-        RANET= RAND(I)
-          II=RANET
-      END Subroutine RANSET
-
-      Real FUNCTION RANF()
-        COMMON/RST/ II
-        RANF= RAND(II)
-          II=RANF
-      END FUNCTION RANF
 
       BLOCK DATA CPTRCG
 C>    BLOCK DATA

@@ -127,7 +127,7 @@ select case (cmodel)
   T(1) = 283.8 ! Kelvin
   WMOL = [93.96,0.,0.,0.,0.,0.,0.,0.,0.,0.,0.,0.]
  case default
-  stop 'unknown model selection ' //cmodel
+  stop 'unknown model selection'
 end select
 !-------- END model config -----------------
 !-------- END command line parse ------------
@@ -161,7 +161,7 @@ select case (cmodel)
     print '(F9.1,F20.5,ES18.3)', 1e3*ALAMPy(i), TXPy(i,9),SumVVPy(i)
   enddo
  case default
-  stop 'unknown model selection '//cmodel
+  stop 'unknown model selection'
 end select
 
 end subroutine printout
