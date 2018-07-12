@@ -43,9 +43,7 @@ add_test(NAME FortranSolarRadiance COMMAND testlowtran solarrad)
 
 find_package(PythonInterp)
 if(PYTHON_VERSION_MAJOR GREATER_EQUAL 3)
-  if(DEFINED ENV{APPVEYOR})
-    message(INFO TODO:check plain Fortran output)
-  else()
+  if(UNIX)
     add_test(NAME Python COMMAND pytest -v
          WORKING_DIRECTORY ${PROJECT_SOURCE_DIR})
   endif()
