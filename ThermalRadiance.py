@@ -14,13 +14,12 @@ Np = (Ilowtran*10000)*lambda_m/(h*c)
 """
 from pathlib import Path
 from matplotlib.pyplot import show
-#
+from argparse import ArgumentParser
 import lowtran
 from lowtran.plots import plotradiance
 
 
-if __name__ == '__main__':
-    from argparse import ArgumentParser
+def main():
     p = ArgumentParser(description='Lowtran 7 interface')
     p.add_argument('-z', '--obsalt', help='altitude of observer [km]', type=float, default=0.)
     p.add_argument('-a', '--zenang', help='Observer zenith angle [deg] ', nargs='+', type=float, default=[0., 60, 80])
@@ -46,3 +45,7 @@ if __name__ == '__main__':
     plotradiance(TR, c1, True)
 
     show()
+
+
+if __name__ == '__main__':
+    main()

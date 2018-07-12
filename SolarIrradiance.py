@@ -5,13 +5,12 @@ Implicitly, your sensor is looking at the sun and that's the only choice per
 Lowtran manual p. 36 s3.2.3.1
 """
 from matplotlib.pyplot import show
-#
+from argparse import ArgumentParser
 import lowtran
 from lowtran.plots import plotirrad
 
-if __name__ == '__main__':
 
-    from argparse import ArgumentParser
+def main():
     p = ArgumentParser(description='Lowtran 7 interface')
     p.add_argument('-z', '--obsalt', help='altitude of observer [km]', type=float, default=0.)
     p.add_argument('-a', '--zenang', help='zenith angle [deg]  of sun or moon', nargs='+', type=float, default=[0, 60, 80])
@@ -30,3 +29,7 @@ if __name__ == '__main__':
     plotirrad(irr, c1, True)
 
     show()
+
+
+if __name__ == '__main__':
+    main()

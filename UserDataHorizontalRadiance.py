@@ -1,17 +1,15 @@
 #!/usr/bin/env python
 """
 Horizontal cases are for special use by advanced users.
-
 """
 from pathlib import Path
 from matplotlib.pyplot import show
-#
+from argparse import ArgumentParser
 import lowtran
 from lowtran.plots import plotradtime
 
-if __name__ == '__main__':
 
-    from argparse import ArgumentParser
+def main():
     p = ArgumentParser(description='Lowtran 7 interface')
     p.add_argument(
         'ptfn', help='csv file with time,relative humidity [%],ambient temperature [K], total pressure (millibar)', nargs='?')
@@ -38,3 +36,7 @@ if __name__ == '__main__':
     plotradtime(TR, c1)
 
     show()
+
+
+if __name__ == '__main__':
+    main()

@@ -1,12 +1,11 @@
 #!/usr/bin/env python
 from matplotlib.pyplot import show
-#
+from argparse import ArgumentParser
 import lowtran
 from lowtran.plots import plottrans
 
-if __name__ == '__main__':
 
-    from argparse import ArgumentParser
+def main():
     p = ArgumentParser(description='Lowtran 7 interface')
     p.add_argument('-z', '--obsalt', help='altitude of observer [km]', type=float, default=0.)
     p.add_argument('-a', '--zenang', help='observer zenith angle [deg]', type=float, nargs='+', default=[0, 60, 80])
@@ -25,3 +24,7 @@ if __name__ == '__main__':
     plottrans(TR, c1)
 
     show()
+
+
+if __name__ == '__main__':
+    main()

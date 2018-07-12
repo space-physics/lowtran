@@ -1,6 +1,7 @@
 import numpy as np
 import xarray
 from matplotlib.pyplot import figure
+from typing import Dict, Any
 #
 h = 6.62607004e-34
 c = 299792458
@@ -8,7 +9,7 @@ UNITS = 'ster$^{-1}$ cm$^{-2}$ $\mu$m$^{-1}$]'
 plotNp = False
 
 
-def plotscatter(irrad: xarray.Dataset, c1: dict, log: bool=False):
+def plotscatter(irrad: xarray.Dataset, c1: Dict[str, Any], log: bool=False):
 
     fg = figure()
     axs = fg.subplots(2, 1, sharex=True)
@@ -48,7 +49,7 @@ def plotscatter(irrad: xarray.Dataset, c1: dict, log: bool=False):
         pass
 
 
-def plotradiance(irrad: xarray.Dataset, c1: dict, log: bool=False):
+def plotradiance(irrad: xarray.Dataset, c1: Dict[str, Any], log: bool=False):
     fg = figure()
     axs = fg.subplots(2, 1, sharex=True)
 
@@ -86,7 +87,7 @@ def plotradiance(irrad: xarray.Dataset, c1: dict, log: bool=False):
         pass
 
 
-def plotradtime(TR: xarray.Dataset, c1: dict, log: bool=False):
+def plotradtime(TR: xarray.Dataset, c1: Dict[str, Any], log: bool=False):
     """
     make one plot per time for now.
 
@@ -99,7 +100,7 @@ def plotradtime(TR: xarray.Dataset, c1: dict, log: bool=False):
         plotirrad(TR.sel(time=t), c1, log)
 
 
-def plottrans(T: xarray.Dataset, c1: dict, log: bool=False):
+def plottrans(T: xarray.Dataset, c1: Dict[str, Any], log: bool=False):
     ax = figure().gca()
 
     h = ax.plot(T.wavelength_nm, T['transmission'].squeeze())
@@ -119,7 +120,7 @@ def plottrans(T: xarray.Dataset, c1: dict, log: bool=False):
     ax.legend(h, T.angle_deg.values)
 
 
-def plotirrad(irrad: xarray.Dataset, c1: dict, log: bool=False):
+def plotirrad(irrad: xarray.Dataset, c1: Dict[str, Any], log: bool=False):
     fg = figure()
     axs = fg.subplots(2, 1, sharex=True)
 
@@ -179,7 +180,7 @@ def plotirrad(irrad: xarray.Dataset, c1: dict, log: bool=False):
     ax.autoscale(True, axis='x', tight=True)
 
 
-def plothoriz(trans: xarray.Dataset, c1: dict, log: bool=False):
+def plothoriz(trans: xarray.Dataset, c1: Dict[str, Any], log: bool=False):
 
     ttxt = f'Transmittance Horizontal \n {c1["range_km"]} km path @ {c1["h1"]} km altitude\n'
 

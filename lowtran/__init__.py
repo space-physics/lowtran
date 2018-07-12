@@ -15,7 +15,7 @@ user manual:
 www.dtic.mil/dtic/tr/fulltext/u2/a206773.pdf
 
 """
-from typing import Tuple
+from typing import Tuple, Dict, Any
 from pathlib import Path
 from pandas import read_csv
 from dateutil.parser import parse
@@ -26,10 +26,10 @@ import numpy as np
 try:
     import lowtran7  # don't use dot in front, it's linking to .dll, .pyd, or .so
 except ImportError as e:
-    raise ImportError('you must compile the Fortran code first. f2py -m lowtran7 -c lowtran7.f {}'.format(e))
+    raise ImportError(f'you must compile the Fortran code first. f2py -m lowtran7 -c lowtran7.f  {e}')
 
 
-def loopuserdef(c1: dict) -> xarray.DataArray:
+def loopuserdef(c1: Dict[str, Any]) -> xarray.DataArray:
     """
     golowtran() is for scalar parameters only
     (besides vector of wavelength, which Lowtran internally loops over)
@@ -62,7 +62,7 @@ def loopuserdef(c1: dict) -> xarray.DataArray:
     return TR
 
 
-def loopangle(c1: dict) -> xarray.Dataset:
+def loopangle(c1: Dict[str, Any]) -> xarray.Dataset:
     """
     loop over "ANGLE"
     """
@@ -77,7 +77,7 @@ def loopangle(c1: dict) -> xarray.Dataset:
     return TR
 
 
-def _golowtran(c1: dict) -> xarray.Dataset:
+def _golowtran(c1: Dict[str, Any]) -> xarray.Dataset:
     """directly run Fortran code"""
 # %% default parameters
     if 'time' not in c1:
@@ -133,7 +133,7 @@ def nm2lt7(wlnm: np.ndarray) -> Tuple[np.ndarray, float, float]:
     return wlcminv, wlcminvstep, nwl
 
 
-def scatter(c1: dict) -> xarray.Dataset:
+def scatter(c1: Dict[str, Any]) -> xarray.Dataset:
     # %% low-level Lowtran configuration for this scenario, don't change
     c1.update({
         'itype':  3,  # 3: observer to space
@@ -143,7 +143,7 @@ def scatter(c1: dict) -> xarray.Dataset:
     return loopangle(c1)
 
 
-def irradiance(c1: dict) -> xarray.Dataset:
+def irradiance(c1: Dict[str, Any]) -> xarray.Dataset:
     c1.update({
         'itype': 3,   # 3: observer to space
         'iemsct': 3,  # 3: solar irradiance
@@ -152,7 +152,7 @@ def irradiance(c1: dict) -> xarray.Dataset:
     return loopangle(c1)
 
 
-def radiance(c1: dict) -> xarray.Dataset:
+def radiance(c1: Dict[str, Any]) -> xarray.Dataset:
 
     c1.update({
         'itype':  3,  # 3: observer to space
@@ -162,7 +162,7 @@ def radiance(c1: dict) -> xarray.Dataset:
     return loopangle(c1)
 
 
-def transmittance(c1: dict) -> xarray.Dataset:
+def transmittance(c1: Dict[str, Any]) -> xarray.Dataset:
 
     c1.update({
         'itype': 3,   # 3: observer to space
@@ -210,7 +210,7 @@ def horizrad(infn: Path, outfn: Path, c1: dict) -> xarray.Dataset:
     return TR
 
 
-def horiztrans(c1: dict) -> xarray.Dataset:
+def horiztrans(c1: Dict[str, Any]) -> xarray.Dataset:
 
     c1.update({'model': 5,  # 5: subartic winter
                'itype': 1,  # 1: horizontal path
@@ -222,7 +222,7 @@ def horiztrans(c1: dict) -> xarray.Dataset:
     return _golowtran(c1)
 
 
-def userhoriztrans(c1: dict) -> xarray.Dataset:
+def userhoriztrans(c1: Dict[str, Any]) -> xarray.Dataset:
 
     c1.update({'model': 0,  # 0: user meterological data
                'itype': 1,  # 1: horizontal path

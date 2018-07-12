@@ -9,13 +9,13 @@
 
 # Lowtran in Python
 
-LOWTRAN7 atmospheric absportion extinction model. Updated by Michael
+LOWTRAN7 atmospheric absorption extinction model. Updated by Michael
 Hirsch to be platform independent and easily accessible from Python.
 
 The main LOWTRAN program has been made accessible from Python by using
 direct memory transfers instead of the cumbersome and error-prone
 process of writing/reading text files. xarray.Dataset high-performance
-N-D array data is passed out, with all approprirate metadata.
+N-D array data is passed out, with all appropriate metadata.
 
 
 ## Gallery
@@ -100,7 +100,7 @@ Tested on Windows with
 ### Windows Fortran compile
 
 Normal users don't need to do this. 
-I suggest that you instead use Cygwin or Windows Subsytem for Linux:
+I suggest that you instead use Cygwin or Windows Subsystem for Linux:
 ```sh
 cd bin
 cmake -G "MinGW Makefiles" ..

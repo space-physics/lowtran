@@ -5,13 +5,12 @@ Horizontal case.
 lowtran manual p.36 specify height H1 and RANGE
 """
 from matplotlib.pyplot import show
-#
+from argparse import ArgumentParser
 import lowtran
 from lowtran.plots import plothoriz
 
-if __name__ == '__main__':
 
-    from argparse import ArgumentParser
+def main():
     p = ArgumentParser(description='Lowtran 7 interface')
     p.add_argument('-z', '--obsalt', help='altitude of bother observers on horizontal path [km]', type=float, default=0.3)
     p.add_argument('-r', '--range_km', help='range between observers on horizontal path [km]', type=float, default=1.0)
@@ -30,3 +29,7 @@ if __name__ == '__main__':
     plothoriz(TR, c1)
 
     show()
+
+
+if __name__ == '__main__':
+    main()
