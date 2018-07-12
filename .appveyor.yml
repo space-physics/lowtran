@@ -20,7 +20,7 @@ build_script:
 #- pip install -e .[tests]   # FIXME: need to figure out f2py on AppVeyor
 
 - cd bin
-- cmd: cmake -G "MinGW Makefiles" DCMAKE_SH="CMAKE_SH-NOTFOUND" ..
+- cmd: cmake -G "MinGW Makefiles" -DCMAKE_SH="CMAKE_SH-NOTFOUND" ..
 - sh: cmake ..
 - cmake --build .
   

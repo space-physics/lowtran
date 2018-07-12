@@ -16,13 +16,13 @@ os:
 
 env: FC=gfortran-6
 
-# gfortran >= 6 required
-addons:
-  apt:
-    sources: ubuntu-toolchain-r-test
-    packages: gfortran-6
+before_install:
+# FIXME: until Travis Xenial gets whitelist updated
+  - sudo add-apt-repository ppa:ubuntu-toolchain-r/test -y
+  - sudo apt-get update -q
+  - sudo apt-get install -yq gfortran-6
 
-install: 
+install:
   - pip install -e .[tests]
 
   - cd bin
