@@ -14,13 +14,10 @@ python:
 os:
   - linux
 
-env: FC=gfortran-6
-
-before_install:
-# FIXME: until Travis Xenial gets whitelist updated
-  - sudo add-apt-repository ppa:ubuntu-toolchain-r/test -y
-  - sudo apt-get update -q
-  - sudo apt-get install -yq gfortran-6
+addons:
+  apt:
+    packages:
+      - gfortran
 
 install:
   - pip install -e .[tests]
