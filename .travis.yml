@@ -20,22 +20,22 @@ addons:
       - gfortran
 
 install:
-  - pip install -e .[tests]
+- pip install -e .[tests]
 
-  - cd bin
-  - cmake ..
-  - cmake --build .
+- cd bin
+- cmake ..
+- cmake --build .
 
 script:
-  - ctest -V
+- ctest -V
 
-  - cd ..
-  - flake8
-  - mypy . --ignore-missing-imports
+- cd ..
+- flake8
+- mypy . --ignore-missing-imports
 
 after_success:
-  - if [[ $TRAVIS_PYTHON_VERSION == 3.6* ]]; then
-    pytest --cov;
-    coveralls;
-    fi
+- if [[ $TRAVIS_PYTHON_VERSION == 3.6* ]]; then
+pytest --cov;
+coveralls;
+fi
 
