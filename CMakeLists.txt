@@ -40,14 +40,3 @@ target_compile_options(testlowtran PRIVATE ${FFLAGS})
 add_test(NAME FortranObs2space COMMAND testlowtran obs2space)
 add_test(NAME FortranSolarRadiance COMMAND testlowtran solarrad)
 
-
-find_package(PythonInterp)
-if(PYTHON_VERSION_MAJOR GREATER_EQUAL 3)
-  if(UNIX)
-    add_test(NAME Python COMMAND pytest -v
-         WORKING_DIRECTORY ${PROJECT_SOURCE_DIR})
-  endif()
-endif()
-
-
-

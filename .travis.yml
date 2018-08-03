@@ -8,16 +8,16 @@ git:
   quiet: true
 
 python:
-  - 3.6
-  - 3.7
+- 3.6
+- 3.7
 
 os:
-  - linux
+- linux
 
 addons:
   apt:
     packages:
-      - gfortran
+    - gfortran
 
 install:
 - pip install -e .[tests]
@@ -30,12 +30,13 @@ script:
 - ctest -V
 
 - cd ..
+- pytest -rsv
 - flake8
 - mypy . --ignore-missing-imports
 
 after_success:
 - if [[ $TRAVIS_PYTHON_VERSION == 3.6* ]]; then
-pytest --cov;
-coveralls;
-fi
+  pytest --cov;
+  coveralls;
+  fi
 
