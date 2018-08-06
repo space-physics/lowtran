@@ -19,17 +19,9 @@ addons:
     packages:
     - gfortran
 
-install:
-- pip install -e .[tests]
-
-- cd bin
-- cmake ..
-- cmake --build .
+install: pip install -e .[tests]
 
 script:
-- ctest -V
-
-- cd ..
 - pytest -rsv
 - flake8
 - mypy . --ignore-missing-imports
