@@ -9,13 +9,11 @@
 
 # Lowtran in Python
 
-LOWTRAN7 atmospheric absorption extinction model. Updated by Michael
-Hirsch to be platform independent and easily accessible from Python.
+LOWTRAN7 atmospheric absorption extinction model. 
+Updated by Michael Hirsch to be platform independent and easily accessible from Python.
 
-The main LOWTRAN program has been made accessible from Python by using
-direct memory transfers instead of the cumbersome and error-prone
-process of writing/reading text files. xarray.Dataset high-performance
-N-D array data is passed out, with all appropriate metadata.
+The main LOWTRAN program has been made accessible from Python by using direct memory transfers instead of the cumbersome and error-prone process of writing/reading text files.
+`xarray.Dataset` high-performance, simple N-D array data is passed out, with appropriate metadata.
 
 
 ## Gallery
@@ -26,7 +24,9 @@ See below for how to make these examples.
 
 ## Install
 
-1. You need a Fortran compiler. If you don't have one, here is how to install Gfortran:
+1. A Fortran compiler such as `gfortran` is needed. 
+   We use `f2py` (part of `numpy`) to seamlessly use the Fortran Lowtran library from Python.
+   If you don't have one, here is how to install Gfortran:
    
    * Linux: `apt install gfortran`
    * Mac: `brew install gcc`
@@ -78,21 +78,25 @@ Right now a lot of configuration features aren't implemented, please request tho
 ### Fortran (optional)
 
 This is not necessary for normal users:
+```sh
+cd bin
+cmake ..
+cmake --build .
+ctest -V
+```
 
-    cd bin
-    cmake ..
-    make
-    make test
-
-should generate [this text output](https://gist.github.com/drhirsch/89ef2060d8f15b0a60914d13a61e33ab).
+should generate 
+[this text output](https://gist.github.com/drhirsch/89ef2060d8f15b0a60914d13a61e33ab).
 
 ### Windows f2py
 
 (this is handled automatically by `setup.py`, noted here for debugging)
 
-Yes, even though you're [using a 64-bit compiler](https://scivision.co/f2py-running-fortran-code-in-python-on-windows/):
-
-    f2py --compiler=mingw32 -m lowtran7 -c lowtran7.f
+Yes, even though you're 
+[using a 64-bit compiler](https://scivision.co/f2py-running-fortran-code-in-python-on-windows/):
+```sh
+f2py --compiler=mingw32 -m lowtran7 -c lowtran7.f
+```
 
 Tested on Windows with
 [MinGW](https://sourceforge.net/projects/mingw-w64/).

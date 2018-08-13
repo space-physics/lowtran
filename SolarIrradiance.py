@@ -14,14 +14,18 @@ def main():
     p = ArgumentParser(description='Lowtran 7 interface')
     p.add_argument('-z', '--obsalt', help='altitude of observer [km]', type=float, default=0.)
     p.add_argument('-a', '--zenang', help='zenith angle [deg]  of sun or moon', nargs='+', type=float, default=[0, 60, 80])
-    p.add_argument('-w', '--wavelen', help='wavelength range nm (start,stop)', type=float, nargs=2, default=(200, 25000))
+    p.add_argument('-s', '--short', help='shortest wavelength nm ', type=float, default=200)
+    p.add_argument('-l', '--long', help='longest wavelength nm ', type=float, default=30000)
+    p.add_argument('-step', help='wavelength step size cm^-1', type=float, default=20)
     p.add_argument('--model', help='0-6, see Card1 "model" reference. 5=subarctic winter', type=int, default=5)
     P = p.parse_args()
 
     c1 = {'model': P.model,
           'h1': P.obsalt,
           'angle': P.zenang,  # zenith angle of sun or moon
-          'wlnmlim': P.wavelen,
+          'wlshort': P.short,
+          'wllong': P.long,
+          'wlstep': P.step,
           }
 
     irr = lowtran.irradiance(c1)

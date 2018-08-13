@@ -15,13 +15,17 @@ def main():
     p.add_argument('-z', '--obsalt', help='altitude of bother observers on horizontal path [km]', type=float, default=0.3)
     p.add_argument('-r', '--range_km', help='range between observers on horizontal path [km]', type=float, default=1.0)
     p.add_argument('-a', '--zenang', help='zenith angle [deg]  can be single value or list of values', type=float, default=0.)
-    p.add_argument('-w', '--wavelen', help='wavelength range nm (start,stop)', type=float, nargs=2, default=(200, 30000))
+    p.add_argument('-s', '--short', help='shortest wavelength nm ', type=float, default=200)
+    p.add_argument('-l', '--long', help='longest wavelength nm ', type=float, default=30000)
+    p.add_argument('-step', help='wavelength step size cm^-1', type=float, default=20)
     P = p.parse_args()
 
     c1 = {'zmdl': P.obsalt,
           'h1': P.obsalt,
           'range_km': P.range_km,
-          'wlnmlim': P.wavelen,
+          'wlshort': P.short,
+          'wllong': P.long,
+          'wlstep': P.step,
           }
 
     TR = lowtran.horiztrans(c1).squeeze()
