@@ -108,6 +108,6 @@ I suggest that you instead use Cygwin or Windows Subsystem for Linux:
 ```sh
 cd bin
 cmake -G "MinGW Makefiles" ..
-make
-make test
+cmake --build .
+ctest -V
 ```
