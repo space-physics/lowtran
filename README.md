@@ -25,7 +25,7 @@ See below for how to make these examples.
 ## Install
 
 1. A Fortran compiler such as `gfortran` is needed. 
-   We use `f2py` (part of `numpy`) to seamlessly use the Fortran Lowtran library from Python.
+   We use `f2py` (part of `numpy`) to seamlessly use Fortran libraries from Python.
    If you don't have one, here is how to install Gfortran:
    
    * Linux: `apt install gfortran`
