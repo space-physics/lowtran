@@ -37,7 +37,7 @@ See below for how to make these examples.
    ```
 
 ### Windows
-If you get ImportError on Windows for the Fortran module, try from the `msise00` directory:
+If you get ImportError on Windows for the Fortran module, try from the `lowtran` directory:
 ```posh
 del *.pyd
 python setup.py build_ext --inplace --compiler=mingw32
