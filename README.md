@@ -33,11 +33,15 @@ See below for how to make these examples.
    * [Windows](https://www.scivision.co/windows-gcc-gfortran-cmake-make-install/)
 2. Install Python Lowtran code
    ```sh
-   python -m pip install -e .
+   pip install -e .
    ```
 
-[See this page](https://www.scivision.co/f2py-running-fortran-code-in-python-on-windows)
-if you have errors on Fortran compilation.
+### Windows
+If you get ImportError on Windows for the Fortran module, try from the `msise00` directory:
+```posh
+del *.pyd
+python setup.py build_ext --inplace --compiler=mingw32
+```
 
 ## Examples
 
@@ -88,26 +92,3 @@ ctest -V
 should generate 
 [this text output](https://gist.github.com/drhirsch/89ef2060d8f15b0a60914d13a61e33ab).
 
-### Windows f2py
-
-(this is handled automatically by `setup.py`, noted here for debugging)
-
-Yes, even though you're 
-[using a 64-bit compiler](https://scivision.co/f2py-running-fortran-code-in-python-on-windows/):
-```sh
-f2py --compiler=mingw32 -m lowtran7 -c lowtran7.f
-```
-
-Tested on Windows with
-[MinGW](https://sourceforge.net/projects/mingw-w64/).
-
-### Windows Fortran compile
-
-Normal users don't need to do this. 
-I suggest that you instead use Cygwin or Windows Subsystem for Linux:
-```sh
-cd bin
-cmake -G "MinGW Makefiles" ..
-cmake --build .
-ctest -V
-```

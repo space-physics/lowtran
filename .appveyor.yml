@@ -17,15 +17,9 @@ init:
 - cmd: set PATH=%PY_DIR%;%PY_DIR%\Scripts;%PATH%
 
 install:
-#- pip install -e .[tests]   # FIXME: need to figure out f2py on AppVeyor
+- pip install -e .[tests]
+- cmd: del *.pyd
+- cmd: python setup.py build_ext --inplace --compiler=mingw32
 
-- cd bin
-- cmd: cmake -G "MinGW Makefiles" -DCMAKE_SH="CMAKE_SH-NOTFOUND" ..
-- sh: cmake ..
-- cmake --build .
-
-test_script:
-- ctest -V
-- cd ..
-#- pytest -rsv
+test_script: pytest -rsv
 
