@@ -32,7 +32,7 @@ else()  # non-Fortran 2008 compilers
   target_sources(assert PRIVATE src/error2003.f90)
 endif()
 # ---
-add_executable(testlowtran reference/lowtran_driver.f90 src/lowtran7.f)
+add_executable(testlowtran src/lowtran_driver.f90 src/lowtran7.f)
 target_link_libraries(testlowtran PRIVATE assert)
 target_compile_options(testlowtran PRIVATE ${FFLAGS})
 

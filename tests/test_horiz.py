@@ -1,7 +1,7 @@
 #!/usr/bin/env python
 import pytest
 import lowtran
-from numpy.testing import assert_allclose
+from pytest import approx
 
 
 def test_horiz():
@@ -15,10 +15,8 @@ def test_horiz():
 
     TR = lowtran.horiztrans(c1)
 
-    assert_allclose(TR.wavelength_nm[[0, -1]],
-                    (30303.03, 200), rtol=0.001)
-    assert_allclose(TR['transmission'][0, [1000, 1200], 0],
-                    [0.980679, 0.959992], rtol=0.001)
+    assert TR.wavelength_nm[[0, -1]].values == approx((30303.03, 200), rel=0.001)
+    assert TR['transmission'][0, [1000, 1200], 0].values == approx([0.980679, 0.959992], rel=0.001)
 
 
 def test_userhoriz():
@@ -37,10 +35,9 @@ def test_userhoriz():
 
     TR = lowtran.userhoriztrans(c1)
 
-    assert_allclose(TR.wavelength_nm[[0, -1]], (30303.03, 200), rtol=0.001)
-    assert_allclose(TR['transmission'][0, [1000, 1200], 0],
-                    [0.982909, 0.9645], rtol=0.001)
+    assert TR.wavelength_nm[[0, -1]].values == approx((30303.03, 200), rel=0.001)
+    assert TR['transmission'][0, [1000, 1200], 0].values == approx([0.982909, 0.9645], rel=0.001)
 
 
 if __name__ == '__main__':
-    pytest.main(['-x', __file__])
+    pytest.main(['-xv', __file__])

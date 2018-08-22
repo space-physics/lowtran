@@ -2,7 +2,6 @@
 import lowtran
 import pytest
 from pytest import approx
-from numpy.testing import assert_allclose
 
 
 def test_scatter():
@@ -18,11 +17,9 @@ def test_scatter():
 # %%
     TR = lowtran.scatter(c1)
 
-    assert_allclose(TR.wavelength_nm[[0, -1]], (700.035, 400.), rtol=0.001)
-    assert_allclose(TR['transmission'][0, [0, -1], 0],
-                    [0.876713, 0.488109], rtol=1e-4)
-    assert_allclose(TR['pathscatter'][0, [-10, -1], 0],
-                    [0.005474, 0.00518], rtol=1e-4)
+    assert TR.wavelength_nm[[0, -1]].values == approx((700.035, 400.), rel=0.001)
+    assert TR['transmission'][0, [0, -1], 0].values == approx([0.876713, 0.488109], rel=1e-4)
+    assert TR['pathscatter'][0, [-10, -1], 0].values == approx([0.005474, 0.00518], rel=1e-4)
 
 
 def test_irradiance():
@@ -38,9 +35,8 @@ def test_irradiance():
 # %%
     TR = lowtran.irradiance(c1)
 
-    assert_allclose([c1['wllong'], c1['wlshort']], TR.wavelength_nm[[0, -1]])
-    assert_allclose(TR['transmission'][0, [0, 100], 0],
-                    [1.675140e-04, 0.2456177], rtol=1e-6)
+    assert [c1['wllong'], c1['wlshort']] == approx(TR.wavelength_nm[[0, -1]].values)
+    assert TR['transmission'][0, [0, 100], 0].values == approx([1.675140e-04, 0.2456177], rel=1e-6)
     assert (TR['irradiance'][0, [100, 1000], 0].values == approx([0.00019873, 0.14551014], rel=1e-5))
 
 
@@ -57,11 +53,9 @@ def test_radiance():
 # %%
     TR = lowtran.radiance(c1)
 
-    assert_allclose([c1['wllong'], c1['wlshort']], TR.wavelength_nm[[0, -1]])
-    assert_allclose(TR['transmission'][0, [0, 100], 0],
-                    [1.675140e-04, 0.2456177], rtol=1e-6)
-    assert_allclose(TR['radiance'][0, [10, 200], 0],
-                    [3.110389e-04, 3.907411e-10], rtol=0.01)
+    assert [c1['wllong'], c1['wlshort']] == approx(TR.wavelength_nm[[0, -1]].values)
+    assert TR['transmission'][0, [0, 100], 0].values == approx([1.675140e-04, 0.2456177], rel=1e-6)
+    assert TR['radiance'][0, [10, 200], 0].values == approx([3.110389e-04, 3.907411e-10], rel=0.01)
 
 
 def test_transmittance():
@@ -77,9 +71,8 @@ def test_transmittance():
 # %%
     TR = lowtran.transmittance(c1)
 
-    assert_allclose(TR.wavelength_nm[[0, -1]], (30303.03, 200), rtol=0.001)
-    assert_allclose(TR['transmission'][0, [1000, 1200], 0],
-                    [0.726516, 0.527192], rtol=0.001)
+    assert TR.wavelength_nm[[0, -1]].values == approx((30303.03, 200), rel=0.001)
+    assert TR['transmission'][0, [1000, 1200], 0].values == approx([0.726516, 0.527192], rel=0.001)
 
 
 if __name__ == '__main__':

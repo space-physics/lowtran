@@ -1,4 +1,4 @@
-! Comments by Michael Hirsch, Ph.D. https://www.scivision.co
+! Michael Hirsch, Ph.D. https://www.scivision.co
 ! p. = page, s. = section of Lowtran7 user manual
 ! p. 19(28) s. 3.1 begins to describe the Card format
 

@@ -2,15 +2,15 @@
 [![Travis CI](https://travis-ci.org/scivision/lowtran.svg?branch=master)](https://travis-ci.org/scivision/lowtran)
 [![Coverage](https://coveralls.io/repos/github/scivision/lowtran/badge.svg?branch=master)](https://coveralls.io/github/scivision/lowtran?branch=master)
 [![AppVeyor CI](https://ci.appveyor.com/api/projects/status/85epbcxvbgxnkp62?svg=true)](https://ci.appveyor.com/project/scivision/lowtran)
+[![Maintainability](https://api.codeclimate.com/v1/badges/fb6bf9d0351130bba583/maintainability)](https://codeclimate.com/github/scivision/lowtran/maintainability)
 [![PyPi version](https://img.shields.io/pypi/pyversions/lowtran.svg)](https://pypi.python.org/pypi/lowtran)
 [![PyPi formats](https://img.shields.io/pypi/format/lowtran.svg)](https://pypi.python.org/pypi/lowtran)
-[![Maintainability](https://api.codeclimate.com/v1/badges/fb6bf9d0351130bba583/maintainability)](https://codeclimate.com/github/scivision/lowtran/maintainability)
 [![PyPi Download stats](http://pepy.tech/badge/lowtran)](http://pepy.tech/project/lowtran)
 
 # Lowtran in Python
 
 LOWTRAN7 atmospheric absorption extinction model. 
-Updated by Michael Hirsch to be platform independent and easily accessible from Python.
+Updated by Michael Hirsch to be platform independent and easily accessible from Python &ge; 3.6 and Matlab &ge; R2014b.
 
 The main LOWTRAN program has been made accessible from Python by using direct memory transfers instead of the cumbersome and error-prone process of writing/reading text files.
 `xarray.Dataset` high-performance, simple N-D array data is passed out, with appropriate metadata.
@@ -65,6 +65,8 @@ We present examples of:
 
   ![Lowtran Horizontal Path transmittance](gfx/horizcompare.png)
 
+### Matlab
+Matlab &ge; R2014b can seamlessly access Python modules, as demonstrated in `lowtran.m`.
 
 ## Notes
 

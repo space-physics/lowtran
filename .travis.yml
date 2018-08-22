@@ -1,6 +1,4 @@
 language: python
-sudo: required
-dist: xenial
 group: travis_latest
 
 git:
@@ -9,7 +7,6 @@ git:
 
 python:
 - 3.6
-- 3.7
 
 os:
 - linux
