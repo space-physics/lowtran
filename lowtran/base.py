@@ -78,22 +78,18 @@ def loopangle(c1: Dict[str, Any]) -> xarray.Dataset:
 def golowtran(c1: Dict[str, Any]) -> xarray.Dataset:
     """directly run Fortran code"""
 # %% default parameters
-    if 'time' not in c1:
-        c1['time'] = None
+    c1.setdefault('time', None)
 
     defp = ('h1', 'h2', 'angle', 'im', 'iseasn', 'ird1', 'range_km', 'zmdl', 'p', 't')
     for p in defp:
-        if p not in c1:
-            c1[p] = 0
+        c1.setdefault(p, 0)
 
-    if 'wmol' not in c1:
-        c1['wmol'] = [0]*12
+    c1.setdefault('wmol', [0]*12)
 # %% input check
     assert len(c1['wmol']) == 12, 'see Lowtran user manual for 12 values of WMOL'
     assert np.isfinite(c1['h1']), 'per Lowtran user manual Table 14, H1 must always be defined'
 # %% setup wavelength
-    if 'wlstep' not in c1:
-        c1['wlstep'] = 20
+    c1.setdefault('wlstep', 20)
     if c1['wlstep'] < 5:
         logging.critical('minimum resolution 5 cm^-1, specified resolution 20 cm^-1')
 
