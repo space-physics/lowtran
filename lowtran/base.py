@@ -9,7 +9,7 @@ except ImportError as e:
     raise ImportError(f'you must compile the Fortran code first. f2py -m lowtran7 -c lowtran7.f  {e}')
 
 
-def nm2lt7(short_nm: float, long_nm: float, step_cminv: float=20) -> Tuple[float, float, float]:
+def nm2lt7(short_nm: float, long_nm: float, step_cminv: float = 20) -> Tuple[float, float, float]:
     """converts wavelength in nm to cm^-1
     minimum meaningful step is 20, but 5 is minimum before crashing lowtran
 
