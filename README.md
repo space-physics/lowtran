@@ -4,7 +4,6 @@
 [![AppVeyor CI](https://ci.appveyor.com/api/projects/status/85epbcxvbgxnkp62?svg=true)](https://ci.appveyor.com/project/scivision/lowtran)
 [![Maintainability](https://api.codeclimate.com/v1/badges/fb6bf9d0351130bba583/maintainability)](https://codeclimate.com/github/scivision/lowtran/maintainability)
 [![PyPi version](https://img.shields.io/pypi/pyversions/lowtran.svg)](https://pypi.python.org/pypi/lowtran)
-[![PyPi formats](https://img.shields.io/pypi/format/lowtran.svg)](https://pypi.python.org/pypi/lowtran)
 [![PyPi Download stats](http://pepy.tech/badge/lowtran)](http://pepy.tech/project/lowtran)
 
 # Lowtran in Python
@@ -24,10 +23,11 @@ See below for how to make these examples.
 
 ## Install
 
-1. A Fortran compiler such as `gfortran` is needed. 
-   We use `f2py` (part of `numpy`) to seamlessly use Fortran libraries from Python.
-   If you don't have one, here is how to install Gfortran:
-   
+We do not provide compiled library, so you will need a Fortran compiler.
+`gfortran` is one suitable compiler.
+We use `f2py` (part of `numpy`) to seamlessly use Fortran libraries from Python by special compilation of the Fortran library with auto-generated shim code.
+
+1. If a Fortran compiler is not already installed, install Gfortran:
    * Linux: `apt install gfortran`
    * Mac: `brew install gcc`
    * [Windows](https://www.scivision.co/windows-gcc-gfortran-cmake-make-install/)
@@ -37,7 +37,7 @@ See below for how to make these examples.
    ```
 
 ### Windows
-If you get ImportError on Windows for the Fortran module, try from the `lowtran` directory:
+If you get ImportError on Windows for the Fortran module, try:
 ```posh
 del *.pyd
 python setup.py build_ext --inplace --compiler=mingw32
@@ -66,11 +66,13 @@ We present examples of:
   ![Lowtran Horizontal Path transmittance](gfx/horizcompare.png)
 
 ### Matlab
-Matlab &ge; R2014b can seamlessly access Python modules, as demonstrated in `lowtran.m`.
+Matlab users can seamlessly access Python modules, as demonstrated in `lowtran.m`.
 
 ## Notes
 
-LOWTRAN7 [User manual](http://www.dtic.mil/dtic/tr/fulltext/u2/a206773.pdf) -- you may refer to this to understand what parameters are set to default.
+LOWTRAN7 
+[User manual](http://www.dtic.mil/dtic/tr/fulltext/u2/a206773.pdf)
+Refer to this to understand what parameters are set to default.
 Currently I don't have any aerosols enabled for example, though it's straightforward to add them.
 
 Right now a lot of configuration features aren't implemented, please request those you want.
