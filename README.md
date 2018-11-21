@@ -9,7 +9,8 @@
 # Lowtran in Python
 
 LOWTRAN7 atmospheric absorption extinction model. 
-Updated by Michael Hirsch to be platform independent and easily accessible from Python &ge; 3.6 and Matlab.
+Updated by Michael Hirsch to be platform independent and easily accessible from Python &ge; 3.6 and 
+[Matlab](#matlab).
 
 The main LOWTRAN program has been made accessible from Python by using direct memory transfers instead of the cumbersome and error-prone process of writing/reading text files.
 `xarray.Dataset` high-performance, simple N-D array data is passed out, with appropriate metadata.
@@ -67,7 +68,17 @@ We present examples of:
 ### Matlab
 Matlab users can seamlessly access Python modules, as demonstrated in 
 [RunLowtran.m](./matlab/RunLowtran.m) and 
-[lowtran_transmission.m](./matlab/lowtran_transmission.m)
+[lowtran_transmission.m](./matlab/lowtran_transmission.m).
+
+Here's what's you'll need:
+
+1. [Setup Python &harr; Matlab interface](https://www.scivision.co/matlab-python-user-module-import/).
+2. Install Lowtran in Python as at the top of this Readme.
+3. From Matlab, verify everything is working by from the `lowtran/` directory:
+   ```matlab
+   runtests('tests')
+   ```
+
 
 ## Notes
 

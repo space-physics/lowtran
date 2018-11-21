@@ -5,7 +5,7 @@ from typing import Dict, Any
 #
 h = 6.62607004e-34
 c = 299792458
-UNITS = 'ster$^{-1}$ cm$^{-2}$ $\mu$m$^{-1}$]'
+UNITS = r'ster$^{-1}$ cm$^{-2}$ $\mu$m$^{-1}$]'
 plotNp = False
 
 
