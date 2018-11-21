@@ -9,7 +9,7 @@
 # Lowtran in Python
 
 LOWTRAN7 atmospheric absorption extinction model. 
-Updated by Michael Hirsch to be platform independent and easily accessible from Python &ge; 3.6 and Matlab &ge; R2014b.
+Updated by Michael Hirsch to be platform independent and easily accessible from Python &ge; 3.6 and Matlab.
 
 The main LOWTRAN program has been made accessible from Python by using direct memory transfers instead of the cumbersome and error-prone process of writing/reading text files.
 `xarray.Dataset` high-performance, simple N-D array data is passed out, with appropriate metadata.
@@ -23,7 +23,7 @@ See below for how to make these examples.
 
 ## Install
 
-We do not provide compiled library, so you will need a Fortran compiler.
+You will need a Fortran compiler.
 `gfortran` is one suitable compiler.
 We use `f2py` (part of `numpy`) to seamlessly use Fortran libraries from Python by special compilation of the Fortran library with auto-generated shim code.
 
@@ -36,44 +36,45 @@ We use `f2py` (part of `numpy`) to seamlessly use Fortran libraries from Python 
    pip install -e .
    ```
 
-### Windows
-If you get ImportError on Windows for the Fortran module, try:
-```posh
-del *.pyd
-python setup.py build_ext --inplace --compiler=mingw32
-```
-
 ## Examples
 
 In these examples, you can write to HDF5 with the `-o` option. 
 
 We present examples of:
 
-* ground-to-space transmittance: `TransmittanceGround2Space.py`
+* ground-to-space transmittance: 
+  [TransmittanceGround2Space.py](./TransmittanceGround2Space.py)
 
-  ![Lowtran Transmission](doc/txgnd2space.png)
-* sun-to-observer scattered radiance (why the sky is blue): `ScatterRadiance.py`
+  ![Lowtran Transmission](./doc/txgnd2space.png)
+* sun-to-observer scattered radiance (why the sky is blue): 
+  [ScatterRadiance.py](./ScatterRadiance.py)
 
-  ![Lowtran Scatter Radiance](gfx/whyskyisblue.png)
-* sun-to-observer irradiance: `SolarIrradiance.py`
+  ![Lowtran Scatter Radiance](./gfx/whyskyisblue.png)
+* sun-to-observer irradiance: 
+  [SolarIrradiance.py](./SolarIrradiance.py)
 
-  ![Lowtran Solar Irradiance](gfx/irradiance.png)
-* observer-to-observer solar single-scattering solar radiance (up-going) with custom Pressure, Temperature and partial pressure for 12 species: `UserDataHorizontalRadiance.py`
-  ![Lowtran Solar Irradiance](gfx/thermalradiance.png)
-* observer-to-observer transmittance with custom Pressure, Temperature and partial pressure for 12 species:  `UserDataHorizontalTransmittance.py`
-* observer-to-observer transmittance `HorizontalTransmittance.py`
+  ![Lowtran Solar Irradiance](./gfx/irradiance.png)
+* observer-to-observer solar single-scattering solar radiance (up-going) with custom Pressure, Temperature and partial pressure for 12 species:    
+  [UserDataHorizontalRadiance.py](./UserDataHorizontalRadiance.py)
+  ![Lowtran Solar Irradiance](./gfx/thermalradiance.png)
+* observer-to-observer transmittance with custom Pressure, Temperature and partial pressure for 12 species:  
+  [UserDataHorizontalTransmittance.py](./UserDataHorizontalTransmittance.py)
+* observer-to-observer transmittance:
+  [HorizontalTransmittance.py](./HorizontalTransmittance.py)
 
-  ![Lowtran Horizontal Path transmittance](gfx/horizcompare.png)
+  ![Lowtran Horizontal Path transmittance](./gfx/horizcompare.png)
 
 ### Matlab
-Matlab users can seamlessly access Python modules, as demonstrated in `lowtran.m`.
+Matlab users can seamlessly access Python modules, as demonstrated in 
+[RunLowtran.m](./matlab/RunLowtran.m) and 
+[lowtran_transmission.m](./matlab/lowtran_transmission.m)
 
 ## Notes
 
 LOWTRAN7 
 [User manual](http://www.dtic.mil/dtic/tr/fulltext/u2/a206773.pdf)
 Refer to this to understand what parameters are set to default.
-Currently I don't have any aerosols enabled for example, though it's straightforward to add them.
+Currently I don't have any aerosols enabled for example, though it's straightforward to add them into the code.
 
 Right now a lot of configuration features aren't implemented, please request those you want.
 
@@ -89,6 +90,7 @@ This is not necessary for normal users:
 ```sh
 cd bin
 cmake ..
+
 cmake --build .
 ctest -V
 ```
