@@ -30,6 +30,11 @@ matrix:
     language: sh
     before_install: brew install gcc
     install: pip3 install -e .[tests]
+  - os: windows
+    language: sh
+    before_install:
+    - choco install python3
+    - export PATH="/c/Python37:/c/Python37/Scripts:$PATH"
 
 
 install: pip install -e .[tests]
