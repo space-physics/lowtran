@@ -31,7 +31,7 @@ We use `f2py` (part of `numpy`) to seamlessly use Fortran libraries from Python 
 1. If a Fortran compiler is not already installed, install Gfortran:
    * Linux: `apt install gfortran`
    * Mac: `brew install gcc`
-   * [Windows](https://www.scivision.co/windows-gcc-gfortran-cmake-make-install/)
+   * [Windows](https://www.scivision.dev/windows-gcc-gfortran-cmake-make-install/)
 2. Install Python Lowtran code
    ```sh
    pip install -e .
