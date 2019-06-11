@@ -15,7 +15,7 @@ build: off
 init:
 - cmd: set PATH=%MINGW_DIR%;%PATH%
 - cmd: set PATH=%PY_DIR%;%PY_DIR%\Scripts;%PATH%
-- ps: if ($isWindows) {echo "[build]`ncompiler=mingw32" > ~/pydistutils.cfg}
+- ps: if ($isWindows) {echo "[build]`ncompiler=mingw32" | Out-File -Encoding ASCII ~/pydistutils.cfg}
 
 install:
 - pip install -e .[tests]
