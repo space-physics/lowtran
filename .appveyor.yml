@@ -8,7 +8,7 @@ environment:
   MINGW_DIR: C:\mingw-w64\x86_64-7.2.0-posix-seh-rt_v5-rev1\mingw64\bin
   PY_DIR: C:\Python37-x64
 
-clone_depth: 3
+clone_depth: 25
 
 build: off
 
