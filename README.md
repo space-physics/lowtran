@@ -1,7 +1,7 @@
 [![Zenodo DOI](https://zenodo.org/badge/DOI/10.5281/zenodo.213475.svg)](https://doi.org/10.5281/zenodo.213475)
-[![Travis CI](https://travis-ci.org/scivision/lowtran.svg?branch=master)](https://travis-ci.org/scivision/lowtran)
+[![Build Status](https://travis-ci.com/space-physics/lowtran.svg?branch=master)](https://travis-ci.com/space-physics/lowtran)
 [![Coverage](https://coveralls.io/repos/github/scivision/lowtran/badge.svg?branch=master)](https://coveralls.io/github/scivision/lowtran?branch=master)
-[![AppVeyor CI](https://ci.appveyor.com/api/projects/status/85epbcxvbgxnkp62?svg=true)](https://ci.appveyor.com/project/scivision/lowtran)
+[![Build status](https://ci.appveyor.com/api/projects/status/aglvdq1spa19ifhx?svg=true)](https://ci.appveyor.com/project/scivision/lowtran)
 [![Maintainability](https://api.codeclimate.com/v1/badges/fb6bf9d0351130bba583/maintainability)](https://codeclimate.com/github/scivision/lowtran/maintainability)
 [![PyPi version](https://img.shields.io/pypi/pyversions/lowtran.svg)](https://pypi.python.org/pypi/lowtran)
 [![PyPi Download stats](http://pepy.tech/badge/lowtran)](http://pepy.tech/project/lowtran)
@@ -29,10 +29,12 @@ You will need a Fortran compiler.
 We use `f2py` (part of `numpy`) to seamlessly use Fortran libraries from Python by special compilation of the Fortran library with auto-generated shim code.
 
 1. If a Fortran compiler is not already installed, install Gfortran:
+
    * Linux: `apt install gfortran`
    * Mac: `brew install gcc`
    * [Windows](https://www.scivision.dev/windows-gcc-gfortran-cmake-make-install/)
 2. Install Python Lowtran code
+
    ```sh
    pip install -e .
    ```
@@ -76,6 +78,7 @@ Here's what's you'll need:
 1. [Setup Python &harr; Matlab interface](https://www.scivision.dev/matlab-python-user-module-import/).
 2. Install Lowtran in Python as at the top of this Readme.
 3. From Matlab, verify everything is working by from the `lowtran/` directory:
+
    ```matlab
    runtests('tests')
    ```
@@ -86,7 +89,7 @@ Here's what's you'll need:
 LOWTRAN7
 [User manual](http://www.dtic.mil/dtic/tr/fulltext/u2/a206773.pdf)
 Refer to this to understand what parameters are set to default.
-Currently I don't have any aerosols enabled for example, though it's straightforward to add them into the code.
+Currently I don't have any aerosols enabled for example, though it's possible to add them into the code.
 
 Right now a lot of configuration features aren't implemented, please request those you want.
 
@@ -99,6 +102,7 @@ Right now a lot of configuration features aren't implemented, please request tho
 ### Fortran (optional)
 
 This is not necessary for normal users:
+
 ```sh
 cd bin
 cmake ..
