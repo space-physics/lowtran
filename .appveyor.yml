@@ -22,3 +22,5 @@ install:
 
 test_script: pytest -rsv
 
+artifacts:
+  - path: lowtran7.cp37-win_amd64.pyd
