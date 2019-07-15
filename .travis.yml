@@ -18,11 +18,20 @@ addons:
 matrix:
   include:
   - os: linux
-    python: 3.7
+    name: Integration install
+    install:
+    - python setup.py install
+    - pip install gitutils[tests]
+    script:
+    - cd $HOME
+    - python -m pytest $TRAVIS_BUILD_DIR/tests -r a -v
+  - os: linux
+    name: PEP8 MyPy Coverage
     install: pip install -e .[tests,cov]
     script:
     - flake8
     - mypy .
+    - pytest -r a -v
     after_success:
     - pytest --cov
     - coveralls
@@ -39,6 +48,6 @@ matrix:
 
 install: pip install -e .[tests]
 
-script: pytest -rsv
+script: pytest -r a -v
 
 

@@ -2,7 +2,7 @@ image:
 - Visual Studio 2017
 - ubuntu1804
 
-stack: python 3
+stack: python 3.7
 
 environment:
   MINGW_DIR: C:\mingw-w64\x86_64-7.2.0-posix-seh-rt_v5-rev1\mingw64\bin
@@ -20,7 +20,7 @@ init:
 install:
 - pip install -e .[tests]
 
-test_script: pytest -rsv
+test_script: pytest -r a -v
 
 artifacts:
   - path: lowtran7.cp37-win_amd64.pyd
