@@ -32,7 +32,16 @@ We use `f2py` (part of `numpy`) to seamlessly use Fortran libraries from Python 
 
    * Linux: `apt install gfortran`
    * Mac: `brew install gcc`
-   * [Windows](https://www.scivision.dev/windows-gcc-gfortran-cmake-make-install/)
+   * [Windows](https://www.scivision.dev/windows-gcc-gfortran-cmake-make-install/) use MSYS2 or MinGW to get Gfortran.
+     Windows only: from Powershell:
+
+   ```posh
+   echo "[build]`ncompiler=mingw32" | Out-File -Encoding ASCII ~/pydistutils.cfg
+   ```
+
+   Note: Cygwin is essentially obsolete due to Windows Subsystem for Linux. Cygwin is broken for Numpy and Gfortran and general.
+
+
 2. Install Python Lowtran code
 
    ```sh

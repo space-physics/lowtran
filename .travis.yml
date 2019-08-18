@@ -27,7 +27,7 @@ matrix:
     - python -m pytest $TRAVIS_BUILD_DIR/tests -r a -v
   - os: linux
     name: PEP8 MyPy Coverage
-    install: pip install -e .[tests,cov]
+    install: pip install -e .[tests,lint]
     script:
     - flake8
     - mypy .
@@ -35,15 +35,6 @@ matrix:
     after_success:
     - pytest --cov
     - coveralls
-#  - os: osx
-#    language: minimal
-#    before_install: brew install gcc > /dev/null
-#    install: pip3 install -e .[tests]
-#  - os: windows
-#    language: minimal
-#    before_install:
-#    - choco install python3
-#    - export PATH="/c/Python37:/c/Python37/Scripts:$PATH"
 
 
 install: pip install -e .[tests]

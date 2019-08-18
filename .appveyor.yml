@@ -1,6 +1,6 @@
 image:
 - Visual Studio 2017
-- ubuntu1804
+#- ubuntu1804 appveyor broken import lzma, go to azure
 
 stack: python 3.7
 
