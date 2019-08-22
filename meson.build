@@ -1,4 +1,5 @@
-project('lowtran', 'fortran', default_options : ['default_library=static'])
+project('lowtran', 'fortran',
+  default_options : ['default_library=static', 'buildtype='release'])
 
 lowtran_exe = executable('testlowtran', 'src/lowtran_driver.f90', 'src/lowtran7.f', 'src/assert.f90')
 
