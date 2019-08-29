@@ -34,4 +34,4 @@ def test_userfail():
 
 
 if __name__ == '__main__':
-    pytest.main(['-xv', __file__])
+    pytest.main(['-v', __file__])
