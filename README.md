@@ -1,8 +1,7 @@
 [![Zenodo DOI](https://zenodo.org/badge/DOI/10.5281/zenodo.213475.svg)](https://doi.org/10.5281/zenodo.213475)
-[![Build Status](https://travis-ci.com/space-physics/lowtran.svg?branch=master)](https://travis-ci.com/space-physics/lowtran)
-[![Coverage](https://coveralls.io/repos/github/scivision/lowtran/badge.svg?branch=master)](https://coveralls.io/github/scivision/lowtran?branch=master)
-[![Build status](https://ci.appveyor.com/api/projects/status/aglvdq1spa19ifhx?svg=true)](https://ci.appveyor.com/project/scivision/lowtran)
-[![Maintainability](https://api.codeclimate.com/v1/badges/fb6bf9d0351130bba583/maintainability)](https://codeclimate.com/github/scivision/lowtran/maintainability)
+
+[![Actions Status](https://github.com/space-physics/lowtran/workflows/ci_python/badge.svg)](https://github.com/space-physics/lowtran/actions)
+
 [![PyPi version](https://img.shields.io/pypi/pyversions/lowtran.svg)](https://pypi.python.org/pypi/lowtran)
 [![PyPi Download stats](http://pepy.tech/badge/lowtran)](http://pepy.tech/project/lowtran)
 
