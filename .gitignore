@@ -1,3 +1,4 @@
+_skbuild/
 .eggs/
 .coverage
 .mypy_cache/
