@@ -41,4 +41,9 @@ jobs:
     - run: echo "[build]`ncompiler=mingw32" | Out-File -Encoding ASCII ~/pydistutils.cfg
       shell: powershell
     - run: pip install .[tests]
+    - run: |
+        cmake -B build
+        cmake --build build
+    - run: ctest -V
+      working-directory: build
     - run: pytest
