@@ -2,14 +2,13 @@
 ! p. = page, s. = section of Lowtran7 user manual
 ! p. 19(28) s. 3.1 begins to describe the Card format
 
-Program LowtranDemo
-
 use, intrinsic:: iso_fortran_env, only: stderr=>error_unit
 
 implicit none
 
 integer :: argc,i
-character(80) :: argv, cmodel = 'obs2space'
+character(256) :: argv
+character(:), allocatable :: cmodel
 integer :: model,itype,iemsct,im
 integer :: iseasn,ird1
 integer :: iday,ro,isourc
@@ -37,16 +36,21 @@ real :: TXPy(nwl,ncol), VPy(nwl), ALAMPy(nwl), TRACEPy(nwl), UNIFPy(nwl), SUMAPy
 ! Command line selection
 
 argc = command_argument_count()
-if (argc > 0) then
-  call GET_COMMAND_ARGUMENT(1,argv); read(argv,'(A)') cmodel
-endif
-if (argc > 1) then
-  call GET_COMMAND_ARGUMENT(2,argv); if (argv=='-v') verbose=.true.
+if (argc < 3) error stop 'inputs: model_method v1 v2'
+call get_command_argument(1,argv)
+cmodel = trim(argv)
+call get_command_argument(2,argv)
+read(argv,*) v1
+call get_command_argument(3,argv)
+read(argv,*) v2
+
+if (argc > 3) then
+  call GET_COMMAND_ARGUMENT(4,argv); if (argv=='-v') verbose=.true.
 endif
 
 select case (cmodel)
  case('obs2space')
-  v1=8333.; v2=33333. ! frequency cm^-1 bounds
+  ! v1, v2 frequency cm^-1 bounds
   dv=500. ! DV: frequency cm^1 step (lower limit 5. per Card 4 p.40)
 
 !!! Auroral oval Model e.g. central Alaska !!!
@@ -66,7 +70,6 @@ select case (cmodel)
   range=0. ! not used
  case('userhoriz')
 !!! Horizontal model (only way to use meterological data) !!!
-  v1=714.2857; v2=1250. ! frequency cm^-1 bounds
   dv=13.  ! DV: frequency cm^1 step (lower limit 5. per Card 4 p.40)
 
   model=0 ! 0: Specify meterological data (horiz path)
@@ -87,7 +90,7 @@ select case (cmodel)
   WMOL = [93.96,0.,0.,0.,0.,0.,0.,0.,0.,0.,0.,0.]
  case('solarirrad')
 !!! Solar irradiance !!!
-  v1=749.5; v2=1250. ! frequency cm^-1 bounds
+  ! frequency cm^-1 bounds
   dv=13.  ! DV: frequency cm^1 step (lower limit 5. per Card 4 p.40)
 
   model = 2 ! 2: midlatitude summer, 3: mid latitude winter
@@ -107,7 +110,7 @@ select case (cmodel)
   ! Cards 3A, 3B not used for irradiance
  case('solarrad')
 !!! Solar radiance !!!
-  v1=749.5; v2=1250. ! frequency cm^-1 bounds
+! frequency cm^-1 bounds
   dv=13.  ! DV: frequency cm^1 step (lower limit 5. per Card 4 p.40)
 
   model=0 ! 0: Specify meterological data (horiz path)
@@ -127,7 +130,7 @@ select case (cmodel)
   T(1) = 283.8 ! Kelvin
   WMOL = [93.96,0.,0.,0.,0.,0.,0.,0.,0.,0.,0.,0.]
  case default
-  stop 'unknown model selection'
+  error stop 'unknown model selection'
 end select
 !-------- END model config -----------------
 !-------- END command line parse ------------

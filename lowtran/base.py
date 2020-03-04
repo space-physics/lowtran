@@ -4,9 +4,9 @@ import xarray
 import numpy as np
 from typing import Tuple
 try:
-    import lowtran7  # don't use dot in front, it's linking to .dll, .pyd, or .so
+    import lowtran7  # don't use dot in front, it's linking to .pyd or .so
 except ImportError as e:
-    raise ImportError(f'you must compile the Fortran code first. f2py -m lowtran7 -c lowtran7.f  {e}')
+    raise ImportError(f'you must compile the Fortran code first. f2py -m lowtran7 -c src/lowtran7.f  {e}')
 
 
 def nm2lt7(short_nm: float, long_nm: float, step_cminv: float = 20) -> Tuple[float, float, float]:
