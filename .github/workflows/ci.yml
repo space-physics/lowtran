@@ -40,7 +40,7 @@ jobs:
     # Still needed at least through Numpy 1.17
     - run: echo "[build]`ncompiler=mingw32" | Out-File -Encoding ASCII ~/pydistutils.cfg
       shell: powershell
-    - run: pip install .[tests]
+    - run: pip install -e .[tests]
     - run: |
         cmake -B build
         cmake --build build
