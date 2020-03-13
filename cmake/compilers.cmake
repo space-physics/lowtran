@@ -1,9 +1,7 @@
-
 if(CMAKE_Fortran_COMPILER_ID STREQUAL GNU)
-  add_compile_options(-march=native)
+# mtune instead of march for better CPU compatibility
+  add_compile_options(-mtune=native)
   set(old_flags -std=legacy -w)
-
-  set(CMAKE_Fortran_FLAGS_DEBUG " -ffpe-trap=invalid,zero,overflow")
 elseif(CMAKE_Fortran_COMPILER_ID STREQUAL Intel)
   if(WIN32)
     add_compile_options(/arch:native)
