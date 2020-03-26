@@ -1,4 +1,5 @@
 [![Zenodo DOI](https://zenodo.org/badge/DOI/10.5281/zenodo.213475.svg)](https://doi.org/10.5281/zenodo.213475)
+[![CDash](./tests/cdash.png)](https://my.cdash.org/index.php?project=lowtran)
 
 ![Actions Status](https://github.com/space-physics/lowtran/workflows/ci_unix/badge.svg)
 ![Actions Status](https://github.com/space-physics/lowtran/workflows/ci_windows/badge.svg)
