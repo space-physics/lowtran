@@ -23,6 +23,10 @@ jobs:
       with:
         python-version: '3.x'
 
+    - run: |
+        sudo apt update
+        sudo apt install -yq --no-install-recommends gfortran
+
     - run: pip install .[tests,lint]
     - run: flake8
     - run: mypy .
@@ -57,12 +61,15 @@ jobs:
       with:
         python-version: '3.x'
 
-    # Still needed at least through Numpy 1.17
-    - run: echo "[build]`ncompiler=mingw32" | Out-File -Encoding ASCII ~/pydistutils.cfg
-      shell: powershell
+    # deferred till make driver replacement for f2py
 
-    - run: pip install -e .[tests]
-    - run: pytest
+    # - run: echo "[build]`ncompiler=mingw32" | Out-File -Encoding ASCII ~/pydistutils.cfg
+    #   shell: powershell
+
+    # - run: pip install -e .[tests]
+    # - run: pytest
 
     - run: cinst -y ninja
     - run: ctest -S setup.cmake -V
+      env:
+        FC: gfortran-9
