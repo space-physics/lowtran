@@ -1,0 +1,36 @@
+name: ci_windows
+
+on:
+  push:
+    paths:
+      - "**.build"
+      - "**.txt"
+      - "**.cmake"
+      - "**.f90"
+      - "*.py"
+      - ".github/workflows/ci_windows.yml"
+  pull_request:
+  release:
+
+jobs:
+
+  windows:
+    runs-on: windows-latest
+    steps:
+    - uses: actions/checkout@v2
+    - uses: actions/setup-python@v1
+      with:
+        python-version: '3.x'
+
+    # deferred till make driver replacement for f2py
+
+    # - run: echo "[build]`ncompiler=mingw32" | Out-File -Encoding ASCII ~/pydistutils.cfg
+    #   shell: powershell
+
+    # - run: pip install -e .[tests]
+    # - run: pytest
+
+    - run: cinst -y ninja
+    - run: ctest -S setup.cmake -V
+      env:
+        FC: gfortran

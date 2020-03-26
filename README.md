@@ -1,6 +1,7 @@
 [![Zenodo DOI](https://zenodo.org/badge/DOI/10.5281/zenodo.213475.svg)](https://doi.org/10.5281/zenodo.213475)
 
-![Actions Status](https://github.com/space-physics/lowtran/workflows/ci_python/badge.svg)
+![Actions Status](https://github.com/space-physics/lowtran/workflows/ci_unix/badge.svg)
+![Actions Status](https://github.com/space-physics/lowtran/workflows/ci_windows/badge.svg)
 [![PyPi version](https://img.shields.io/pypi/pyversions/lowtran.svg)](https://pypi.python.org/pypi/lowtran)
 [![PyPi Download stats](http://pepy.tech/badge/lowtran)](http://pepy.tech/project/lowtran)
 
