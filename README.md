@@ -1,7 +1,6 @@
 [![Zenodo DOI](https://zenodo.org/badge/DOI/10.5281/zenodo.213475.svg)](https://doi.org/10.5281/zenodo.213475)
 
-[![Actions Status](https://github.com/space-physics/lowtran/workflows/ci_python/badge.svg)](https://github.com/space-physics/lowtran/actions)
-
+![Actions Status](https://github.com/space-physics/lowtran/workflows/ci_python/badge.svg)
 [![PyPi version](https://img.shields.io/pypi/pyversions/lowtran.svg)](https://pypi.python.org/pypi/lowtran)
 [![PyPi Download stats](http://pepy.tech/badge/lowtran)](http://pepy.tech/project/lowtran)
 
@@ -14,12 +13,11 @@ Updated by Michael Hirsch to be platform independent and easily accessible from 
 The main LOWTRAN program has been made accessible from Python by using direct memory transfers instead of the cumbersome and error-prone process of writing/reading text files.
 `xarray.Dataset` high-performance, simple N-D array data is passed out, with appropriate metadata.
 
-
 ## Gallery
 
 See below for how to make these examples.
 
-![Lowtran7 absorption](gfx/lowtran.png)
+![Lowtran7 absorption](./gfx/lowtran.png)
 
 ## Install
 
@@ -39,7 +37,6 @@ We use `f2py` (part of `numpy`) to seamlessly use Fortran libraries from Python 
    ```
 
    Note: Cygwin is essentially obsolete due to Windows Subsystem for Linux. Cygwin is broken for Numpy and Gfortran and general.
-
 
 2. Install Python Lowtran code
 
@@ -91,7 +88,6 @@ Here's what's you'll need:
    runtests('tests')
    ```
 
-
 ## Notes
 
 LOWTRAN7
@@ -109,16 +105,8 @@ Right now a lot of configuration features aren't implemented, please request tho
 
 ### Fortran (optional)
 
-This is not necessary for normal users:
+To compile Fortran code standalone (without Python):
 
 ```sh
-cd bin
-cmake ..
-
-cmake --build .
-ctest -V
+ctest -S setup.cmake -V
 ```
-
-should generate
-[this text output](https://gist.github.com/drhirsch/89ef2060d8f15b0a60914d13a61e33ab).
-
