@@ -20,15 +20,20 @@ jobs:
       with:
         python-version: '3.x'
 
+  # f2py is seriously broken for finding fortran compilers
+    - name: prereqs for f2py
+      run: |
+        sudo apt -yq update
+        sudo apt -yq install --no-install-recommends gfortran
+
     - run: pip install .[tests,lint]
+
     - run: flake8
     - run: mypy .
 
     - run: pytest
 
     - run: ctest -S setup.cmake -V
-      env:
-        FC: gfortran
 
 
   macos:
@@ -40,6 +45,8 @@ jobs:
         python-version: '3.x'
 
     - run: pip install .[tests]
+      env:
+        FC: gfortran-9
 
     - run: pytest
 
