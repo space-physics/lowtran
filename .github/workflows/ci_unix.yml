@@ -6,10 +6,8 @@ on:
       - "**.txt"
       - "**.cmake"
       - "**.f90"
-      - "*.py"
+      - "**.py"
       - ".github/workflows/ci_unix.yml"
-  pull_request:
-  release:
 
 
 jobs:
@@ -25,6 +23,7 @@ jobs:
     - run: pip install .[tests,lint]
     - run: flake8
     - run: mypy .
+
     - run: pytest
 
     - run: ctest -S setup.cmake -V
@@ -41,6 +40,7 @@ jobs:
         python-version: '3.x'
 
     - run: pip install .[tests]
+
     - run: pytest
 
     - run: ctest -S setup.cmake -V

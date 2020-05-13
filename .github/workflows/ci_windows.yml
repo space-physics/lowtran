@@ -7,10 +7,9 @@ on:
       - "**.txt"
       - "**.cmake"
       - "**.f90"
-      - "*.py"
+      - "**.py"
       - ".github/workflows/ci_windows.yml"
-  pull_request:
-  release:
+
 
 jobs:
 

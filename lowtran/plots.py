@@ -187,7 +187,7 @@ def plothoriz(trans: xarray.Dataset, c1: Dict[str, Any], log: bool = False):
     if c1['model'] == 0:
         ttxt += f'User defined atmosphere: pressure: {c1["p"]} mbar, temperature {c1["t"]} K'
     elif c1['model'] == 5:
-        ttxt += f'Subarctic winter atmosphere'
+        ttxt += 'Subarctic winter atmosphere'
 
     ax = figure().gca()
 

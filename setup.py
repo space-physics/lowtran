@@ -1,5 +1,5 @@
 #!/usr/bin/env python
-import setuptools  # noqa: F401
+import setuptools  # noqa: F401 # lgtm [py/unused-import]
 from numpy.distutils.core import setup, Extension
 
 
