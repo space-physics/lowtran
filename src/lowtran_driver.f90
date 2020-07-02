@@ -1,6 +1,7 @@
-! Michael Hirsch, Ph.D. https://www.scivision.dev
-! p. = page, s. = section of Lowtran7 user manual
-! p. 19(28) s. 3.1 begins to describe the Card format
+program lowtran_driver
+!! Michael Hirsch, Ph.D. https://www.scivision.dev
+!! p. = page, s. = section of Lowtran7 user manual
+!! p. 19(28) s. 3.1 begins to describe the Card format
 
 use, intrinsic:: iso_fortran_env, only: stderr=>error_unit
 
@@ -176,10 +177,17 @@ use assert, only: assert_isclose
 
 real, allocatable ::  dat(:,:)
 integer :: u, nline, i
+character(1024) :: test_file
+
+call get_command_argument(4, test_file, status=i)
+if (i/=0) then
+  write(stderr,*) 'please specify test data filename'
+  error stop 77
+endif
 
 select case (cmodel)
  case ('obs2space')
-  open(newunit=u, file='../tests/testfort_trans.asc',form='formatted',status='old',action='read')
+  open(newunit=u, file=test_file,form='formatted',status='old',action='read')
   read(u,*) nline
   read(u,*) ! discard header line
   allocate(dat(nline,2))
@@ -191,7 +199,7 @@ select case (cmodel)
 
   print *,'OK: Lowtran obs2pace'
  case ('solarrad')
-  open(newunit=u, file='../tests/testfort_solarrad.asc',form='formatted',status='old',action='read')
+  open(newunit=u, file=test_file,form='formatted',status='old',action='read')
   read(u,*) nline
   read(u,*) ! discard header line
   allocate(dat(nline,3))
@@ -206,8 +214,6 @@ select case (cmodel)
  case default
   write(stderr,*) 'sorry, this case is not yet tested: '//cmodel
  end select
-
-
 
 end subroutine testself
 
