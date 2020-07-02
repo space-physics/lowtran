@@ -3,7 +3,7 @@ assert(~verLessThan('matlab', '9.5'), 'Matlab >= R2018b required')
 
 %% simple
 cwd = fileparts(mfilename('fullpath'));
-addpath([cwd,'/../matlab'])
+addpath(fullfile(cwd,'../../../matlab'))
 
 alt_km = 0;
 zenithangle = [0, 60, 80];

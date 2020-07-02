@@ -10,9 +10,9 @@ MATLAB = shutil.which('matlab')
 
 @pytest.mark.skipif(not MATLAB, reason='Matlab not found')
 def test_matlab_api():
-    subprocess.check_call(['matlab', '-batch', 'r=runtests(); exit(any([r.Failed]))'],
+    subprocess.check_call(['matlab', '-batch', 'r=runtests; exit(any([r.Failed]))'],
                           cwd=R, timeout=60)
 
 
 if __name__ == '__main__':
-    pytest.main(['-v', __file__])
+    pytest.main([__file__])

@@ -28,7 +28,7 @@ ep=$(command -v $CXX)
 
 if [[ $es && $ec && $ep ]]
 then
-  echo  
+  echo
   echo "testing with"
   echo $FC  $CC  $CXX
   echo "press Enter to proceed."
@@ -50,7 +50,7 @@ ret=$?
 [[ $ret == 0 ]] && ctest -V || exit $ret
 
 )
-  
+
 done
 
 cd "${0%/*}"  # change to directory of this script
