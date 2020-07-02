@@ -1,10 +1,18 @@
 # f2py
 if(CMAKE_VERSION VERSION_LESS 3.17)
+  message(WARNING "CMake >= 3.17 required for f2py")
   return()
 endif()
 
-find_package(Python3 COMPONENTS Interpreter)
+find_package(Python3 COMPONENTS Interpreter NumPy)
 if(NOT Python3_FOUND)
+  return()
+endif()
+
+if(CMAKE_Fortran_COMPILER_ID STREQUAL GNU AND
+  CMAKE_Fortran_COMPILER_VERSION VERSION_GREATER_EQUAL 10 AND
+  Python3_NumPy_VERSION VERSION_LESS 1.19)
+  message(WARNING "Numpy >= 1.19 required for GCC >= 10")
   return()
 endif()
 
