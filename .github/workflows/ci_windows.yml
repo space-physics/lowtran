@@ -19,7 +19,7 @@ jobs:
     - uses: actions/checkout@v2
     - uses: actions/setup-python@v2
       with:
-        python-version: '3.x'
+        python-version: '3.8'
 
     # deferred till make driver replacement for f2py
 
@@ -29,6 +29,8 @@ jobs:
     # - run: pip install -e .[tests]
     # - run: pytest
 
-    - run: ctest -S setup.cmake -V
-      env:
-        FC: gfortran
+    - run: cmake -B build
+    - run: cmake --build build
+
+    - run: ctest --output-on-failure
+      working-directory: build
