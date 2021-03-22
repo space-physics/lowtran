@@ -104,11 +104,3 @@ Right now a lot of configuration features aren't implemented, please request tho
 * Original 1994 Lowtran7 [Code](http://www1.ncdc.noaa.gov/pub/data/software/lowtran/)
 * `LOWFIL` program in reference/lowtran7.10.f was not connected as we had previously implemented a filter function directly in  Python.
 * `LOWSCAN` spectral sampling (scanning) program in `reference/lowtran7.13.f` was not connected as we had no need for coarser spectral resolution.
-
-### Fortran (optional)
-
-To compile Fortran code standalone (without Python):
-
-```sh
-ctest -S setup.cmake -V
-```
