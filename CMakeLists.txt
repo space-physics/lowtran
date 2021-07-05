@@ -1,11 +1,9 @@
-cmake_minimum_required(VERSION 3.12)
-if(NOT CMAKE_BUILD_TYPE)
-  set(CMAKE_BUILD_TYPE Release CACHE STRING "Debug or Release")
-endif()
+cmake_minimum_required(VERSION 3.17...3.21)
+
 project(lowtran
   LANGUAGES Fortran
   VERSION 2.5.1)
-enable_testing()
+
 include(CTest)
 
 include(cmake/compilers.cmake)

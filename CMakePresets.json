@@ -1,0 +1,42 @@
+{
+  "version": 2,
+
+"configurePresets": [
+{
+  "name": "default",
+  "binaryDir": "${sourceDir}/build",
+  "generator": "Ninja",
+  "cacheVariables": {
+    "CMAKE_BUILD_TYPE": "Release"
+  }
+},
+{
+  "name": "intel", "inherits": "default",
+  "displayName": "Intel oneAPI LLVM",
+  "environment": {
+    "CC": "icx",
+    "CXX": "icx",
+    "FC": "ifx"
+  }
+}
+],
+"buildPresets": [
+  {
+    "name": "default",
+    "configurePreset": "default"
+  }
+],
+"testPresets": [
+{
+  "name": "default",
+  "configurePreset": "default",
+  "output": {
+    "outputOnFailure": true,
+    "verbosity": "default"
+  },
+  "execution": {
+    "noTestsAction": "error",
+    "stopOnFailure": false}
+}
+]
+}

@@ -1,8 +1,4 @@
 # f2py
-if(CMAKE_VERSION VERSION_LESS 3.17)
-  message(WARNING "CMake >= 3.17 required for f2py")
-  return()
-endif()
 
 find_package(Python3 COMPONENTS Interpreter NumPy)
 if(NOT Python3_FOUND)
