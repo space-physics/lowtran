@@ -19,7 +19,7 @@ jobs:
     - uses: actions/checkout@v2
     - uses: actions/setup-python@v2
       with:
-        python-version: '3.8'
+        python-version: '3.9'
 
     # deferred till make driver replacement for f2py
 
@@ -29,8 +29,9 @@ jobs:
     # - run: pip install -e .[tests]
     # - run: pytest
 
-    - run: cmake -B build
-    - run: cmake --build build
+    - run: pip install ninja
 
-    - run: ctest --output-on-failure
-      working-directory: build
+    - run: cmake --preset default
+    - run: cmake --build --preset default
+
+    - run: ctest --preset default

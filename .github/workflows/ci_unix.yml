@@ -24,7 +24,7 @@ jobs:
     - name: prereqs for f2py
       run: |
         sudo apt -yq update
-        sudo apt -yq install --no-install-recommends gfortran
+        sudo apt -yq install --no-install-recommends gfortran ninja-build
 
     - run: pip install .[tests,lint]
 
@@ -33,10 +33,10 @@ jobs:
 
     - run: pytest
 
-    - run: cmake -B build
-    - run: cmake --build build
+    - run: cmake --preset default
+    - run: cmake --build --preset default
 
-    - run: ctest --test-dir build
+    - run: ctest --preset default
 
 
   macos:
@@ -44,16 +44,19 @@ jobs:
     runs-on: macos-latest
     env:
       FC: gfortran-11
+      HOMEBREW_NO_INSTALL_CLEANUP: 1
+
     steps:
     - uses: actions/checkout@v2
     - uses: actions/setup-python@v2
       with:
         python-version: '3.x'
 
+    - run: pip install ninja
     - run: pip install .[tests]
     - run: pytest
 
-    - run: cmake -B build
-    - run: cmake --build build
+    - run: cmake --preset default
+    - run: cmake --build --preset default
 
-    - run: ctest --test-dir build
+    - run: ctest --preset default
