@@ -32,7 +32,7 @@ def nm2lt7(
     return short, long, N
 
 
-def loopuserdef(c1: dict[str, Any]) -> xarray.DataArray:
+def loopuserdef(c1: dict[str, Any]) -> xarray.Dataset:
     """
     golowtran() is for scalar parameters only
     (besides vector of wavelength, which Lowtran internally loops over)
