@@ -36,10 +36,9 @@ jobs:
 
     - run: pytest
 
-    - run: cmake --preset default
-    - run: cmake --build --preset default
-
-    - run: ctest --preset default
+    - run: cmake -B build
+    - run: cmake --build build
+    - run: ctest --test-dir build --preset default
 
 
   macos:
@@ -61,7 +60,6 @@ jobs:
     # - run: pip install .[tests]
     # - run: pytest
 
-    - run: cmake --preset default
-    - run: cmake --build --preset default
-
-    - run: ctest --preset default
+    - run: cmake -B build
+    - run: cmake --build build
+    - run: ctest --test-dir build --preset default
