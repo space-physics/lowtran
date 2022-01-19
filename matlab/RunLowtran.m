@@ -2,7 +2,7 @@ clear;
 
 %% Set parameters
 % Units: distance in km, wavelength in nm, angle in degree
-model = 6;   % selects the geographical - seasonal model atmosphere
+model = 5;   % selects the geographical - seasonal model atmosphere
              % 0: If meteorological data are specified (horizontal path only)
              % 1: Tropical Atmosphere
              % 2: Midlatitude Summer
