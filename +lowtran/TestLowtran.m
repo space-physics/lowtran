@@ -5,7 +5,7 @@ methods (Test)
 function test_transmission(tc)
 
 try
-  py.dict();
+  py.numpy.arange(1);
 catch
   tc.assumeFail('Python not setup for Matlab');
 end

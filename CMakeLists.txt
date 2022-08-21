@@ -37,15 +37,15 @@ if(matlab)
 
 find_package(Matlab COMPONENTS MAIN_PROGRAM REQUIRED)
 
-add_test(NAME MatlabPythonOK COMMAND matlab -batch "py.dict();")
-set_property(TEST MatlabPythonOK PROPERTY FIXTURES_SETUP MatlabPython)
+add_test(NAME MatlabNumpy COMMAND matlab -batch "py.numpy.arange(1);")
+set_property(TEST MatlabNumpy PROPERTY FIXTURES_SETUP MatlabNumpy)
 
 add_test(NAME MatlabLowtran
 COMMAND ${Matlab_MAIN_PROGRAM} -batch "r = runtests('lowtran'); assertSuccess(r)"
 WORKING_DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR}
 )
-set_property(TEST MatlabLowtran PROPERTY FIXTURES_REQUIRED MatlabPython)
+set_property(TEST MatlabLowtran PROPERTY FIXTURES_REQUIRED MatlabNumpy)
 
-set(property TEST MatlabPythonOK MatlabLowtran PROPERTY TIMEOUT 90)
+set(property TEST MatlabNumpy MatlabLowtran PROPERTY TIMEOUT 90)
 
 endif()
