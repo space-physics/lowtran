@@ -1,0 +1,73 @@
+name: ci
+
+env:
+  CMAKE_BUILD_TYPE: Release
+  HOMEBREW_NO_INSTALL_CLEANUP: 1
+
+on:
+  push:
+    paths:
+      - "**/CMakeLists.txt"
+      - "**.cmake"
+      - "**.f90"
+      - "**.py"
+      - ".github/workflows/ci.yml"
+
+
+jobs:
+
+  core:
+    runs-on: ubuntu-latest
+    steps:
+    - uses: actions/checkout@v3
+    - uses: actions/setup-python@v4
+      with:
+        python-version: '3.9'
+
+    - name: prereqs for f2py (macOS)
+      if: runner.os == 'macOS'
+      run: brew reinstall gcc
+
+    - run: pip install .[tests,lint]
+
+    - run: flake8
+    - run: mypy
+
+    - run: pytest
+    # this auto-builds lowtran7 via f2py and CMake, but not the top-level standalone Fortran tests
+
+    - run: cmake -B build
+    - run: cmake --build build
+    - run: ctest --test-dir build --preset default
+
+  windows:
+    runs-on: windows-latest
+    timeout-minutes: 10
+
+    env:
+      CMAKE_GENERATOR: "MinGW Makefiles"
+
+    steps:
+    - uses: msys2/setup-msys2@v2
+      with:
+        update: true
+        install: >-
+          mingw-w64-x86_64-gcc-fortran
+    # Github actions Gfortran in default image is messed up.
+
+    - name: Put MSYS2_MinGW64 on PATH
+      run: echo "${{ runner.temp }}/msys64/mingw64/bin" | Out-File -FilePath $env:GITHUB_PATH -Encoding utf8 -Append
+
+    - uses: actions/checkout@v3
+
+    - run: python -m pip install .[tests,lint]
+
+    - run: flake8
+    - run: mypy
+
+    - run: pytest
+    # this auto-builds lowtran7 via f2py and CMake, but not the top-level standalone Fortran tests
+
+    - run: cmake -B build
+    - run: cmake --build build
+    - run: ctest --test-dir build --preset default

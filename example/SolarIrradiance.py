@@ -7,14 +7,12 @@ Lowtran manual p. 36 s3.2.3.1
 from matplotlib.pyplot import show
 from argparse import ArgumentParser
 import lowtran
-from lowtran.plots import plotirrad
+from lowtran.plot import irradiance
 
 
 def main():
     p = ArgumentParser(description="Lowtran 7 interface")
-    p.add_argument(
-        "-z", "--obsalt", help="altitude of observer [km]", type=float, default=0.0
-    )
+    p.add_argument("-z", "--obsalt", help="altitude of observer [km]", type=float, default=0.0)
     p.add_argument(
         "-a",
         "--zenang",
@@ -23,12 +21,8 @@ def main():
         type=float,
         default=[0, 60, 80],
     )
-    p.add_argument(
-        "-s", "--short", help="shortest wavelength nm ", type=float, default=200
-    )
-    p.add_argument(
-        "-l", "--long", help="longest wavelength nm ", type=float, default=30000
-    )
+    p.add_argument("-s", "--short", help="shortest wavelength nm ", type=float, default=200)
+    p.add_argument("-l", "--long", help="longest wavelength nm ", type=float, default=30000)
     p.add_argument("-step", help="wavelength step size cm^-1", type=float, default=20)
     p.add_argument(
         "--model",
@@ -49,7 +43,7 @@ def main():
 
     irr = lowtran.irradiance(c1)
 
-    plotirrad(irr, c1, True)
+    irradiance(irr, c1, True)
 
     show()
 

@@ -1,26 +1,51 @@
-cmake_minimum_required(VERSION 3.17...3.22)
+cmake_minimum_required(VERSION 3.17...3.25)
+# 3.17+ for Python_SOABI
 
-project(lowtran
-  LANGUAGES Fortran
-  VERSION 2.5.1)
+project(lowtran LANGUAGES Fortran)
 
-include(CTest)
+enable_testing()
 
-include(cmake/compilers.cmake)
+option(BUILD_TESTING "Build testing tools" ON)
+option(matlab "build matlab interface")
 
-add_library(lowtran_lib OBJECT src/lowtran7.f)
-target_compile_options(lowtran_lib PRIVATE ${old_flags})
+# --- auto-ignore build directory
+if(NOT EXISTS ${PROJECT_BINARY_DIR}/.gitignore)
+  file(WRITE ${PROJECT_BINARY_DIR}/.gitignore "*")
+endif()
 
-add_executable(testlowtran src/lowtran_driver.f90 src/assert.f90)
-target_link_libraries(testlowtran lowtran_lib)
+add_subdirectory(src/lowtran)
 
-add_test(NAME Obs2space COMMAND $<TARGET_FILE:testlowtran> obs2space 8333 33333 ${CMAKE_CURRENT_SOURCE_DIR}/src/lowtran/tests/testfort_trans.asc)
-set_tests_properties(Obs2space PROPERTIES REQUIRED_FILES ${CMAKE_CURRENT_SOURCE_DIR}/src/lowtran/tests/testfort_trans.asc)
 
-add_test(NAME SolarRadiance COMMAND $<TARGET_FILE:testlowtran> solarrad 749.5 1250 ${CMAKE_CURRENT_SOURCE_DIR}/src/lowtran/tests/testfort_solarrad.asc)
-set_tests_properties(SolarRadiance PROPERTIES REQUIRED_FILES ${CMAKE_CURRENT_SOURCE_DIR}/src/lowtran/tests/testfort_solarrad.asc)
+if(BUILD_TESTING)
 
-add_test(NAME SolarIrradiance COMMAND $<TARGET_FILE:testlowtran> solarirrad 749.5 1250 "")
-add_test(NAME UserHoriz COMMAND $<TARGET_FILE:testlowtran> userhoriz 714.2857 1250 "")
+add_executable(lowtran_cli test/lowtran_driver.f90 test/assert.f90)
+target_link_libraries(lowtran_cli PRIVATE lowtran)
 
-include(cmake/f2py.cmake)
+add_test(NAME Obs2space COMMAND lowtran_cli obs2space 8333 33333 ${CMAKE_CURRENT_SOURCE_DIR}/test/testfort_trans.asc)
+set_property(TEST Obs2space PROPERTY REQUIRED_FILES ${CMAKE_CURRENT_SOURCE_DIR}/test/testfort_trans.asc)
+
+add_test(NAME SolarRadiance COMMAND lowtran_cli solarrad 749.5 1250 ${CMAKE_CURRENT_SOURCE_DIR}/test/testfort_solarrad.asc)
+set_property(TEST SolarRadiance PROPERTY REQUIRED_FILES ${CMAKE_CURRENT_SOURCE_DIR}/test/testfort_solarrad.asc)
+
+add_test(NAME SolarIrradiance COMMAND lowtran_cli solarirrad 749.5 1250 "")
+add_test(NAME UserHoriz COMMAND lowtran_cli userhoriz 714.2857 1250 "")
+
+endif(BUILD_TESTING)
+
+
+if(matlab)
+
+find_package(Matlab COMPONENTS MAIN_PROGRAM REQUIRED)
+
+add_test(NAME MatlabPythonOK COMMAND matlab -batch "py.dict();")
+set_property(TEST MatlabPythonOK PROPERTY FIXTURES_SETUP MatlabPython)
+
+add_test(NAME MatlabLowtran
+COMMAND ${Matlab_MAIN_PROGRAM} -batch "r = runtests('lowtran'); assertSuccess(r)"
+WORKING_DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR}
+)
+set_property(TEST MatlabLowtran PROPERTY FIXTURES_REQUIRED MatlabPython)
+
+set(property TEST MatlabPythonOK MatlabLowtran PROPERTY TIMEOUT 90)
+
+endif()

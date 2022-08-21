@@ -2,14 +2,12 @@
 from matplotlib.pyplot import show
 from argparse import ArgumentParser
 import lowtran
-from lowtran.plots import plottrans
+from lowtran.plot import transmission
 
 
 def main():
     p = ArgumentParser(description="Lowtran 7 interface")
-    p.add_argument(
-        "-z", "--obsalt", help="altitude of observer [km]", type=float, default=0.0
-    )
+    p.add_argument("-z", "--obsalt", help="altitude of observer [km]", type=float, default=0.0)
     p.add_argument(
         "-a",
         "--zenang",
@@ -18,12 +16,8 @@ def main():
         nargs="+",
         default=[0, 60, 80],
     )
-    p.add_argument(
-        "-s", "--short", help="shortest wavelength nm ", type=float, default=200
-    )
-    p.add_argument(
-        "-l", "--long", help="longest wavelength cm^-1 ", type=float, default=30000
-    )
+    p.add_argument("-s", "--short", help="shortest wavelength nm ", type=float, default=200)
+    p.add_argument("-l", "--long", help="longest wavelength cm^-1 ", type=float, default=30000)
     p.add_argument("-step", help="wavelength step size cm^-1", type=float, default=20)
     p.add_argument(
         "--model",
@@ -44,7 +38,7 @@ def main():
 
     TR = lowtran.transmittance(c1)
 
-    plottrans(TR, c1)
+    transmission(TR, c1)
 
     show()
 

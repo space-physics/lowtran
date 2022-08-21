@@ -1,0 +1,5 @@
+if(CMAKE_Fortran_COMPILER_ID STREQUAL "GNU")
+  set(old_flags -std=legacy -w)
+elseif(CMAKE_Fortran_COMPILER_ID MATCHES "^Intel")
+  set(old_flags -w)
+endif()

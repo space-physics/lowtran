@@ -1,3 +1,7 @@
+path_classifiers:
+  test:
+  - exclude: example
+
 extraction:
   python:
     python_setup:

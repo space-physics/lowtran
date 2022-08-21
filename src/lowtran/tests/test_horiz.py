@@ -15,9 +15,7 @@ def test_horiz():
     TR = lowtran.horiztrans(c1)
 
     assert TR.wavelength_nm[[0, -1]].values == approx((30303.03, 200), rel=0.001)
-    assert TR["transmission"][0, [1000, 1200], 0].values == approx(
-        [0.980679, 0.959992], rel=0.001
-    )
+    assert TR["transmission"][0, [1000, 1200], 0].values == approx([0.980679, 0.959992], rel=0.001)
 
 
 def test_userhoriz():
@@ -42,6 +40,4 @@ def test_userhoriz():
     TR = lowtran.userhoriztrans(c1)
 
     assert TR.wavelength_nm[[0, -1]].values == approx((30303.03, 200), rel=0.001)
-    assert TR["transmission"][0, [1000, 1200], 0].values == approx(
-        [0.982909, 0.9645], rel=0.001
-    )
+    assert TR["transmission"][0, [1000, 1200], 0].values == approx([0.982909, 0.9645], rel=0.001)

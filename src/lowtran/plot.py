@@ -1,3 +1,4 @@
+from __future__ import annotations
 import numpy as np
 import xarray
 from matplotlib.pyplot import figure
@@ -10,7 +11,7 @@ UNITS = r"ster$^{-1}$ cm$^{-2}$ $\mu$m$^{-1}$]"
 plotNp = False
 
 
-def plotscatter(irrad: xarray.Dataset, c1: dict[str, Any], log: bool = False):
+def scatter(irrad: xarray.Dataset, c1: dict[str, Any], log: bool = False) -> None:
 
     fg = figure()
     axs = fg.subplots(2, 1, sharex=True)
@@ -50,7 +51,7 @@ def plotscatter(irrad: xarray.Dataset, c1: dict[str, Any], log: bool = False):
         pass
 
 
-def plotradiance(irrad: xarray.Dataset, c1: dict[str, Any], log: bool = False):
+def radiance(irrad: xarray.Dataset, c1: dict[str, Any], log: bool = False) -> None:
     fg = figure()
     axs = fg.subplots(2, 1, sharex=True)
 
@@ -88,7 +89,7 @@ def plotradiance(irrad: xarray.Dataset, c1: dict[str, Any], log: bool = False):
         pass
 
 
-def plotradtime(TR: xarray.Dataset, c1: dict[str, Any], log: bool = False):
+def radtime(TR: xarray.Dataset, c1: dict[str, Any], log: bool = False) -> None:
     """
     make one plot per time for now.
 
@@ -98,10 +99,10 @@ def plotradtime(TR: xarray.Dataset, c1: dict[str, Any], log: bool = False):
     """
 
     for t in TR.time:  # for each time
-        plotirrad(TR.sel(time=t), c1, log)
+        irradiance(TR.sel(time=t), c1, log)
 
 
-def plottrans(T: xarray.Dataset, c1: dict[str, Any], log: bool = False):
+def transmission(T: xarray.Dataset, c1: dict[str, Any], log: bool = False) -> None:
     ax = figure().gca()
 
     h = ax.plot(T.wavelength_nm, T["transmission"].squeeze())
@@ -121,7 +122,7 @@ def plottrans(T: xarray.Dataset, c1: dict[str, Any], log: bool = False):
     ax.legend(h, T.angle_deg.values)
 
 
-def plotirrad(irrad: xarray.Dataset, c1: dict[str, Any], log: bool = False):
+def irradiance(irrad: xarray.Dataset, c1: dict[str, Any], log: bool = False) -> None:
     fg = figure()
     axs = fg.subplots(2, 1, sharex=True)
 
@@ -181,7 +182,7 @@ def plotirrad(irrad: xarray.Dataset, c1: dict[str, Any], log: bool = False):
     ax.autoscale(True, axis="x", tight=True)
 
 
-def plothoriz(trans: xarray.Dataset, c1: dict[str, Any], log: bool = False):
+def horiz(trans: xarray.Dataset, c1: dict[str, Any], log: bool = False) -> None:
 
     ttxt = f'Transmittance Horizontal \n {c1["range_km"]} km path @ {c1["h1"]} km altitude\n'
 

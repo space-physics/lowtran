@@ -10,7 +10,7 @@ temperature [Kelvin]
 from matplotlib.pyplot import show
 from argparse import ArgumentParser
 import lowtran
-from lowtran.plots import plothoriz
+from lowtran.plot import horiz
 
 
 def main():
@@ -36,12 +36,8 @@ def main():
         type=float,
         default=0.0,
     )
-    p.add_argument(
-        "-s", "--short", help="shortest wavelength nm ", type=float, default=200
-    )
-    p.add_argument(
-        "-l", "--long", help="longest wavelength nm ", type=float, default=30000
-    )
+    p.add_argument("-s", "--short", help="shortest wavelength nm ", type=float, default=200)
+    p.add_argument("-l", "--long", help="longest wavelength nm ", type=float, default=30000)
     p.add_argument("-step", help="wavelength step size cm^-1", type=float, default=20)
     P = p.parse_args()
 
@@ -64,7 +60,7 @@ def main():
 
     TR = lowtran.userhoriztrans(c1).squeeze()
 
-    plothoriz(TR, c1)
+    horiz(TR, c1)
 
     show()
 

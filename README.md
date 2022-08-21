@@ -1,15 +1,13 @@
 # Lowtran in Python
 
 [![Zenodo DOI](https://zenodo.org/badge/DOI/10.5281/zenodo.213475.svg)](https://doi.org/10.5281/zenodo.213475)
-[![CDash](./tests/cdash.png)](https://my.cdash.org/index.php?project=lowtran)
 [![Language grade: Python](https://img.shields.io/lgtm/grade/python/g/space-physics/lowtran.svg?logo=lgtm&logoWidth=18)](https://lgtm.com/projects/g/space-physics/lowtran/context:python)
-![Actions Status](https://github.com/space-physics/lowtran/workflows/ci_unix/badge.svg)
-![Actions Status](https://github.com/space-physics/lowtran/workflows/ci_windows/badge.svg)
+![Actions Status](https://github.com/space-physics/lowtran/workflows/ci/badge.svg)
 [![PyPi version](https://img.shields.io/pypi/pyversions/lowtran.svg)](https://pypi.python.org/pypi/lowtran)
 [![PyPi Download stats](http://pepy.tech/badge/lowtran)](http://pepy.tech/project/lowtran)
 
 LOWTRAN7 atmospheric absorption extinction model.
-Updated by Michael Hirsch to be platform independent and easily accessible from Python &ge; 3.6 and
+Updated by Michael Hirsch to be platform independent and easily accessible from Python and
 [Matlab](#matlab).
 
 The main LOWTRAN program has been made accessible from Python by using direct memory transfers instead of the cumbersome and error-prone process of writing/reading text files.

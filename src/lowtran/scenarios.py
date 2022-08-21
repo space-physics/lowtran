@@ -1,3 +1,4 @@
+from __future__ import annotations
 from pathlib import Path
 from pandas import read_csv
 from dateutil.parser import parse

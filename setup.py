@@ -1,15 +1,8 @@
-#!/usr/bin/env python
-import setuptools  # noqa: F401 # lgtm [py/unused-import]
-from numpy.distutils.core import setup, Extension
+#!/usr/bin/env python3
+import site
+import setuptools
 
+# PEP517 workaround
+site.ENABLE_USER_SITE = True
 
-ext = [
-    Extension(
-        name="lowtran7",
-        sources=["src/lowtran7.f"],
-        f2py_options=["--quiet"],
-        extra_f77_compile_args=["-w"],
-    )
-]
-
-setup(ext_modules=ext)
+setuptools.setup()

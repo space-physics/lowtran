@@ -8,6 +8,6 @@ p.angle=zenithangle;
 p.wlshort= 200;
 p.wllong=30000;
 
-T = lowtran_transmission(p);
+T = lowtran.transmission(p);
 
-plot_transmission(T)
+lowtran.plot_transmission(T)

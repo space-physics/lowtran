@@ -1,5 +1,4 @@
 """
-Michael Hirsch, Ph.D.
 Python wrapper of the venerable LOWTRAN7 atmospheric absorption and solar transmission
 model circa 1992.
 
@@ -14,6 +13,7 @@ precision, future would like to ensure full LOWTRAN7 code can run at 64-bit doub
 user manual:
 www.dtic.mil/dtic/tr/fulltext/u2/a206773.pdf
 """
+
 from .base import nm2lt7, golowtran
 from .scenarios import (
     scatter,

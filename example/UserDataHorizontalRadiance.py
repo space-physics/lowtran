@@ -6,25 +6,20 @@ from pathlib import Path
 from matplotlib.pyplot import show
 from argparse import ArgumentParser
 import lowtran
-from lowtran.plots import plotradtime
+from lowtran.plot import radtime
 
 
 def main():
     p = ArgumentParser(description="Lowtran 7 interface")
     p.add_argument(
         "ptfn",
-        help="csv file with time,relative humidity [%],ambient temperature [K], total pressure (millibar)",
+        help="csv file with "
+        "time, relative humidity [%],ambient temperature [K], total pressure (millibar)",
         nargs="?",
     )
-    p.add_argument(
-        "-z", "--obsalt", help="altitude of observer [km]", type=float, default=0.05
-    )
-    p.add_argument(
-        "-s", "--short", help="shortest wavelength nm ", type=float, default=200
-    )
-    p.add_argument(
-        "-l", "--long", help="longest wavelength nm ", type=float, default=30000
-    )
+    p.add_argument("-z", "--obsalt", help="altitude of observer [km]", type=float, default=0.05)
+    p.add_argument("-s", "--short", help="shortest wavelength nm ", type=float, default=200)
+    p.add_argument("-l", "--long", help="longest wavelength nm ", type=float, default=30000)
     p.add_argument("-step", help="wavelength step size cm^-1", type=float, default=20)
     p.add_argument("-o", "--outfn", help="HDF5 file to write")
     P = p.parse_args()
@@ -47,7 +42,7 @@ def main():
         print("writing", outfn)
         TR.to_netcdf(outfn)
 
-    plotradtime(TR, c1)
+    radtime(TR, c1)
 
     show()
 

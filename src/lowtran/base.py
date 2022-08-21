@@ -1,20 +1,33 @@
 from __future__ import annotations
+from pathlib import Path
+import importlib.util
+import distutils.sysconfig
 import logging
 import xarray
 import numpy as np
 from typing import Any
 
-try:
-    import lowtran7  # don't use dot in front, it's linking to .pyd or .so
-except ImportError as e:
-    raise ImportError(
-        f"you must compile the Fortran code first. f2py -m lowtran7 -c src/lowtran7.f  {e}"
-    )
+from .cmake import build
 
 
-def nm2lt7(
-    short_nm: float, long_nm: float, step_cminv: float = 20
-) -> tuple[float, float, float]:
+def import_f2py_mod(name: str):
+
+    mod_name = name + distutils.sysconfig.get_config_var("EXT_SUFFIX")  # type: ignore
+    mod_file = Path(__file__).parent / mod_name
+    if not mod_file.is_file():
+        raise ModuleNotFoundError(mod_file)
+    spec = importlib.util.spec_from_file_location(name, mod_file)
+    if spec is None:
+        raise ModuleNotFoundError(f"{name} not found in {mod_file}")
+    mod = importlib.util.module_from_spec(spec)
+    if mod is None:
+        raise ImportError(f"could not import {name} from {mod_file}")
+    spec.loader.exec_module(mod)  # type: ignore
+
+    return mod
+
+
+def nm2lt7(short_nm: float, long_nm: float, step_cminv: float = 20) -> tuple[float, float, float]:
     """converts wavelength in nm to cm^-1
     minimum meaningful step is 20, but 5 is minimum before crashing lowtran
 
@@ -94,9 +107,7 @@ def golowtran(c1: dict[str, Any]) -> xarray.Dataset:
     c1.setdefault("wmol", [0] * 12)
     # %% input check
     assert len(c1["wmol"]) == 12, "see Lowtran user manual for 12 values of WMOL"
-    assert np.isfinite(
-        c1["h1"]
-    ), "per Lowtran user manual Table 14, H1 must always be defined"
+    assert np.isfinite(c1["h1"]), "per Lowtran user manual Table 14, H1 must always be defined"
     # %% setup wavelength
     c1.setdefault("wlstep", 20)
     if c1["wlstep"] < 5:
@@ -111,6 +122,13 @@ def golowtran(c1: dict[str, Any]) -> xarray.Dataset:
     Note we invoke case "3a" from table 14, only observer altitude and apparent
     angle are specified
     """
+
+    try:
+        lowtran7 = import_f2py_mod("lowtran7")
+    except ImportError:
+        build(source_dir=Path(__file__).parent, build_dir=Path(__file__).parent / "build")
+        lowtran7 = import_f2py_mod("lowtran7")
+
     Tx, V, Alam, trace, unif, suma, irrad, sumvv = lowtran7.lwtrn7(
         True,
         nwl,
