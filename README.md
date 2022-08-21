@@ -7,10 +7,10 @@
 [![PyPi Download stats](http://pepy.tech/badge/lowtran)](http://pepy.tech/project/lowtran)
 
 LOWTRAN7 atmospheric absorption extinction model.
-Updated by Michael Hirsch to be platform independent and easily accessible from Python and
+Updated to be platform independent and easily accessible from Python and
 [Matlab](#matlab).
 
-The main LOWTRAN program has been made accessible from Python by using direct memory transfers instead of the cumbersome and error-prone process of writing/reading text files.
+The main LOWTRAN program is accessible from Python by using direct memory transfers instead of the cumbersome and error-prone process of writing/reading text files.
 `xarray.Dataset` high-performance, simple N-D array data is passed out, with appropriate metadata.
 
 ## Gallery
@@ -21,22 +21,16 @@ See below for how to make these examples.
 
 ## Install
 
-You will need a Fortran compiler.
-`gfortran` is one suitable compiler.
+Lowtran requires a Fortran compiler and CMake.
 We use `f2py` (part of `numpy`) to seamlessly use Fortran libraries from Python by special compilation of the Fortran library with auto-generated shim code.
 
 1. If a Fortran compiler is not already installed, install Gfortran:
 
    * Linux: `apt install gfortran`
    * Mac: `brew install gcc`
-   * [Windows](https://www.scivision.dev/windows-gcc-gfortran-cmake-make-install/) use MSYS2 or MinGW to get Gfortran.
-     Windows only: from Powershell:
+   * Windows: use any one of Windows Subsystem for Linux, MSYS2, MinGW to get Gfortran or use Intel oneAPI.
 
-   ```posh
-   echo "[build]`ncompiler=mingw32" | Out-File -Encoding ASCII ~/pydistutils.cfg
-   ```
-
-   Note: Cygwin is essentially obsolete due to Windows Subsystem for Linux. Cygwin is broken for Numpy and Gfortran and general.
+Note: Cygwin is essentially obsolete due to Windows Subsystem for Linux. Cygwin is broken for Numpy and Gfortran and general.
 
 2. Install Python Lowtran code
 
@@ -48,44 +42,37 @@ We use `f2py` (part of `numpy`) to seamlessly use Fortran libraries from Python 
 
 In these examples, you can write to HDF5 with the `-o` option.
 
-We present examples of:
+We present Python [examples](./example) of:
 
-* ground-to-space transmittance:
-  [TransmittanceGround2Space.py](./TransmittanceGround2Space.py)
+* ground-to-space transmittance: TransmittanceGround2Space.py
 
   ![Lowtran Transmission](./doc/txgnd2space.png)
-* sun-to-observer scattered radiance (why the sky is blue):
-  [ScatterRadiance.py](./ScatterRadiance.py)
+* sun-to-observer scattered radiance (why the sky is blue): ScatterRadiance.py
 
   ![Lowtran Scatter Radiance](./gfx/whyskyisblue.png)
-* sun-to-observer irradiance:
-  [SolarIrradiance.py](./SolarIrradiance.py)
+* sun-to-observer irradiance: SolarIrradiance.py
 
   ![Lowtran Solar Irradiance](./gfx/irradiance.png)
-* observer-to-observer solar single-scattering solar radiance (up-going) with custom Pressure, Temperature and partial pressure for 12 species:
-  [UserDataHorizontalRadiance.py](./UserDataHorizontalRadiance.py)
+* observer-to-observer solar single-scattering solar radiance (up-going) with custom Pressure, Temperature and partial pressure for 12 species: UserDataHorizontalRadiance.py
   ![Lowtran Solar Irradiance](./gfx/thermalradiance.png)
-* observer-to-observer transmittance with custom Pressure, Temperature and partial pressure for 12 species:
-  [UserDataHorizontalTransmittance.py](./UserDataHorizontalTransmittance.py)
-* observer-to-observer transmittance:
-  [HorizontalTransmittance.py](./HorizontalTransmittance.py)
+* observer-to-observer transmittance with custom Pressure, Temperature and partial pressure for 12 species: UserDataHorizontalTransmittance.py
+* observer-to-observer transmittance: HorizontalTransmittance.py
 
   ![Lowtran Horizontal Path transmittance](./gfx/horizcompare.png)
 
 ### Matlab
 
 Matlab users can seamlessly access Python modules, as demonstrated in
-[RunLowtran.m](./matlab/RunLowtran.m) and
-[lowtran_transmission.m](./matlab/lowtran_transmission.m).
+[RunLowtran.m](./RunLowtran.m).
 
 Here's what's you'll need:
 
 1. [Setup Python &harr; Matlab interface](https://www.scivision.dev/matlab-python-user-module-import/).
 2. Install Lowtran in Python as at the top of this Readme.
-3. From Matlab, verify everything is working by from the `lowtran/` directory:
+3. From Matlab, verify everything is working by:
 
    ```matlab
-   runtests('tests')
+   runtests('lowtran')
    ```
 
 ## Notes
