@@ -1,14 +1,8 @@
 include(${CMAKE_CURRENT_LIST_DIR}/f2py.cmake)
 
-if(WIN32)
-  set(f2py_suffix .pyd)
-else()
-  set(f2py_suffix ${CMAKE_SHARED_LIBRARY_SUFFIX})
-endif()
-
 function(f2py_target module_name module_src out_dir)
 
-set(out ${CMAKE_CURRENT_BINARY_DIR}/${module_name}.${Python_SOABI}${f2py_suffix})
+set(out ${CMAKE_CURRENT_BINARY_DIR}/${module_name}${f2py_suffix})
 
 add_custom_command(
   OUTPUT ${out}
