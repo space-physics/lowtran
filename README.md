@@ -1,9 +1,7 @@
 # Lowtran in Python
 
 [![Zenodo DOI](https://zenodo.org/badge/DOI/10.5281/zenodo.213475.svg)](https://doi.org/10.5281/zenodo.213475)
-[![Language grade: Python](https://img.shields.io/lgtm/grade/python/g/space-physics/lowtran.svg?logo=lgtm&logoWidth=18)](https://lgtm.com/projects/g/space-physics/lowtran/context:python)
 ![Actions Status](https://github.com/space-physics/lowtran/workflows/ci/badge.svg)
-[![PyPi version](https://img.shields.io/pypi/pyversions/lowtran.svg)](https://pypi.python.org/pypi/lowtran)
 [![PyPi Download stats](http://pepy.tech/badge/lowtran)](http://pepy.tech/project/lowtran)
 
 LOWTRAN7 atmospheric absorption extinction model.
