@@ -1,5 +1,5 @@
 if(CMAKE_Fortran_COMPILER_ID STREQUAL "GNU")
-  set(old_flags -std=legacy -w)
+  add_compile_options("$<$<COMPILE_LANGUAGE:Fortran>:-std=legacy;-w>")
 elseif(CMAKE_Fortran_COMPILER_ID MATCHES "^Intel")
-  set(old_flags -w)
+  add_compile_options("$<$<COMPILE_LANGUAGE:Fortran>:-w>")
 endif()

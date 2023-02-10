@@ -1,4 +1,4 @@
-cmake_minimum_required(VERSION 3.17...3.25)
+cmake_minimum_required(VERSION 3.19...3.26)
 # 3.17+ for Python_SOABI
 
 project(lowtran LANGUAGES Fortran)

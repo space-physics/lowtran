@@ -12,11 +12,7 @@ if(CMAKE_Fortran_COMPILER_ID STREQUAL "GNU" AND
   return()
 endif()
 
-find_program(f2py NAMES f2py)
-if(NOT f2py)
-  message(STATUS "f2py not found")
-  return()
-endif()
+find_program(f2py NAMES f2py REQUIRED)
 
 if(f2py_suffix)
   return()
