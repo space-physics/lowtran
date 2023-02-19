@@ -1,16 +1,40 @@
 from __future__ import annotations
-from pathlib import Path
-import importlib.util
-import distutils.sysconfig
 import logging
 import xarray
 import numpy as np
 from typing import Any
+from pathlib import Path
+import importlib.util
+import distutils.sysconfig
+import os
+from types import ModuleType
 
 from .cmake import build
 
 
-def import_f2py_mod(name: str):
+def check() -> ModuleType:
+    try:
+        lowtran7 = import_f2py_mod("lowtran7")
+    except ImportError:
+        src = Path(__file__).parent
+        build(source_dir=src, build_dir=src / "build")
+        lowtran7 = import_f2py_mod("lowtran7")
+
+    return lowtran7
+
+
+def import_f2py_mod(name: str) -> ModuleType:
+
+    if os.name == "nt":
+        # https://github.com/space-physics/lowtran/issues/19
+        # code inspired by scipy._distributor_init.py for loading DLLs on Window
+        dll_path = (Path(__file__) / "../build/lowtran7/.libs").resolve()
+        if dll_path.is_dir():
+            # add the folder for Python 3.8 and above
+            logging.info(f"Adding {dll_path} to DLL search path")
+            os.add_dll_directory(dll_path)  # type: ignore
+        else:
+            logging.info(f"Could not find {dll_path} to add to DLL search path")
 
     mod_name = name + distutils.sysconfig.get_config_var("EXT_SUFFIX")  # type: ignore
     mod_file = Path(__file__).parent / mod_name
@@ -40,7 +64,8 @@ def nm2lt7(short_nm: float, long_nm: float, step_cminv: float = 20) -> tuple[flo
     short = 1e7 / short_nm
     long = 1e7 / long_nm
 
-    N = int(np.ceil((short - long) / step_cminv)) + 1  # yes, ceil
+    N = int(np.ceil((short - long) / step_cminv)) + 1
+    # yes, ceil
 
     return short, long, N
 
@@ -123,11 +148,7 @@ def golowtran(c1: dict[str, Any]):
     angle are specified
     """
 
-    try:
-        lowtran7 = import_f2py_mod("lowtran7")
-    except ImportError:
-        build(source_dir=Path(__file__).parent, build_dir=Path(__file__).parent / "build")
-        lowtran7 = import_f2py_mod("lowtran7")
+    lowtran7 = check()
 
     Tx, V, Alam, trace, unif, suma, irrad, sumvv = lowtran7.lwtrn7(
         True,

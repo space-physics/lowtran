@@ -14,23 +14,7 @@ user manual:
 www.dtic.mil/dtic/tr/fulltext/u2/a206773.pdf
 """
 
-from pathlib import Path
-import os
-import logging
-import sys
-
-if os.name == 'nt':
-    dll_path = (Path(__file__) / "../build/lowtran7/.libs").resolve()
-    # https://github.com/space-physics/lowtran/issues/19
-    # code inspired by scipy._distributor_init.py for loading DLLs on Windows
-    if dll_path.is_dir():
-        # add the folder for Python 3.8 and above
-        logging.info(f"Adding {dll_path} to DLL search path")
-        os.add_dll_directory(dll_path)  # type: ignore
-    else:
-        logging.info(f"Could not find {dll_path} to add to DLL search path")
-
-from .base import nm2lt7, golowtran
+from .base import check, golowtran, nm2lt7
 from .scenarios import (
     scatter,
     irradiance,

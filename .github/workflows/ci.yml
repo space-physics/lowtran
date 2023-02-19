@@ -43,8 +43,10 @@ jobs:
     - run: flake8
     - run: mypy
 
+    - name: Build Lowtran, check that it can be imported by Python
+      run: python -c "import lowtran; lowtran.check()"
+
     - run: pytest
-    # this auto-builds lowtran7 via f2py and CMake, but not the top-level standalone Fortran tests
 
     - run: cmake --workflow --preset default
 
@@ -74,8 +76,10 @@ jobs:
     - run: flake8
     - run: mypy
 
-    - run: pytest
-    # this auto-builds lowtran7 via f2py and CMake, but not the top-level standalone Fortran tests
+    - name: Build Lowtran, check that it can be imported by Python
+      run: python -c "import lowtran; lowtran.check()"
+
+    - run: pytest -v
 
     - run: cmake -B build
       env:
