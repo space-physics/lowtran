@@ -12,16 +12,12 @@ def build(source_dir: Path, build_dir: Path):
     if not cmake:
         raise FileNotFoundError("CMake not found.  Try:\n    pip install cmake")
 
-    if os.name == "nt":
-        g = os.environ.get("CMAKE_GENERATOR")
-        if not g:
-            g = shutil.which("ninja")
-            if g:
-                os.environ["CMAKE_GENERATOR"] = "Ninja"
-            else:
-                g = shutil.which("mingw32-make")
-                if g:
-                    os.environ["CMAKE_GENERATOR"] = "MinGW Makefiles"
+    env = os.environ.copy()
+    if os.name == "nt" and not "CMAKE_GENERATOR" in env:
+        if shutil.which("ninja"):
+            env["CMAKE_GENERATOR"] = "Ninja"
+        elif shutil.which("mingw32-make"):
+            env["CMAKE_GENERATOR"] = "MinGW Makefiles"
 
     # %% Configure
     cmd = [cmake, f"-B{build_dir}", f"-S{source_dir}"]
@@ -30,4 +26,4 @@ def build(source_dir: Path, build_dir: Path):
     # %% Build
     cmd = [cmake, "--build", str(build_dir), "--parallel"]
 
-    subprocess.check_call(cmd)
+    subprocess.check_call(cmd, env=env)
