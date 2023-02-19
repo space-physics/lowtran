@@ -3,6 +3,7 @@ name: ci
 env:
   CMAKE_BUILD_TYPE: Release
   HOMEBREW_NO_INSTALL_CLEANUP: 1
+  CTEST_NO_TESTS_ACTION: error
 
 on:
   push:
@@ -17,7 +18,12 @@ on:
 jobs:
 
   core:
-    runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        os: [ubuntu-latest, macos-latest]
+
+    runs-on: ${{ matrix.os }}
+
     steps:
     - uses: actions/checkout@v3
     - uses: actions/setup-python@v4
@@ -36,42 +42,4 @@ jobs:
     - run: pytest
     # this auto-builds lowtran7 via f2py and CMake, but not the top-level standalone Fortran tests
 
-    - run: cmake -B build
-    - run: cmake --build build
-    - run: ctest --test-dir build --preset default
-
-  windows:
-    runs-on: windows-latest
-    timeout-minutes: 10
-
-    steps:
-    - uses: msys2/setup-msys2@v2
-      with:
-        update: true
-        install: >-
-          mingw-w64-x86_64-gcc-fortran
-    # Github actions Gfortran in default image is messed up.
-
-    - name: Put MSYS2_MinGW64 on PATH
-      run: echo "${{ runner.temp }}/msys64/mingw64/bin" | Out-File -FilePath $env:GITHUB_PATH -Encoding utf8 -Append
-
-    - uses: actions/setup-python@v4
-      with:
-        python-version: '3.9'
-
-    - uses: actions/checkout@v3
-
-    - run: python -m pip install .[tests,lint]
-
-    - run: flake8
-    - run: mypy
-
-    - run: pytest
-    # this auto-builds lowtran7 via f2py and CMake, but not the top-level standalone Fortran tests
-
-    - run: cmake -B build
-      env:
-        CMAKE_GENERATOR: "MinGW Makefiles"
-
-    - run: cmake --build build
-    - run: ctest --test-dir build --preset default
+    - run: cmake --workflow --preset default

@@ -22,23 +22,21 @@ See below for how to make these examples.
 Lowtran requires a Fortran compiler and CMake.
 We use `f2py` (part of `numpy`) to seamlessly use Fortran libraries from Python by special compilation of the Fortran library with auto-generated shim code.
 
-1. If a Fortran compiler is not already installed, install Gfortran:
+If a Fortran compiler is not already installed, install Gfortran:
 
-   * Linux: `apt install gfortran`
-   * Mac: `brew install gcc`
-   * Windows: use any one of Windows Subsystem for Linux, MSYS2, MinGW to get Gfortran or use Intel oneAPI.
+* Linux: `apt install gfortran`
+* Mac: `brew install gcc`
+* Windows: Windows Subsystem for Linux
 
-Note: Cygwin is essentially obsolete due to Windows Subsystem for Linux. Cygwin is broken for Numpy and Gfortran and general.
+Install Python Lowtran code
 
-2. Install Python Lowtran code
-
-   ```sh
-   pip install -e .
-   ```
+```sh
+pip install -e .
+```
 
 ## Examples
 
-In these examples, you can write to HDF5 with the `-o` option.
+In these examples, optionally write to HDF5 with the `-o` option.
 
 We present Python [examples](./example) of:
 

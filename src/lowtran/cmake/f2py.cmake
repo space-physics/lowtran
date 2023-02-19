@@ -1,15 +1,11 @@
 # f2py
 
-find_package(Python COMPONENTS Interpreter NumPy)
-if(NOT Python_FOUND)
-  return()
-endif()
+find_package(Python COMPONENTS Interpreter NumPy REQUIRED)
 
 if(CMAKE_Fortran_COMPILER_ID STREQUAL "GNU" AND
-  CMAKE_Fortran_COMPILER_VERSION VERSION_GREATER_EQUAL 10 AND
-  Python_NumPy_VERSION VERSION_LESS 1.19)
-  message(WARNING "Numpy >= 1.19 required for GCC >= 10")
-  return()
+   CMAKE_Fortran_COMPILER_VERSION VERSION_GREATER_EQUAL 10 AND
+   Python_NumPy_VERSION VERSION_LESS 1.19)
+  message(FATAL_ERROR "Numpy >= 1.19 required for GCC >= 10")
 endif()
 
 find_program(f2py NAMES f2py REQUIRED)
@@ -24,7 +20,6 @@ OUTPUT_STRIP_TRAILING_WHITESPACE
 RESULT_VARIABLE ret
 OUTPUT_VARIABLE out
 ERROR_VARIABLE err
-TIMEOUT 5
 )
 
 if(NOT ret EQUAL 0)
@@ -37,7 +32,6 @@ OUTPUT_STRIP_TRAILING_WHITESPACE
 RESULT_VARIABLE ret
 OUTPUT_VARIABLE out
 ERROR_VARIABLE err
-TIMEOUT 5
 )
 
 endif()

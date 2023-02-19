@@ -5,8 +5,10 @@ function(f2py_target module_name module_src out_dir)
 set(out ${CMAKE_CURRENT_BINARY_DIR}/${module_name}${f2py_suffix})
 
 set(f2py_arg --quiet -m ${module_name} -c ${module_src})
-if(WIN32 AND CMAKE_Fortran_COMPILER_ID STREQUAL "GNU")
-  list(APPEND f2py_arg --compiler=mingw32)
+
+if(WIN32)
+message(STATUS "Windows is long known to have problems with f2py.
+Suggest Windows Subsystem for Linux instead.")
 endif()
 
 add_custom_command(

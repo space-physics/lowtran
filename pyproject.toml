@@ -4,7 +4,7 @@ build-backend = "setuptools.build_meta"
 
 [project]
 name = "lowtran"
-version = "3.0.0"
+version = "3.1.0"
 description = " Model of Earth atmosphere absorption and transmission vs. wavelength and location."
 keywords = ["mesosphere", "stratosphere", "thermosphere", "atmosphere"]
 classifiers = [
@@ -17,7 +17,7 @@ classifiers = [
   "Topic :: Scientific/Engineering :: Atmospheric Science"
 ]
 dynamic = ["readme"]
-requires-python = ">=3.7"
+requires-python = ">=3.8"
 dependencies = ["numpy", "xarray", "python-dateutil"]
 
 [project.optional-dependencies]
