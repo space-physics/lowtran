@@ -1,9 +1,7 @@
 cmake_minimum_required(VERSION 3.19...3.26)
 # 3.17+ for Python_SOABI
 
-project(lowtran
-LANGUAGES Fortran
-VERSION 3.0.0)
+project(lowtran LANGUAGES Fortran)
 
 enable_testing()
 
