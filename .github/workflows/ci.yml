@@ -59,6 +59,7 @@ jobs:
       with:
         update: true
         install: >-
+          mingw-w64-x86_64-ninja
           mingw-w64-x86_64-gcc-fortran
     # Github actions Gfortran in default image is messed up.
 
