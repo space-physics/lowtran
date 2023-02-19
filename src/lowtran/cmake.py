@@ -6,14 +6,14 @@ import os
 __all__ = ["build"]
 
 
-def build(source_dir: Path, build_dir: Path):
+def build(source_dir: Path, build_dir: Path) -> None:
     """build with CMake"""
     cmake = shutil.which("cmake")
     if not cmake:
         raise FileNotFoundError("CMake not found.  Try:\n    pip install cmake")
 
     env = os.environ.copy()
-    if os.name == "nt" and not "CMAKE_GENERATOR" in env:
+    if os.name == "nt" and "CMAKE_GENERATOR" not in env:
         if shutil.which("ninja"):
             env["CMAKE_GENERATOR"] = "Ninja"
         elif shutil.which("mingw32-make"):

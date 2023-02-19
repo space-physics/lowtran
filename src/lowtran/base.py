@@ -45,7 +45,7 @@ def nm2lt7(short_nm: float, long_nm: float, step_cminv: float = 20) -> tuple[flo
     return short, long, N
 
 
-def loopuserdef(c1: dict[str, Any]) -> xarray.Dataset:
+def loopuserdef(c1: dict[str, Any]):
     """
     golowtran() is for scalar parameters only
     (besides vector of wavelength, which Lowtran internally loops over)
@@ -80,7 +80,7 @@ def loopuserdef(c1: dict[str, Any]) -> xarray.Dataset:
     return TR
 
 
-def loopangle(c1: dict[str, Any]) -> xarray.Dataset:
+def loopangle(c1: dict[str, Any]):
     """
     loop over "ANGLE"
     """
@@ -95,7 +95,7 @@ def loopangle(c1: dict[str, Any]) -> xarray.Dataset:
     return TR
 
 
-def golowtran(c1: dict[str, Any]) -> xarray.Dataset:
+def golowtran(c1: dict[str, Any]):
     """directly run Fortran code"""
     # %% default parameters
     c1.setdefault("time", None)
