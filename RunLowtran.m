@@ -1,13 +1,10 @@
 
 alt_km = 0;
-zenithangle = [0, 60, 80];
+zenith_angle = [0, 60, 80];
 
-p.model=5;
-p.h1=alt_km;
-p.angle=zenithangle;
-p.wlshort= 200;
-p.wllong=30000;
+model=5;
+wavelen_minmax=[200, 30000];
 
-T = lowtran.transmission(p);
+T = lowtran.transmission(model, alt_km, zenith_angle, wavelen_minmax);
 
 lowtran.plot_transmission(T)
