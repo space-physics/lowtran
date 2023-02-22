@@ -8,10 +8,7 @@ enable_testing()
 option(BUILD_TESTING "Build testing tools" ON)
 option(matlab "build matlab interface")
 
-# --- auto-ignore build directory
-if(NOT EXISTS ${PROJECT_BINARY_DIR}/.gitignore)
-  file(WRITE ${PROJECT_BINARY_DIR}/.gitignore "*")
-endif()
+file(GENERATE OUTPUT .gitignore CONTENT "*")
 
 add_subdirectory(src/lowtran)
 
