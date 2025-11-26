@@ -6,8 +6,26 @@
 
 dist/
 
+build/
+cmake-build-*/
+CMakeFiles/
+CMakeCache.txt
+
 __pycache__/
 *.py[cod]
 *.so
 *.dylib
 *.egg-info/
+
+# Local virtual environments
+.venv/
+venv/
+
+# Ninja / CMake logs
+rules.ninja
+.ninja_log
+.ninja_deps
+
+# OS specific files
+.DS_Store
+Thumbs.db

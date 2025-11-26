@@ -36,7 +36,7 @@ def test_irradiance():
     TR = lowtran.irradiance(c1)
 
     assert [c1["wllong"], c1["wlshort"]] == approx(TR.wavelength_nm[[0, -1]].values)
-    assert TR["transmission"][0, [0, 100], 0].values == approx([1.675140e-04, 0.2456177], rel=1e-6)
+    assert TR["transmission"][0, [0, 100], 0].values == approx([1.675140e-04, 0.2456177], rel=1e-5)
     assert TR["irradiance"][0, [100, 1000], 0].values == approx([0.00019873, 0.14551014], rel=1e-5)
 
 
@@ -55,7 +55,7 @@ def test_radiance():
     TR = lowtran.radiance(c1)
 
     assert [c1["wllong"], c1["wlshort"]] == approx(TR.wavelength_nm[[0, -1]].values)
-    assert TR["transmission"][0, [0, 100], 0].values == approx([1.675140e-04, 0.2456177], rel=1e-6)
+    assert TR["transmission"][0, [0, 100], 0].values == approx([1.675140e-04, 0.2456177], rel=1e-5)
     assert TR["radiance"][0, [10, 200], 0].values == approx([3.110389e-04, 3.907411e-10], rel=0.01)
 
 

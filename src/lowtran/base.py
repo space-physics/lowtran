@@ -3,52 +3,76 @@ import logging
 import xarray
 import numpy as np
 from typing import Any
-from pathlib import Path
-import importlib.util
-import distutils.sysconfig
+import importlib
+import sysconfig
 import os
+import sys
+from pathlib import Path
 from types import ModuleType
-
-from .cmake import build
 
 
 def check() -> ModuleType:
-    try:
-        lowtran7 = import_f2py_mod("lowtran7")
-    except ImportError:
-        src = Path(__file__).parent
-        build(source_dir=src, build_dir=src / "build")
-        lowtran7 = import_f2py_mod("lowtran7")
+    """Ensure the compiled lowtran7 extension is available.
 
-    return lowtran7
+    With scikit-build-core, the extension is built at install time and shipped in the wheel.
+    If it's missing, prompt the user to install the package (e.g., `pip install .`).
+    """
+
+    try:
+        return import_f2py_mod("lowtran7")
+    except ImportError as e:
+        raise ImportError(
+            "lowtran7 extension not found. Please install the package so the Fortran "
+            "extension is built (e.g., `pip install .` or `pip install lowtran`)."
+        ) from e
 
 
 def import_f2py_mod(name: str) -> ModuleType:
+    lib_name = name + sysconfig.get_config_var("EXT_SUFFIX")
+    lib_path = importlib.resources.files(__package__) / lib_name
 
-    if os.name == "nt":
-        # https://github.com/space-physics/lowtran/issues/19
-        # code inspired by scipy._distributor_init.py for loading DLLs on Window
-        dll_path = (Path(__file__) / "../build/lowtran7/.libs").resolve()
-        if dll_path.is_dir():
-            # add the folder for Python 3.8 and above
-            logging.info(f"Adding {dll_path} to DLL search path")
-            os.add_dll_directory(dll_path)  # type: ignore
-        else:
-            logging.info(f"Could not find {dll_path} to add to DLL search path")
+    if not lib_path.is_file():
+        # Assume editable install: navigate up to find the build directory
+        src_dir = Path(__file__).parent
+        project_root = src_dir.parent.parent  # Assuming src/lowtran structure
 
-    mod_name = name + distutils.sysconfig.get_config_var("EXT_SUFFIX")  # type: ignore
-    mod_file = Path(__file__).parent / mod_name
-    if not mod_file.is_file():
-        raise ModuleNotFoundError(mod_file)
-    spec = importlib.util.spec_from_file_location(name, mod_file)
-    if spec is None:
-        raise ModuleNotFoundError(f"{name} not found in {mod_file}")
-    mod = importlib.util.module_from_spec(spec)
-    if mod is None:
-        raise ImportError(f"could not import {name} from {mod_file}")
-    spec.loader.exec_module(mod)  # type: ignore
+        # scikit-build-core build directory pattern
+        build_base = project_root / "build"
 
-    return mod
+        if build_base.exists():
+            # Recursively search for the library file
+            matches = list(build_base.rglob(lib_name))
+            if matches:
+                lib_path = matches[0]  # Use the first match
+
+    if not lib_path.is_file():
+        raise ModuleNotFoundError(f"Module not found: {lib_path}")
+
+    # On Windows, add DLL search directories to fix loading issues
+    dll_dirs: list[Any] = []
+    if sys.platform == "win32" and hasattr(os, 'add_dll_directory'):
+        # Add common locations where your dependencies might be, i.e., system PATH and module dir
+        search_paths = os.environ.get('PATH', '').split(os.pathsep)
+        search_paths.append(os.fspath(lib_path.parent))
+
+        for path in search_paths:
+            try:
+                dll_dirs.append(os.add_dll_directory(path))
+            except OSError:
+                pass
+    try:
+        # Load the module from file path
+        spec = importlib.util.spec_from_file_location(name, lib_path)
+        if spec is None or spec.loader is None:
+            raise ImportError(f"Cannot load module from {lib_path}")
+
+        mod = importlib.util.module_from_spec(spec)
+        spec.loader.exec_module(mod)
+        return mod
+    finally:
+        # Clean up DLL directories
+        for dll_dir in dll_dirs:
+            dll_dir.close()
 
 
 def nm2lt7(short_nm: float, long_nm: float, step_cminv: float = 20) -> tuple[float, float, float]:

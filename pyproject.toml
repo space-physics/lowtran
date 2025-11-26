@@ -1,6 +1,10 @@
 [build-system]
-requires = ["setuptools>=61.0.0", "wheel", "numpy"]
-build-backend = "setuptools.build_meta"
+requires = [
+  "scikit-build-core>=0.9.0",
+  "numpy",
+  "meson"
+]
+build-backend = "scikit_build_core.build"
 
 [project]
 name = "lowtran"
@@ -16,7 +20,6 @@ classifiers = [
   "Programming Language :: Fortran",
   "Topic :: Scientific/Engineering :: Atmospheric Science"
 ]
-dynamic = ["readme"]
 requires-python = ">=3.9"
 dependencies = ["numpy", "xarray", "python-dateutil"]
 
@@ -24,8 +27,9 @@ dependencies = ["numpy", "xarray", "python-dateutil"]
 tests = ["pytest"]
 lint = ["flake8", "flake8-bugbear", "flake8-builtins", "flake8-blind-except", "mypy", "types-python-dateutil"]
 
-[tool.setuptools.dynamic]
-readme = {file = ["README.md"], content-type = "text/markdown"}
+[project.readme]
+file = "README.md"
+content-type = "text/markdown"
 
 [tool.black]
 line-length = 100
@@ -34,3 +38,11 @@ line-length = 100
 files = ["src", "example"]
 allow_redefinition = true
 ignore_missing_imports = true
+
+# scikit-build-core configuration: out-of-source build and package discovery
+[tool.scikit-build]
+cmake.args = ["-GNinja"]
+editable.mode = "redirect"
+build-dir = "build/{wheel_tag}"
+wheel.packages = ["src/lowtran"]
+sdist.include = ["src/lowtran", "README.md", "LICENSE.txt", "MANIFEST.in"]
