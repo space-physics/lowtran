@@ -92,7 +92,17 @@ def import_f2py_mod(name: str) -> ModuleType:
     mod_name = name + sysconfig.get_config_var("EXT_SUFFIX")  # type: ignore
     mod_file = Path(__file__).parent / mod_name
     if not mod_file.is_file():
-        raise ModuleNotFoundError(mod_file)
+        # Editable installs with meson-python keep the built .pyd in
+        # the build tree rather than next to __init__.py. Walk up to
+        # the repo root and search ``build/*/src/lowtran/fortran/``
+        # before giving up.
+        for candidate in Path(__file__).resolve().parents:
+            hit = sorted(candidate.glob(f'build/*/src/lowtran/fortran/{mod_name}'))
+            if hit:
+                mod_file = hit[-1]
+                break
+        if not mod_file.is_file():
+            raise ModuleNotFoundError(mod_file)
     spec = importlib.util.spec_from_file_location(name, mod_file)
     if spec is None:
         raise ModuleNotFoundError(f"{name} not found in {mod_file}")
