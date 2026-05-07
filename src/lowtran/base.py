@@ -1,25 +1,67 @@
 from __future__ import annotations
 import logging
-import xarray
 import numpy as np
 from typing import Any
 from pathlib import Path
 import importlib.util
-import distutils.sysconfig
+import sysconfig
 import os
 from types import ModuleType
 
-from .cmake import build
+
+class LowtranResult:
+    """Structured container for Lowtran atmospheric model results.
+
+    Attributes:
+        transmission: (time, wavelength, angle) transmission values
+        radiance: (time, wavelength, angle) radiance values
+        irradiance: (time, wavelength, angle) irradiance values
+        pathscatter: (time, wavelength, angle) path scatter values
+        time: time coordinates
+        wavelength_nm: wavelength coordinates in nm
+        angle_deg: angle coordinates in degrees
+    """
+    __slots__ = ('transmission', 'radiance', 'irradiance', 'pathscatter',
+                 'time', 'wavelength_nm', 'angle_deg')
+
+    def __init__(self, transmission: np.ndarray, radiance: np.ndarray,
+                 irradiance: np.ndarray, pathscatter: np.ndarray,
+                 time: np.ndarray, wavelength_nm: np.ndarray, angle_deg: np.ndarray):
+        self.transmission = transmission
+        self.radiance = radiance
+        self.irradiance = irradiance
+        self.pathscatter = pathscatter
+        self.time = time
+        self.wavelength_nm = wavelength_nm
+        self.angle_deg = angle_deg
+
+    def __getitem__(self, key: str) -> np.ndarray:
+        """Dictionary-style access for backward compatibility."""
+        return getattr(self, key)
+
+    def __repr__(self) -> str:
+        return (f"LowtranResult(shape={self.transmission.shape}, "
+                f"wavelength=[{self.wavelength_nm[0]:.1f}, {self.wavelength_nm[-1]:.1f}] nm)")
+
+    def squeeze(self):
+        """Return a new result with singleton dimensions removed."""
+        return LowtranResult(
+            transmission=self.transmission.squeeze(),
+            radiance=self.radiance.squeeze(),
+            irradiance=self.irradiance.squeeze(),
+            pathscatter=self.pathscatter.squeeze(),
+            time=self.time.squeeze() if self.time.ndim > 0 else self.time,
+            wavelength_nm=self.wavelength_nm,
+            angle_deg=self.angle_deg.squeeze() if self.angle_deg.ndim > 0 else self.angle_deg
+        )
 
 
 def check() -> ModuleType:
-    try:
-        lowtran7 = import_f2py_mod("lowtran7")
-    except ImportError:
-        src = Path(__file__).parent
-        build(source_dir=src, build_dir=src / "build")
-        lowtran7 = import_f2py_mod("lowtran7")
+    """Import the lowtran7 extension module.
 
+    The extension should be built with Meson and installed alongside this package.
+    """
+    lowtran7 = import_f2py_mod("lowtran7")
     return lowtran7
 
 
@@ -27,19 +69,40 @@ def import_f2py_mod(name: str) -> ModuleType:
 
     if os.name == "nt":
         # https://github.com/space-physics/lowtran/issues/19
-        # code inspired by scipy._distributor_init.py for loading DLLs on Window
-        dll_path = (Path(__file__) / "../build/lowtran7/.libs").resolve()
-        if dll_path.is_dir():
-            # add the folder for Python 3.8 and above
-            logging.info(f"Adding {dll_path} to DLL search path")
-            os.add_dll_directory(dll_path)  # type: ignore
-        else:
-            logging.info(f"Could not find {dll_path} to add to DLL search path")
+        # code inspired by scipy._distributor_init.py for loading DLLs on Windows
 
-    mod_name = name + distutils.sysconfig.get_config_var("EXT_SUFFIX")  # type: ignore
+        # First, try to use bundled DLLs (installed alongside the package)
+        bundled_libs = Path(__file__).parent / "libs"
+        if bundled_libs.is_dir():
+            logging.info(f"Adding {bundled_libs} to DLL search path (bundled runtime)")
+            os.add_dll_directory(str(bundled_libs))  # type: ignore
+        else:
+            # Fallback: look for mingw64/bin for gfortran runtime DLLs
+            mingw_paths = [
+                Path("C:/mingw64/bin"),
+                Path("C:/msys64/mingw64/bin"),
+                Path("C:/msys64/ucrt64/bin"),
+            ]
+            for mingw_path in mingw_paths:
+                if mingw_path.is_dir():
+                    logging.info(f"Adding {mingw_path} to DLL search path for Fortran runtime")
+                    os.add_dll_directory(str(mingw_path))  # type: ignore
+                    break
+
+    mod_name = name + sysconfig.get_config_var("EXT_SUFFIX")  # type: ignore
     mod_file = Path(__file__).parent / mod_name
     if not mod_file.is_file():
-        raise ModuleNotFoundError(mod_file)
+        # Editable installs with meson-python keep the built .pyd in
+        # the build tree rather than next to __init__.py. Walk up to
+        # the repo root and search ``build/*/src/lowtran/fortran/``
+        # before giving up.
+        for candidate in Path(__file__).resolve().parents:
+            hit = sorted(candidate.glob(f'build/*/src/lowtran/fortran/{mod_name}'))
+            if hit:
+                mod_file = hit[-1]
+                break
+        if not mod_file.is_file():
+            raise ModuleNotFoundError(mod_file)
     spec = importlib.util.spec_from_file_location(name, mod_file)
     if spec is None:
         raise ModuleNotFoundError(f"{name} not found in {mod_file}")
@@ -88,8 +151,8 @@ def loopuserdef(c1: dict[str, Any]):
     ), "WMOL, P, T,time must be vectors of equal length"
 
     N = len(P)
-    # %% 3-D array indexed by metadata
-    TR = xarray.Dataset(coords={"time": time, "wavelength_nm": None, "angle_deg": None})
+    # %% accumulate results
+    results = []
 
     for i in range(N):
         c = c1.copy()
@@ -98,11 +161,18 @@ def loopuserdef(c1: dict[str, Any]):
         c["t"] = T[i]
         c["time"] = time[i]
 
-        TR = TR.merge(golowtran(c))
+        results.append(golowtran(c))
 
-    #   TR = TR.sort_index(axis=0) # put times in order, sometimes CSV is not monotonic in time.
-
-    return TR
+    # Concatenate along time axis
+    return LowtranResult(
+        transmission=np.concatenate([r.transmission for r in results], axis=0),
+        radiance=np.concatenate([r.radiance for r in results], axis=0),
+        irradiance=np.concatenate([r.irradiance for r in results], axis=0),
+        pathscatter=np.concatenate([r.pathscatter for r in results], axis=0),
+        time=time,
+        wavelength_nm=results[0].wavelength_nm,
+        angle_deg=results[0].angle_deg,
+    )
 
 
 def loopangle(c1: dict[str, Any]):
@@ -110,14 +180,23 @@ def loopangle(c1: dict[str, Any]):
     loop over "ANGLE"
     """
     angles = np.atleast_1d(c1["angle"])
-    TR = xarray.Dataset(coords={"wavelength_nm": None, "angle_deg": angles})
+    results = []
 
     for a in angles:
         c = c1.copy()
         c["angle"] = a
-        TR = TR.merge(golowtran(c))
+        results.append(golowtran(c))
 
-    return TR
+    # Concatenate along angle axis
+    return LowtranResult(
+        transmission=np.concatenate([r.transmission for r in results], axis=2),
+        radiance=np.concatenate([r.radiance for r in results], axis=2),
+        irradiance=np.concatenate([r.irradiance for r in results], axis=2),
+        pathscatter=np.concatenate([r.pathscatter for r in results], axis=2),
+        time=results[0].time,
+        wavelength_nm=results[0].wavelength_nm,
+        angle_deg=angles,
+    )
 
 
 def golowtran(c1: dict[str, Any]):
@@ -172,19 +251,12 @@ def golowtran(c1: dict[str, Any]):
         c1["range_km"],
     )
 
-    dims = ("time", "wavelength_nm", "angle_deg")
-    TR = xarray.Dataset(
-        {
-            "transmission": (dims, Tx[:, 9][None, :, None]),
-            "radiance": (dims, sumvv[None, :, None]),
-            "irradiance": (dims, irrad[:, 0][None, :, None]),
-            "pathscatter": (dims, irrad[:, 2][None, :, None]),
-        },
-        coords={
-            "time": [c1["time"]],
-            "wavelength_nm": Alam * 1e3,
-            "angle_deg": [c1["angle"]],
-        },
+    return LowtranResult(
+        transmission=Tx[:, 9][None, :, None],
+        radiance=sumvv[None, :, None],
+        irradiance=irrad[:, 0][None, :, None],
+        pathscatter=irrad[:, 2][None, :, None],
+        time=np.array([c1["time"]]),
+        wavelength_nm=Alam * 1e3,
+        angle_deg=np.array([c1["angle"]]),
     )
-
-    return TR

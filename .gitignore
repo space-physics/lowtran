@@ -2,8 +2,10 @@
 .mypy_cache/
 .pytest_cache/
 .cache/
+.claude/
+.vscode/
 
-
+build/
 dist/
 
 __pycache__/
@@ -11,3 +13,6 @@ __pycache__/
 *.so
 *.dylib
 *.egg-info/
+
+# Runtime DLLs (bundled during wheel build)
+src/lowtran/libs/*.dll

@@ -2,7 +2,6 @@ from __future__ import annotations
 from pathlib import Path
 from pandas import read_csv
 from dateutil.parser import parse
-import xarray
 from typing import Any
 import numpy as np
 
@@ -64,8 +63,7 @@ def horizrad(infn: Path, outfn: Path, c1: dict[str, Any]):
         infn = Path(infn).expanduser()
 
         if infn.suffix == ".h5":
-            TR = xarray.open_dataset(infn)
-            return TR
+            raise NotImplementedError("HDF5 loading is no longer supported. Use numpy .npz format instead.")
 
     c1.update(
         {

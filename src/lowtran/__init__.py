@@ -14,7 +14,7 @@ user manual:
 www.dtic.mil/dtic/tr/fulltext/u2/a206773.pdf
 """
 
-from .base import check, golowtran, nm2lt7
+from .base import check, golowtran, nm2lt7, LowtranResult
 from .scenarios import (
     scatter,
     irradiance,
@@ -24,3 +24,17 @@ from .scenarios import (
     horiztrans,
     userhoriztrans,
 )
+
+__all__ = [
+    "check",
+    "golowtran",
+    "nm2lt7",
+    "LowtranResult",
+    "scatter",
+    "irradiance",
+    "radiance",
+    "transmittance",
+    "horizrad",
+    "horiztrans",
+    "userhoriztrans",
+]

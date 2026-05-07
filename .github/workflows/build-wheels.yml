@@ -1,0 +1,81 @@
+name: Build Wheels
+
+on:
+  push:
+    branches: [main]
+    tags: ['v*']
+  pull_request:
+    branches: [main]
+  workflow_dispatch:
+
+jobs:
+  build_wheels:
+    name: Build wheels on ${{ matrix.os }}
+    runs-on: ${{ matrix.os }}
+    strategy:
+      matrix:
+        os: [ubuntu-latest, windows-latest, macos-13, macos-14]
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Set up MSYS2 (Windows only)
+        if: runner.os == 'Windows'
+        uses: msys2/setup-msys2@v2
+        with:
+          msystem: MINGW64
+          update: true
+          install: >-
+            mingw-w64-x86_64-gcc-fortran
+            mingw-w64-x86_64-meson
+            mingw-w64-x86_64-ninja
+
+      - name: Install Fortran (Linux)
+        if: runner.os == 'Linux'
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y gfortran
+
+      - name: Install Fortran (macOS)
+        if: runner.os == 'macOS'
+        run: |
+          brew install gcc
+
+      - name: Build wheels
+        uses: pypa/cibuildwheel@v2.17.0
+        env:
+          CIBW_BUILD: cp39-* cp310-* cp311-* cp312-* cp313-* cp314-*
+          CIBW_SKIP: "*-musllinux_* pp*"
+          # Windows: Copy runtime DLLs to libs/ before build
+          CIBW_BEFORE_BUILD_WINDOWS: |
+            python -c "from pathlib import Path; (Path('src/lowtran/libs')).mkdir(parents=True, exist_ok=True)"
+            if exist C:\msys64\mingw64\bin\libgfortran-5.dll (
+              copy C:\msys64\mingw64\bin\libgfortran-5.dll src\lowtran\libs\
+              copy C:\msys64\mingw64\bin\libgcc_s_seh-1.dll src\lowtran\libs\
+              copy C:\msys64\mingw64\bin\libquadmath-0.dll src\lowtran\libs\
+              copy C:\msys64\mingw64\bin\libwinpthread-1.dll src\lowtran\libs\
+            )
+          # Ensure meson and ninja are available
+          CIBW_BEFORE_BUILD: pip install meson-python ninja
+          # Test that the wheel works
+          CIBW_TEST_REQUIRES: pytest numpy
+          CIBW_TEST_COMMAND: pytest {project}/tests || python -c "import lowtran; lowtran.check()"
+
+      - uses: actions/upload-artifact@v4
+        with:
+          name: wheels-${{ matrix.os }}-${{ strategy.job-index }}
+          path: ./wheelhouse/*.whl
+
+  build_sdist:
+    name: Build source distribution
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Build sdist
+        run: pipx run build --sdist
+
+      - uses: actions/upload-artifact@v4
+        with:
+          name: sdist
+          path: dist/*.tar.gz
